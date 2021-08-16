@@ -1,18 +1,39 @@
 <template>
-  <div>
-    <div>
-      <v-toolbar class="mt-15" color="grey" height="83">
-        <img src="logo.png" />
-        <template>
-          <v-tabs color="white" centered>
-            <v-tabs-slider color="white"></v-tabs-slider>
-            <v-tab v-for="(item, index) in items" :key="index">
-              {{ item.title }}
-            </v-tab>
-          </v-tabs>
-        </template>
-      </v-toolbar>
-    </div>
+  <div class="mt-16">
+    <v-navigation-drawer v-model="sidebar" app bottom>
+      <v-list>
+        <v-list-item
+          v-for="(item, index) in items"
+          :key="index"
+          :to="item.path"
+        >
+          <v-list-item-content>{{ item.title }}</v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-toolbar height="85px" color="#b3b3b3">
+      <span class="hidden-md-and-up">
+        <v-app-bar-nav-icon @click="sidebar = !sidebar"></v-app-bar-nav-icon>
+      </span>
+      <v-toolbar-title class="mt-2">
+        <router-link to="/">
+          <img src="logo.png" />
+        </router-link>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items class="hidden-sm-and-down">
+        <v-btn
+          text
+          color="#ffffff"
+          v-for="(item, index) in items"
+          :key="index"
+          :to="item.path"
+        >
+          {{ item.title }}
+        </v-btn>
+      </v-toolbar-items>
+    </v-toolbar>
   </div>
 </template>
 
@@ -20,6 +41,8 @@
 export default {
   data() {
     return {
+      appTitle: "Awesome App",
+      sidebar: false,
       items: [
         { title: "HOME", path: "/" },
         { title: "TRANSFERS", path: "/transfers" },
