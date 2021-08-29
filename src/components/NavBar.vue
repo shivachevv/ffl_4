@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-16">
+  <div class="navbar mt-16">
     <v-navigation-drawer v-model="sidebar" app bottom>
       <v-list>
         <v-list-item
@@ -13,14 +13,15 @@
     </v-navigation-drawer>
 
     <v-toolbar height="85px" color="#b3b3b3">
-      <span class="hidden-md-and-up">
-        <v-app-bar-nav-icon @click="sidebar = !sidebar"></v-app-bar-nav-icon>
-      </span>
       <v-toolbar-title class="mt-2">
         <router-link to="/">
-          <img src="logo.png" />
+          <img class="navbar-logo" src="logo.png" />
         </router-link>
       </v-toolbar-title>
+      <span class="navbar-title">Fantasy Football Legends</span>
+      <span class="navbar-hamburger hidden-md-and-up">
+        <v-app-bar-nav-icon @click="sidebar = !sidebar"></v-app-bar-nav-icon>
+      </span>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn
@@ -41,7 +42,6 @@
 export default {
   data() {
     return {
-      appTitle: "Awesome App",
       sidebar: false,
       items: [
         { title: "HOME", path: "/" },
@@ -58,4 +58,44 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.navbar-title {
+  display: none;
+}
+@media only screen and (max-width: 960px) {
+  .navbar {
+    position: fixed;
+    z-index: 100;
+    bottom: 0;
+    width: 100%;
+  }
+  .navbar-logo {
+    height: 85px;
+    float: left;
+    margin: 0 0 8px 5px;
+  }
+  ::v-deep .v-toolbar__content {
+    padding: 0;
+    width: 100%;
+    justify-content: flex-end !important;
+    float: right !important;
+  }
+  .navbar-hamburger {
+    order: 4;
+  }
+  .navbar-title {
+    display: inline-block;
+    font-size: 20px;
+    margin-left: 15px;
+    font-weight: bold;
+  }
+}
+@media only screen and (max-width: 400px) {
+  .navbar-title {
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 15px;
+    font-weight: bold;
+  }
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-row>
+    <v-row no-gutters="true">
       <v-col>
         <NavBar />
       </v-col>
