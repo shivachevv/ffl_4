@@ -1,0 +1,6 @@
+<template>
+<div class="rounds-container">
+<h1 class="section-header">Rounds section</h1>
+<button @click.prevent="loadRounds()">Load data</button>
+</div>
+</template>
