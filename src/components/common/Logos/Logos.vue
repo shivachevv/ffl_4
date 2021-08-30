@@ -1,7 +1,7 @@
 <template>
-  <section class="logos-container" v-if="users && leagues">
+  <section v-if="users && leagues" class="logos-container">
     <div>
-      <div class="logo" v-for="team in leagueSelected1stHalf" :key="team">
+      <div v-for="team in leagueSelected1stHalf" class="logo" :key="team">
         <router-link :to="`/team-details/${users[team].userLogo}`">
           <img
             :src="
@@ -20,7 +20,7 @@
         :selected="selectedLeague"
         @selectedLeague="selectedLeague = $event"
       ></LeaguesDropdown> -->
-      <div class="logo" v-for="team in leagueSelected2ndHalf" :key="team">
+      <div v-for="team in leagueSelected2ndHalf" class="logo" :key="team">
         <router-link :to="`/team-details/${users[team].userLogo}`">
           <img
             :src="
@@ -55,19 +55,17 @@ export default {
     ...mapGetters(["leagues", "users"]),
     leagueSelected1stHalf() {
       if (this.leagues && this.users) {
-        const teams = Object.values(this.leagues)[0].teams.map((x) => {
-          return this.users[x];
-        });
+        const teams = Object.values(this.leagues)[0].teams.map(
+          (x) => this.users[x]
+        );
         return teams
-          .sort((a, b) => {
-            return a.code - b.code;
+          .sort(
+            (a, b) => a.code - b.code
             // const code1 = Number(this.users[a].code);
             // const code2 = Number(this.users[b].code);
             // return code1 - code2 > 0 ? -1 : 1
-          })
-          .map((x) => {
-            return x.uid;
-          });
+          )
+          .map((x) => x.uid);
       } else return "";
       // return this.leagues[this.selectedLeague].teams.filter((x, i) => {
       //   return i < this.leagues[this.selectedLeague].teams.length / 2;
@@ -75,19 +73,17 @@ export default {
     },
     leagueSelected2ndHalf() {
       if (this.leagues && this.users) {
-        const teams = Object.values(this.leagues)[1].teams.map((x) => {
-          return this.users[x];
-        });
+        const teams = Object.values(this.leagues)[1].teams.map(
+          (x) => this.users[x]
+        );
         return teams
-          .sort((a, b) => {
-            return a.code - b.code;
+          .sort(
+            (a, b) => a.code - b.code
             // const code1 = Number(this.users[a].code);
             // const code2 = Number(this.users[b].code);
             // return code1 - code2 > 0 ? -1 : 1
-          })
-          .map((x) => {
-            return x.uid;
-          });
+          )
+          .map((x) => x.uid);
       } else return "";
 
       // return this.leagues[this.selectedLeague].teams.filter((x, i) => {

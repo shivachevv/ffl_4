@@ -9,11 +9,12 @@
           @click.prevent="showSectionHandler('rounds')"
           >Rounds</a
         >
-        <div class="admin-menu-item" v-if="showRounds">
+        <div v-if="showRounds"
+class="admin-menu-item">
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'Rounds' }"
+            @click.prevent="switchComponent"
           >
             Rounds
           </button>
@@ -25,25 +26,26 @@
           @click.prevent="showSectionHandler('players')"
           >Players</a
         >
-        <div class="admin-menu-item" v-if="showPlayers">
+        <div v-if="showPlayers"
+class="admin-menu-item">
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'PlayersEdit' }"
+            @click.prevent="switchComponent"
           >
             PlayersEdit
           </button>
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'PlayersPoints' }"
+            @click.prevent="switchComponent"
           >
             PlayersPoints
           </button>
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'SyncPoints' }"
+            @click.prevent="switchComponent"
           >
             SyncPoints
           </button>
@@ -55,18 +57,19 @@
           @click.prevent="showSectionHandler('users')"
           >Users</a
         >
-        <div class="admin-menu-item" v-if="showUsers">
+        <div v-if="showUsers"
+class="admin-menu-item">
           <button
-            @click.prevent="switchComponent"
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'UsersPersonal' }"
+            @click.prevent="switchComponent"
           >
             UsersPersonal
           </button>
           <button
-            @click.prevent="switchComponent"
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'UsersTeams' }"
+            @click.prevent="switchComponent"
           >
             UsersTeams
           </button>
@@ -78,11 +81,12 @@
           @click.prevent="showSectionHandler('transfers')"
           >Transfers</a
         >
-        <div class="admin-menu-item" v-if="showTransfers">
+        <div v-if="showTransfers"
+class="admin-menu-item">
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'Transfers' }"
+            @click.prevent="switchComponent"
           >
             Transfers
           </button>
@@ -94,11 +98,12 @@
           @click.prevent="showSectionHandler('leagues')"
           >Leagues</a
         >
-        <div class="admin-menu-item" v-if="showLeagues">
+        <div v-if="showLeagues"
+class="admin-menu-item">
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'Leagues' }"
+            @click.prevent="switchComponent"
           >
             Leagues
           </button>
@@ -109,11 +114,12 @@
           @click.prevent="showSectionHandler('h2h')"
           >H2HLeague</a
         >
-        <div class="admin-menu-item" v-if="showH2H">
+        <div v-if="showH2H"
+class="admin-menu-item">
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'H2HLeague' }"
+            @click.prevent="switchComponent"
           >
             H2HLeague
           </button>
@@ -124,25 +130,26 @@
           @click.prevent="showSectionHandler('cup')"
           >Cup</a
         >
-        <div class="admin-menu-item" v-if="showCup">
+        <div v-if="showCup"
+class="admin-menu-item">
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'CupGroupsAndRounds' }"
+            @click.prevent="switchComponent"
           >
             CupGroupsAndRounds
           </button>
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'CupSquadSelect' }"
+            @click.prevent="switchComponent"
           >
             CupSquadSelect
           </button>
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'CupMatchPoints' }"
+            @click.prevent="switchComponent"
           >
             CupMatchPoints
           </button>
@@ -153,11 +160,12 @@
           @click.prevent="showSectionHandler('matching')"
           >Matching</a
         >
-        <div class="admin-menu-item" v-if="showMatching">
+        <div v-if="showMatching"
+class="admin-menu-item">
           <button
             class="menu-item-link"
-            @click.prevent="switchComponent"
             :class="{ selected: chosenComponent === 'Matching' }"
+            @click.prevent="switchComponent"
           >
             Matching
           </button>
@@ -166,7 +174,7 @@
     </div>
     <div class="admin-details">
       <!-- <keep-alive> -->
-      <component v-bind:is="chosenComponent" />
+      <component :is="chosenComponent" />
       <!-- </keep-alive> -->
     </div>
   </div>
@@ -221,6 +229,9 @@ export default {
       showMatching: false,
     };
   },
+  computed: {},
+  watch: {},
+  created() {},
   methods: {
     switchComponent(e) {
       return (this.chosenComponent = e.target.innerText);
@@ -245,9 +256,6 @@ export default {
       }
     },
   },
-  computed: {},
-  watch: {},
-  created() {},
   // beforeDestroy() {
   //   console.log('destroy', this);
   // },

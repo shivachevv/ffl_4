@@ -1,14 +1,18 @@
 <template>
   <v-app>
     <v-main>
-      <div id="app" class="container">
+      <div
+id="app" class="container"
+>
         <button @click.prevent="logIn()">Log In</button>
-        <Header></Header>
-        <Logos></Logos>
-        <transition name="slide-left" mode="out-in">
-          <router-view></router-view>
+        <Header />
+        <Logos />
+        <transition
+name="slide-left" mode="out-in"
+>
+          <router-view />
         </transition>
-        <Footer></Footer>
+        <Footer />
       </div>
     </v-main>
   </v-app>

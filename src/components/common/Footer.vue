@@ -1,10 +1,13 @@
 <template>
   <footer v-if="leagues && menuLinks && users">
     <div class="footer-logo">
-      <img src="@/assets/images/footer/footer-logo.png" alt />
-      <router-link class="up" to="/" target="blank"
-        >fantasy legends</router-link
-      >
+      <img
+src="@/assets/images/footer/footer-logo.png" alt />
+      <router-link class="up" to="/"
+target="blank"
+>
+        fantasy legends
+      </router-link>
     </div>
 
     <div
@@ -17,8 +20,9 @@
         v-for="team in league.teams"
         :key="team"
         :to="`/team-details/${users[team].userLogo}`"
-        >{{ users[team].userTeam }}</router-link
       >
+        {{ users[team].userTeam }}
+      </router-link>
     </div>
 
     <div class="footer-cat">
@@ -27,8 +31,9 @@
         v-for="link in filteredLinks"
         :key="link.title"
         :to="link.path"
-        >{{ link.title }}</router-link
       >
+        {{ link.title }}
+      </router-link>
     </div>
 
     <div class="footer-fb">
@@ -38,8 +43,11 @@
         target="blank"
         >Follow the legends</a
       >
-      <a href="https://www.facebook.com/groups/292412975320252" target="blank">
-        <img src="@/assets/images/footer/fb.png" alt />
+      <a
+href="https://www.facebook.com/groups/292412975320252" target="blank"
+>
+        <img
+src="@/assets/images/footer/fb.png" alt />
       </a>
     </div>
   </footer>
@@ -56,9 +64,7 @@ export default {
   computed: {
     ...mapGetters(["leagues", "menuLinks", "users"]),
     filteredLinks() {
-      return this.menuLinks.filter((x) => {
-        return x.toShow;
-      });
+      return this.menuLinks.filter((x) => x.toShow);
     },
   },
 };

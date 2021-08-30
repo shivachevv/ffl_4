@@ -11,7 +11,6 @@ export default {
   data() {
     return {};
   },
-  methods: {},
   computed: {},
   watch: {},
   created() {},
@@ -19,6 +18,7 @@ export default {
     // console.log('destroy', this);
     // this.$destroy();
   },
+  methods: {},
 };
 </script>
 

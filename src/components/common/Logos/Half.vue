@@ -1,8 +1,12 @@
 <template>
   <div>
-    <div class="logo" v-for="team in leagueSelected" :key="team.email">
+    <div v-for="team in leagueSelected"
+class="logo" :key="team.email">
       <router-link :to="team.teamName">
-        <img :src="require(`@/assets/images/team-logos/${team.teamLogo}.png`)" alt="Team logo" />
+        <img
+          :src="require(`@/assets/images/team-logos/${team.teamLogo}.png`)"
+          alt="Team logo"
+        />
       </router-link>
     </div>
   </div>
@@ -14,9 +18,9 @@ export default {
   props: {
     leagueSelected: {
       type: Array,
-      required: true
-    }
-  }
+      required: true,
+    },
+  },
 };
 </script>
 

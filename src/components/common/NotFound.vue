@@ -1,7 +1,10 @@
 <template>
   <div>
     <h1>Page Not Found!</h1>
-    <img src="https://cdn4.iconfinder.com/data/icons/faces-10/96/sadness-512.png" alt />
+    <img
+      src="https://cdn4.iconfinder.com/data/icons/faces-10/96/sadness-512.png"
+      alt
+    />
   </div>
 </template>
 
@@ -11,7 +14,7 @@ export default {
   props: {},
   data() {
     return {};
-  }
+  },
 };
 </script>
 

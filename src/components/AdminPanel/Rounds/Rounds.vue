@@ -1,21 +1,56 @@
 <template>
   <div class="rounds-container">
-    <h1 class="section-header">Rounds section</h1>
-
-    <button @click.prevent="loadRounds()">Load data</button>
+    <v-card elevation="10" max-width="500" align="center" class="showed-card">
+      <v-card-title>
+        <v-row justify="center" class="text-h4">
+          Season {{ showRoundInfo.season_name }}
+        </v-row>
+      </v-card-title>
+      <v-card-title>
+        <v-row justify="center" class="text-h4">
+          Round {{ showRoundInfo.name }}
+        </v-row>
+      </v-card-title>
+      <div class="dates">
+        <v-card-subtitle>
+          <v-row justify="center" class="text-h5">
+            From date: {{ showRoundInfo.from_date }}
+          </v-row></v-card-subtitle
+        >
+        <v-card-subtitle>
+          <v-row justify="center" class="text-h5">
+            To date: {{ showRoundInfo.to_date }}
+          </v-row></v-card-subtitle
+        >
+      </div>
+    </v-card>
+    <div class="text-center rounds-pagination">
+      <v-pagination
+        v-model="showRound"
+        :length="rounds.length"
+        :total-visible="5"
+      ></v-pagination>
+    </div>
+    <v-row class="buttons">
+      <v-btn elevation="2" outlined x-large class="green" min-width="150"
+        >EDIT</v-btn
+      >
+      <v-btn elevation="2" outlined x-large class="red" min-width="150"
+        >DELETE</v-btn
+      >
+    </v-row>
   </div>
 </template>
 
 <script>
-import { requestResource } from "../../../utils/loadResource";
-import { GET_RECOURSE_PATH } from "../../../common/apiRequests";
-import axios from "axios";
+import { mapGetters } from "vuex";
 export default {
   name: "Rounds",
   components: {},
   data() {
     return {
       currentRound: undefined,
+      showRound: 1,
       players: undefined,
       users: undefined,
       h2hrounds: undefined,
@@ -24,48 +59,49 @@ export default {
       errorMsg: "",
     };
   },
-  methods: {
-    loadRounds() {
-      requestResource(GET_RECOURSE_PATH.ROUNDS_ALL);
+  methods: {},
+  computed: {
+    ...mapGetters(["getAllRounds"]),
+    rounds() {
+      return this.getAllRounds;
+    },
+    showRoundInfo() {
+      return this.rounds[this.showRound - 1];
     },
   },
-  computed: {},
   watch: {},
-  async created() {},
+  async created() {
+    await this.$store.dispatch("fetchRounds");
+  },
 };
 </script>
 
 <style lang="scss">
 $btn-color: #5ac683;
 
+.row.dates {
+  margin-top: 2rem;
+}
+
 .rounds-container {
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 
-  .rounds {
-    width: 40%;
-    border-radius: 5px;
-    margin: 20px 0 0 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    font-size: 1.4rem;
-    box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.75);
-
-    & > span {
-      margin: 0 0 20px 0;
-    }
+  .showed-card {
+    margin-top: 20px;
+    padding: 2rem;
   }
 
-  .con-vs-alert-success {
-    background: #46c93a80;
-    color: white;
-    margin: 15px 0 0 0;
+  .row.buttons,
+  .rounds-pagination {
+    margin-top: 1rem;
+
+    .v-btn {
+      margin: 0 0.5rem;
+    }
   }
 }
 </style>

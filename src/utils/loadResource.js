@@ -14,7 +14,7 @@ export const requestResource = async (resourcePath, mainId, secondaryId) => {
   try {
     const response = await requester.get(resourceUrl, headers);
 
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.log(error.message);
   }
