@@ -1,25 +1,40 @@
 <template>
-  <div :v-if="showRoundInfo" class="rounds-container">
+  <div v-if="showRoundInfo" class="rounds-container">
     <v-card elevation="10" max-width="500" align="center" class="showed-card">
       <v-card-title>
         <v-row justify="center" class="text-h4">
-          Season {{ showRoundInfo ? showRoundInfo.season_name : "" }}
+          Season {{ showRoundInfo.season_name }}
         </v-row>
       </v-card-title>
       <v-card-title>
         <v-row justify="center" class="text-h4">
-          Round {{ showRoundInfo ? showRoundInfo.name : "" }}
+          Round {{ showRoundInfo.name }}
         </v-row>
       </v-card-title>
       <div class="dates">
         <v-card-subtitle>
           <v-row justify="center" class="text-h5">
-            From date: {{ showRoundInfo ? showRoundInfo.from_date : "" }}
+            From date: {{ showRoundInfo.from_date }}
           </v-row></v-card-subtitle
         >
         <v-card-subtitle>
           <v-row justify="center" class="text-h5">
-            To date: {{ showRoundInfo ? showRoundInfo.to_date : "" }}
+            To date: {{ showRoundInfo.to_date }}
+          </v-row></v-card-subtitle
+        >
+        <v-card-subtitle>
+          <v-row justify="center" class="text-h5">
+            Head 2 Head:
+            <v-icon
+              v-if="showRoundInfo.head_to_head"
+              large
+              color="green darken-2"
+              class="h2h-icon"
+              >fas fa-check</v-icon
+            >
+            <v-icon v-else large color="red darken-2" class="h2h-icon"
+              >fas fa-times</v-icon
+            >
           </v-row></v-card-subtitle
         >
       </div>
@@ -33,6 +48,9 @@
     </div>
     <v-row class="buttons">
       <v-btn elevation="2" outlined x-large class="green" min-width="150"
+        >CREATE</v-btn
+      >
+      <v-btn elevation="2" outlined x-large class="yellow" min-width="150"
         >EDIT</v-btn
       >
       <v-btn elevation="2" outlined x-large class="red" min-width="150"
@@ -49,8 +67,7 @@ export default {
   components: {},
   data() {
     return {
-      currentRound: undefined,
-      showRound: 1,
+      showRound: undefined,
       players: undefined,
       users: undefined,
       h2hrounds: undefined,
@@ -61,10 +78,14 @@ export default {
   },
   methods: {},
   computed: {
-    ...mapGetters(["getAllRounds"]),
+    ...mapGetters(["getAllRounds", "getCurrentRoundIndex"]),
     rounds() {
       return this.getAllRounds;
     },
+    currentRoundIndex() {
+      return this.getCurrentRoundIndex;
+    },
+
     showRoundInfo() {
       return this.rounds
         ? this.rounds[this.showRound - 1]
@@ -73,9 +94,14 @@ export default {
         : undefined;
     },
   },
-  watch: {},
+  watch: {
+    currentRoundIndex() {
+      this.showRound = this.currentRoundIndex;
+    },
+  },
   async created() {
     await this.$store.dispatch("fetchRounds");
+    this.showRound = this.currentRoundIndex + 1;
   },
 };
 </script>
@@ -85,6 +111,10 @@ $btn-color: #5ac683;
 
 .row.dates {
   margin-top: 2rem;
+}
+
+.h2h-icon {
+  margin: -0.3rem 0 0 0.5rem;
 }
 
 .rounds-container {

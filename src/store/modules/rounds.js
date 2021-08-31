@@ -4,7 +4,7 @@ import { GET_RECOURSE_PATH } from "../../common/apiRequests";
 const state = {
   rounds: [],
   roundsH2H: [],
-  currentRoundIndex: null,
+  currentRoundIndex: 8,
   currentH2HRoundIndex: null,
 };
 
@@ -18,8 +18,10 @@ const getters = {
         : H2H
         ? state.currentH2HRoundIndex
         : state.currentRoundIndex;
-    return index ? rounds[index] : {};
+    console.log(index);
+    return index || index == 0 ? rounds[index] : {};
   },
+  getCurrentRoundIndex: (state) => state.currentRoundIndex,
 };
 
 const actions = {
