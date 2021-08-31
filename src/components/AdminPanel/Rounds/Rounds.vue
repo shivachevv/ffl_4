@@ -1,25 +1,25 @@
 <template>
-  <div class="rounds-container">
+  <div :v-if="showRoundInfo" class="rounds-container">
     <v-card elevation="10" max-width="500" align="center" class="showed-card">
       <v-card-title>
         <v-row justify="center" class="text-h4">
-          Season {{ showRoundInfo.season_name }}
+          Season {{ showRoundInfo ? showRoundInfo.season_name : "" }}
         </v-row>
       </v-card-title>
       <v-card-title>
         <v-row justify="center" class="text-h4">
-          Round {{ showRoundInfo.name }}
+          Round {{ showRoundInfo ? showRoundInfo.name : "" }}
         </v-row>
       </v-card-title>
       <div class="dates">
         <v-card-subtitle>
           <v-row justify="center" class="text-h5">
-            From date: {{ showRoundInfo.from_date }}
+            From date: {{ showRoundInfo ? showRoundInfo.from_date : "" }}
           </v-row></v-card-subtitle
         >
         <v-card-subtitle>
           <v-row justify="center" class="text-h5">
-            To date: {{ showRoundInfo.to_date }}
+            To date: {{ showRoundInfo ? showRoundInfo.to_date : "" }}
           </v-row></v-card-subtitle
         >
       </div>
@@ -66,7 +66,11 @@ export default {
       return this.getAllRounds;
     },
     showRoundInfo() {
-      return this.rounds[this.showRound - 1];
+      return this.rounds
+        ? this.rounds[this.showRound - 1]
+          ? this.rounds[this.showRound - 1]
+          : this.rounds[0]
+        : undefined;
     },
   },
   watch: {},

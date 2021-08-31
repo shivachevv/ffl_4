@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-row no-gutters="true">
+      <v-row :no-gutters="true">
         <v-col>
           <NavBar />
         </v-col>
