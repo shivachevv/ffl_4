@@ -1,11 +1,11 @@
 <template>
   <v-app>
-    <v-row no-gutters="true">
-      <v-col>
-        <NavBar />
-      </v-col>
-    </v-row>
     <v-main>
+      <v-row no-gutters="true">
+        <v-col>
+          <NavBar />
+        </v-col>
+      </v-row>
       <div id="app" class="container">
         <button @click.prevent="logIn()">Log In</button>
         <Header />

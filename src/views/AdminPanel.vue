@@ -9,8 +9,7 @@
           @click.prevent="showSectionHandler('rounds')"
           >Rounds</a
         >
-        <div v-if="showRounds"
-class="admin-menu-item">
+        <div v-if="showRounds" class="admin-menu-item">
           <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'Rounds' }"
@@ -26,8 +25,7 @@ class="admin-menu-item">
           @click.prevent="showSectionHandler('players')"
           >Players</a
         >
-        <div v-if="showPlayers"
-class="admin-menu-item">
+        <div v-if="showPlayers" class="admin-menu-item">
           <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'PlayersEdit' }"
@@ -57,8 +55,7 @@ class="admin-menu-item">
           @click.prevent="showSectionHandler('users')"
           >Users</a
         >
-        <div v-if="showUsers"
-class="admin-menu-item">
+        <div v-if="showUsers" class="admin-menu-item">
           <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'UsersPersonal' }"
@@ -81,8 +78,7 @@ class="admin-menu-item">
           @click.prevent="showSectionHandler('transfers')"
           >Transfers</a
         >
-        <div v-if="showTransfers"
-class="admin-menu-item">
+        <div v-if="showTransfers" class="admin-menu-item">
           <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'Transfers' }"
@@ -98,8 +94,7 @@ class="admin-menu-item">
           @click.prevent="showSectionHandler('leagues')"
           >Leagues</a
         >
-        <div v-if="showLeagues"
-class="admin-menu-item">
+        <div v-if="showLeagues" class="admin-menu-item">
           <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'Leagues' }"
@@ -114,8 +109,7 @@ class="admin-menu-item">
           @click.prevent="showSectionHandler('h2h')"
           >H2HLeague</a
         >
-        <div v-if="showH2H"
-class="admin-menu-item">
+        <div v-if="showH2H" class="admin-menu-item">
           <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'H2HLeague' }"
@@ -130,8 +124,7 @@ class="admin-menu-item">
           @click.prevent="showSectionHandler('cup')"
           >Cup</a
         >
-        <div v-if="showCup"
-class="admin-menu-item">
+        <div v-if="showCup" class="admin-menu-item">
           <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'CupGroupsAndRounds' }"
@@ -160,8 +153,7 @@ class="admin-menu-item">
           @click.prevent="showSectionHandler('matching')"
           >Matching</a
         >
-        <div v-if="showMatching"
-class="admin-menu-item">
+        <div v-if="showMatching" class="admin-menu-item">
           <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'Matching' }"
