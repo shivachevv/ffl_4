@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import AdminPanel from "../views/AdminPanel.vue";
-// import TeamDetails from "../views/TeamDetails.vue";
+import TeamDetails from "../views/TeamDetails.vue";
 
 Vue.use(VueRouter);
 
@@ -17,7 +17,7 @@ const routes = [
   },
   {
     path: "/team-details",
-    // component: TeamDetails,
+    component: TeamDetails,
     props: true,
     name: "UserPage",
     beforeEnter(to, from, next) {
