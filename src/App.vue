@@ -6,7 +6,7 @@
           <NavBar />
         </v-col>
       </v-row>
-      <div id="app" class="container">
+      <div id="app">
         <button @click.prevent="logIn()">Log In</button>
         <Header />
         <Logos />
