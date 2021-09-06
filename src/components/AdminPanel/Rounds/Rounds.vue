@@ -1,32 +1,47 @@
 <template>
-  <div v-if="showRoundInfo" class="rounds-container">
-    <v-card elevation="10" max-width="500" align="center" class="showed-card">
+  <div
+    v-if="showRoundData"
+    class="rounds-container"
+    @keyup.left="previewsCard"
+    @keyup.right="nextCard"
+  >
+    <v-card
+      elevation="10"
+      max-width="500"
+      align="center"
+      class="showed-card"
+      :style="roundLabel.isColored ? 'border: 3px solid red;' : ''"
+    >
       <v-card-title>
         <v-row justify="center" class="text-h4">
-          Season {{ showRoundInfo.season_name }}
+          Season {{ showRoundData.season_name }}
         </v-row>
       </v-card-title>
       <v-card-title>
-        <v-row justify="center" class="text-h4">
-          Round {{ showRoundInfo.name }}
+        <v-row
+          justify="center"
+          class="text-h4"
+          :class="{ 'red--text': roundLabel.isColored }"
+        >
+          Round {{ roundLabel.text }}
         </v-row>
       </v-card-title>
       <div class="dates">
         <v-card-subtitle>
           <v-row justify="center" class="text-h5">
-            From date: {{ showRoundInfo.from_date }}
+            From date: {{ showRoundData.from_date }}
           </v-row></v-card-subtitle
         >
         <v-card-subtitle>
           <v-row justify="center" class="text-h5">
-            To date: {{ showRoundInfo.to_date }}
+            To date: {{ showRoundData.to_date }}
           </v-row></v-card-subtitle
         >
         <v-card-subtitle>
           <v-row justify="center" class="text-h5">
             Head 2 Head:
             <v-icon
-              v-if="showRoundInfo.head_to_head"
+              v-if="showRoundData.head_to_head"
               large
               color="green darken-2"
               class="h2h-icon"
@@ -67,6 +82,7 @@ export default {
   components: {},
   data() {
     return {
+      labelColor: "red--text",
       showRound: undefined,
       players: undefined,
       users: undefined,
@@ -76,17 +92,33 @@ export default {
       errorMsg: "",
     };
   },
-  methods: {},
+  methods: {
+    nextCard() {
+      this.showRound++;
+    },
+    previewsCard() {
+      this.showRound--;
+    },
+  },
   computed: {
     ...mapGetters(["getAllRounds", "getCurrentRoundIndex"]),
     rounds() {
       return this.getAllRounds;
     },
-    currentRoundIndex() {
-      return this.getCurrentRoundIndex;
+    currentRound() {
+      const currentRoundIndex = this.getCurrentRoundIndex;
+      const currentRound = this.rounds[currentRoundIndex];
+      return { index: currentRoundIndex, data: currentRound };
     },
-
-    showRoundInfo() {
+    roundLabel() {
+      const roundLabelText =
+        this.showRoundData == this.currentRound.data
+          ? `${this.showRoundData.name} - Current Round`
+          : this.showRoundData.name;
+      const isColored = this.showRoundData == this.currentRound.data;
+      return { text: roundLabelText, isColored };
+    },
+    showRoundData() {
       return this.rounds
         ? this.rounds[this.showRound - 1]
           ? this.rounds[this.showRound - 1]
@@ -95,13 +127,13 @@ export default {
     },
   },
   watch: {
-    currentRoundIndex() {
-      this.showRound = this.currentRoundIndex;
+    currentRound() {
+      this.showRound = this.currentRound.index + 1;
     },
   },
   async created() {
     await this.$store.dispatch("fetchRounds");
-    this.showRound = this.currentRoundIndex + 1;
+    this.showRound = this.currentRound.index + 1;
   },
 };
 </script>

@@ -1,10 +1,11 @@
 import { requestResource } from "../../utils/loadResource";
-import { GET_RECOURSE_PATH } from "../../common/apiRequests";
+import { GET_RESOURCE_PATH } from "../../common/apiRequests";
+import { DateTime } from "luxon";
 
 const state = {
   rounds: [],
   roundsH2H: [],
-  currentRoundIndex: 8,
+  currentRoundIndex: null,
   currentH2HRoundIndex: null,
 };
 
@@ -26,7 +27,7 @@ const getters = {
 
 const actions = {
   async fetchRounds({ commit }) {
-    const rounds = await requestResource(GET_RECOURSE_PATH.ROUNDS_ALL);
+    const rounds = await requestResource(GET_RESOURCE_PATH.ROUNDS_ALL);
     commit("setRounds", rounds);
   },
 };
@@ -40,6 +41,16 @@ const mutations = {
     state.roundsH2H = rounds.filter(function getH2HRounds(round) {
       return round.h2h;
     });
+    const currentRound = rounds.find(function findCurrentRound(round) {
+      return (
+        DateTime.fromISO(round.from_date) <=
+          // DateTime.now() <=
+          DateTime.fromISO("2021-05-06") &&
+        // DateTime.now()
+        DateTime.fromISO("2021-05-06") <= DateTime.fromISO(round.to_date)
+      );
+    });
+    state.currentRoundIndex = rounds.indexOf(currentRound);
   },
 };
 

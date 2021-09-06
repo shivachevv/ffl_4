@@ -10,7 +10,7 @@ const routes = [
     name: "Home",
   },
   {
-    path: "/ffl-admin",
+    path: "/admin",
     name: "AdminPanel",
     component: AdminPanel,
   },
