@@ -13,13 +13,13 @@
     </v-navigation-drawer>
 
     <v-toolbar height="85px" color="#b3b3b3">
-      <v-toolbar-title class="mt-2">
+      <v-toolbar-title class="mt-4">
         <router-link to="/">
           <img class="navbar-logo" src="logo.png" />
         </router-link>
       </v-toolbar-title>
       <span class="navbar-title">Fantasy Football Legends</span>
-      <span class="navbar-hamburger hidden-md-and-up">
+      <span class="navbar-hamburger hidden-md-and-up mr-4">
         <v-app-bar-nav-icon @click="sidebar = !sidebar"></v-app-bar-nav-icon>
       </span>
       <v-spacer></v-spacer>
@@ -45,6 +45,7 @@ export default {
       sidebar: false,
       items: [
         { title: "HOME", path: "/" },
+        { title: "MY TEAM", path: "/team-details" },
         { title: "TRANSFERS", path: "/transfers" },
         { title: "CUP", path: "/cup" },
         { title: "H2H", path: "/h2h" },
@@ -59,10 +60,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/common/breakpoints.scss";
+
 .navbar-title {
   display: none;
 }
-@media only screen and (max-width: 960px) {
+@media #{$tablet} {
   .navbar {
     position: fixed;
     z-index: 100;
@@ -70,9 +73,8 @@ export default {
     width: 100%;
   }
   .navbar-logo {
-    height: 85px;
-    float: left;
-    margin: 0 0 8px 5px;
+    height: 70px;
+    margin: 0 0 8px 10px;
   }
   ::v-deep .v-toolbar__content {
     padding: 0;
