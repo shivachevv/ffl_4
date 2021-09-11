@@ -1,5 +1,13 @@
-import { requestResource } from "../../utils/loadResource";
-import { GET_RESOURCE_PATH } from "../../common/apiRequests";
+import {
+  requestResource,
+  postResource,
+  putResource,
+} from "../../utils/resourceRequests";
+import {
+  GET_RESOURCE_PATH,
+  POST_RESOURCE_PATH,
+  PUT_RESOURCE_PATH,
+} from "../../common/apiRequests";
 import { DateTime } from "luxon";
 
 const state = {
@@ -27,15 +35,34 @@ const getters = {
 
 const actions = {
   async fetchRounds({ commit }) {
-    const rounds = await requestResource(GET_RESOURCE_PATH.ROUNDS_ALL);
+    let rounds;
+    await requestResource({
+      resourcePath: GET_RESOURCE_PATH.ROUNDS_ALL,
+    }).then((response) => {
+      rounds = response.data.data;
+    });
     commit("setRounds", rounds);
+  },
+  async createRound({ dispatch }, payload) {
+    await postResource({
+      resourcePath: POST_RESOURCE_PATH.ROUND_CREATE,
+      payload,
+    })
+      .then(() => dispatch("fetchRounds"))
+      .catch((err) => console.log(err.message));
+  },
+  async editRound({ dispatch }, payload) {
+    await putResource({
+      resourcePath: PUT_RESOURCE_PATH.ROUND_UPDATE,
+      mainId: payload.id,
+      payload,
+    })
+      .then(() => dispatch("fetchRounds"))
+      .catch((err) => console.log(err.message));
   },
 };
 
 const mutations = {
-  setCurrentRound: (state, r) => {
-    state.currentRound = r;
-  },
   setRounds: (state, rounds) => {
     state.rounds = rounds;
     state.roundsH2H = rounds.filter(function getH2HRounds(round) {
