@@ -29,10 +29,10 @@ export default {
     StadiumSvg: () => import("./StadiumSvg.vue"),
   },
   props: {
-    // user: {
-    //   type: Object,
-    //   required: true,
-    // },
+    user: {
+      type: Object,
+      required: true,
+    },
   },
   computed: {
     colors() {

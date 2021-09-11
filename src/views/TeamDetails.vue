@@ -47,7 +47,7 @@ const UserTeam = () => import("../components/TeamDetails/UserTeam.vue");
 // const MatchPrep = () => import("./MatchPrep");
 // const TeamTransfers = () => import("./TeamTransfers");
 // const PlayerPopup = () => import("../Popup/PlayerPopup");
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 export default {
   name: "TeamDetails",
   components: {
@@ -84,7 +84,7 @@ export default {
     // },
   },
   computed: {
-    ...mapGetters("user", ["loggedUser"]),
+    ...mapState("user", ["loggedUser"]),
     // isThisLoggedTeam() {
     //   // console.log(this.user, this.loggedUser);
     //   // return this.user.uid === this.loggedUser.uid;
