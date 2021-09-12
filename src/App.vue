@@ -64,3 +64,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.up {
+  text-transform: uppercase;
+}
+</style>

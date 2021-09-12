@@ -1,6 +1,6 @@
 <template>
   <section>
-    <TeamHeader :user="{}"></TeamHeader>
+    <TeamHeader :user="user"></TeamHeader>
 
     <div class="user-team sha">
       <!-- <Keypress key-event="keyup" :key-code="37" @success="previousRound()" />
@@ -10,7 +10,7 @@
         <div class="buttons-cont">
           <v-btn
             :disabled="isShowingFirstRnd"
-            color="blue-grey"
+            color="#3c474d"
             class="ma-2 white--text"
             @click.prevent="previousRound()"
           >
@@ -18,10 +18,12 @@
             Previous
           </v-btn>
 
-          <span class="round up">Round {{ tempRndShow }}</span>
+          <span class="round up" v-if="tempRndShow"
+            >Round {{ tempRndShow }}</span
+          >
           <v-btn
             :disabled="isShowingLastRnd"
-            color="blue-grey"
+            color="#3c474d"
             class="ma-2 white--text"
             @click.prevent="nextRound()"
           >
@@ -172,7 +174,7 @@
           class="st3"
           :player="{}"
           :isTripple="false"
-          :isCap="false"
+          :isCap="true"
           :isVCap="false"
           :isVCActive="false"
           :tempRndShow="tempRndShow"
@@ -189,17 +191,17 @@
           :key="i"
           @click.prevent.native="playerPopupHandler(pl[1])"
         ></Teammate> -->
-        <!-- <div class="round-total-points up">
+        <div class="round-total-points up elevation-5">
           {{ rndShowTotal }}
           <br />points
-        </div> -->
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapActions } from "vuex";
 import Teammate from "./Teammate";
 import TeamHeader from "./TeamHeader.vue";
 // import roundPointsCalculator from "../../../utils/roundPointsCalculator";
@@ -211,18 +213,18 @@ export default {
     // Keypress: () => import("vue-keypress"),
   },
   props: {
-    // user: {
-    //   type: Object,
-    //   required: true,
-    // },
+    user: {
+      type: Object,
+      required: true,
+    },
     // players: {
     //   type: Object,
     //   required: true,
     // },
-    // currentRound: {
-    //   type: Number,
-    //   required: true,
-    // },
+    currentRound: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -230,9 +232,8 @@ export default {
     };
   },
   computed: {
-    ...mapState("rounds", { lastRound: "currentRoundIndex" }),
     isShowingLastRnd() {
-      return Number(this.tempRndShow) === this.lastRound;
+      return Number(this.tempRndShow) === this.currentRound;
     },
     isShowingFirstRnd() {
       return Number(this.tempRndShow) === 1;
@@ -245,15 +246,15 @@ export default {
         return (this.tempRndShow = v);
       },
     },
-    // rndShowTotal() {
-    //   const total = roundPointsCalculator(
-    //     this.rndShow,
-    //     this.tempRndShow,
-    //     this.players,
-    //     false
-    //   );
-    //   return total;
-    // },
+    rndShowTotal() {
+      // const total = roundPointsCalculator(
+      //   this.rndShow,
+      //   this.tempRndShow,
+      //   this.players,
+      //   false
+      // );
+      return 100;
+    },
   },
   methods: {
     ...mapActions("rounds", ["fetchRounds"]),
@@ -261,7 +262,7 @@ export default {
       if (this.tempRndShow > 1) this.tempRndShow--;
     },
     nextRound() {
-      if (this.tempRndShow < this.lastRound) this.tempRndShow++;
+      if (this.tempRndShow < this.currentRound) this.tempRndShow++;
     },
     // playerPopupHandler(p) {
     //   return this.$emit("playerPopupHandler", p);
@@ -291,7 +292,7 @@ export default {
   },
   async created() {
     await this.fetchRounds();
-    this.tempRndShow = this.lastRound;
+    this.tempRndShow = this.currentRound;
   },
   watch: {
     // user(nv) {
@@ -342,118 +343,118 @@ export default {
     justify-content: space-evenly;
   }
 }
-.prev {
-  text-align: right;
-}
-.next {
-  text-align: left;
-}
-.prev,
-.next {
-  display: inline-block;
-  width: 150px;
-  height: 35px;
-  color: #3c474d;
-  background-color: #9fa5a9;
-  font-size: 0.875rem;
-  text-decoration: none;
-  line-height: 35px;
-  padding: 0 10px 0 10px;
-  font-weight: bold;
-  position: relative;
-  transition: all 0.3s;
-  @media #{$mobile} {
-    width: 25%;
-    text-align: center;
-  }
-}
-.prev:hover,
-.next:hover {
-  /*text-decoration: underline;*/
-  background-color: #c6c6c6;
-  border: 1px solid #1b2e32;
-  -webkit-box-shadow: 6px 6px 17px -11px rgba(0, 0, 0, 0.43);
-  -moz-box-shadow: 6px 6px 17px -11px rgba(0, 0, 0, 0.43);
-  box-shadow: 6px 6px 17px -11px rgba(0, 0, 0, 0.43);
-}
+// .prev {
+//   text-align: right;
+// }
+// .next {
+//   text-align: left;
+// }
+// .prev,
+// .next {
+//   display: inline-block;
+//   width: 150px;
+//   height: 35px;
+//   color: #3c474d;
+//   background-color: #9fa5a9;
+//   font-size: 0.875rem;
+//   text-decoration: none;
+//   line-height: 35px;
+//   padding: 0 10px 0 10px;
+//   font-weight: bold;
+//   position: relative;
+//   transition: all 0.3s;
+//   @media #{$mobile} {
+//     width: 25%;
+//     text-align: center;
+//   }
+// }
+// .prev:hover,
+// .next:hover {
+//   /*text-decoration: underline;*/
+//   background-color: #c6c6c6;
+//   border: 1px solid #1b2e32;
+//   -webkit-box-shadow: 6px 6px 17px -11px rgba(0, 0, 0, 0.43);
+//   -moz-box-shadow: 6px 6px 17px -11px rgba(0, 0, 0, 0.43);
+//   box-shadow: 6px 6px 17px -11px rgba(0, 0, 0, 0.43);
+// }
 .round {
   font-size: 1.25rem;
   font-weight: bold;
 }
-.prev img {
-  width: 10%;
-  position: absolute;
-  top: 11px;
-  left: 11px;
-  z-index: 10;
-  @media #{$mobile} {
-    display: none;
-  }
-}
-.next img {
-  width: 10%;
-  position: absolute;
-  top: 11px;
-  right: 11px;
-  z-index: 10;
-  @media #{$mobile} {
-    display: none;
-  }
-}
-.prev div,
-.next div {
-  display: inline-block;
-  background-color: transparent;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-}
-.prev div::after,
-.next div::after {
-  position: absolute;
-  top: 7px;
-  content: "";
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #3c474d87;
-  transition: all 0.3s;
-  opacity: 0;
-  z-index: 0;
-  @media #{$mobile} {
-    display: none;
-  }
-}
-.prev div::after {
-  left: 8px;
-}
-.next div::after {
-  right: 8px;
-}
-.prev div:hover::after,
-.next div:hover::after {
-  opacity: 0.4;
-  transform: scale(1.4);
-}
+// .prev img {
+//   width: 10%;
+//   position: absolute;
+//   top: 11px;
+//   left: 11px;
+//   z-index: 10;
+//   @media #{$mobile} {
+//     display: none;
+//   }
+// }
+// .next img {
+//   width: 10%;
+//   position: absolute;
+//   top: 11px;
+//   right: 11px;
+//   z-index: 10;
+//   @media #{$mobile} {
+//     display: none;
+//   }
+// }
+// .prev div,
+// .next div {
+//   display: inline-block;
+//   background-color: transparent;
+//   width: 100%;
+//   height: 100%;
+//   position: absolute;
+//   top: 0px;
+//   left: 0px;
+// }
+// .prev div::after,
+// .next div::after {
+//   position: absolute;
+//   top: 7px;
+//   content: "";
+//   width: 20px;
+//   height: 20px;
+//   border-radius: 50%;
+//   background-color: #3c474d87;
+//   transition: all 0.3s;
+//   opacity: 0;
+//   z-index: 0;
+//   @media #{$mobile} {
+//     display: none;
+//   }
+// }
+// .prev div::after {
+//   left: 8px;
+// }
+// .next div::after {
+//   right: 8px;
+// }
+// .prev div:hover::after,
+// .next div:hover::after {
+//   opacity: 0.4;
+//   transform: scale(1.4);
+// }
 /******************************************************************
   ******************      FIELD WITH PLAYERS *************************/
 .team {
   width: 100%;
-  height: 700px;
-  // background-image: url("../../../assets/images/user-page/pitch1.png");
+  background-image: url(/img/pitch1.99a888dc.png);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
   margin: 20px 0 0 0;
-  padding: 0 0 20px 0;
+  padding: 10px 0 20px 0;
   display: grid;
   grid-column-gap: 10px;
   grid-row-gap: 10px;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   position: relative;
+  background-color: #93ab90;
   @media #{$mobile} {
     grid-column-gap: 5px;
     grid-row-gap: 5px;
@@ -596,29 +597,18 @@ export default {
     grid-column: 6 / span 2;
   }
 }
-.teammate {
-  position: relative;
-  cursor: pointer;
-}
 /************** ROUND TOTAL *******************/
 .round-total-points {
-  width: 112px;
-  height: 105px;
   position: absolute;
   top: 0px;
   right: 0px;
-  // background-image: url("../../../assets/images/user-page/wreath.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   text-align: center;
   font-weight: bold;
   font-size: 1rem;
-  margin: 0 10px 0 0;
+  padding: 10px;
+  color: white;
+  background-color: #154c1b;
+  border-bottom-left-radius: 10px;
   @media #{$mobile} {
     left: 0px;
     width: 100%;
@@ -629,8 +619,5 @@ export default {
       display: none;
     }
   }
-}
-.inactiveBtn {
-  opacity: 0;
 }
 </style>

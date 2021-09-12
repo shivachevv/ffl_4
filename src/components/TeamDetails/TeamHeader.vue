@@ -1,10 +1,10 @@
 <template>
   <div class="team-header">
     <div class="team-header__name-venue">
-      <h1 class="up">user team</h1>
+      <h1 class="up">{{ user.user_team }}</h1>
       <div class="venue">
         <StadiumSvg />
-        <h3>user stadium</h3>
+        <h3>{{ user.stadium }}</h3>
       </div>
     </div>
 

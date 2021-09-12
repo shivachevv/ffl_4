@@ -1,50 +1,41 @@
 <template>
-  <v-row class="no-gutters">
+  <v-row class="no-gutters" v-if="user">
     <!---------------- USER TEAM SECTION -------------------------------------->
     <v-col cols="8">
-      <UserTeam></UserTeam>
+      <!---------------- USER TEAM SECTION -------------------------------------->
+      <UserTeam :currentRound="currentRoundIndex + 1" :user="user"></UserTeam>
+    </v-col>
+    <v-col cols="4" class="pl-4">
+      <UserInfo :user="user" :currentRound="currentRoundIndex + 1"></UserInfo>
+
+      <!---------------- MATCH PREPARATION -------------------------------------->
+      <MatchPrep
+        :user="user"
+        :currentRound="currentRoundIndex + 1"
+        :isAdminLogged="true"
+      ></MatchPrep>
+
+      <!-- TRANSFERS INFORMATION  -->
+      <!-- <TeamTransfers
+        v-if="true"
+        :user="user"
+        :currentRound="currentRound"
+      ></TeamTransfers> -->
     </v-col>
   </v-row>
   <!-- <main v-if="user && users && currentRound && players">
     <div class="main-container"> -->
-  <!---------------- USER TEAM SECTION -------------------------------------->
 
   <!---------------- USER DETAILS -------------------------------------->
-  <!-- <section class="user-details"> -->
-  <!-- <UserInfo
-          :user="user"
-          :currentRound="currentRound"
-          :isThisLoggedTeam="isThisLoggedTeam"
-        ></UserInfo> -->
-
-  <!---------------- MATCH PREPARATION -------------------------------------->
-
-  <!-- isAdminLogged is true for testing purposes-->
-  <!-- <MatchPrep
-          :isThisLoggedTeam="isThisLoggedTeam"
-          :owner="user.userTeam"
-          :user="user"
-          :currentRound="currentRound"
-          :players="players"
-          :isAdminLogged="true"
-        ></MatchPrep> -->
-
-  <!-- TRANSFERS INFORMATION -->
-
-  <!-- <TeamTransfers
-          v-if="true"
-          :user="user"
-          :currentRound="currentRound"
-        ></TeamTransfers> -->
-  <!-- </section>
+  <!-- 
     </div>
   </main> -->
 </template>
 
 <script>
 const UserTeam = () => import("../components/TeamDetails/UserTeam.vue");
-// const UserInfo = () => import("./UserInfo");
-// const MatchPrep = () => import("./MatchPrep");
+const UserInfo = () => import("../components/TeamDetails/UserInfo.vue");
+const MatchPrep = () => import("../components/TeamDetails/MatchPrep.vue");
 // const TeamTransfers = () => import("./TeamTransfers");
 // const PlayerPopup = () => import("../Popup/PlayerPopup");
 import { mapState, mapActions } from "vuex";
@@ -52,8 +43,8 @@ export default {
   name: "TeamDetails",
   components: {
     UserTeam,
-    // UserInfo,
-    // MatchPrep,
+    UserInfo,
+    MatchPrep,
     // PlayerPopup,
     // TeamTransfers,
   },
@@ -66,6 +57,7 @@ export default {
   },
   methods: {
     ...mapActions("user", ["fetchLoggedUser"]),
+    ...mapActions("rounds", ["fetchRounds"]),
     // "fetchLeagues",
     // "fetchPlayers",
     //   "fetchCurrentRound",
@@ -85,24 +77,15 @@ export default {
   },
   computed: {
     ...mapState("user", ["loggedUser"]),
+    ...mapState("rounds", ["currentRoundIndex"]),
     // isThisLoggedTeam() {
     //   // console.log(this.user, this.loggedUser);
     //   // return this.user.uid === this.loggedUser.uid;
     //   return true;
     // },
-    // user() {
-    //   if (this.users) {
-    //     const user = Object.values(this.users).filter((x) => {
-    //       const routeTeam = this.$route.params.id;
-    //       if (routeTeam === x.userLogo) {
-    //         return x;
-    //       }
-    //     })[0];
-    //     return user;
-    //   } else {
-    //     return undefined;
-    //   }
-    // },
+    user() {
+      return this.loggedUser?.data?.data;
+    },
   },
   watch: {
     // loggedUser(nv){
@@ -128,10 +111,11 @@ export default {
     //   }
     // },
   },
-  created() {
+  async created() {
     // this.$vs.loading();
     // this.fetchUsers();
-    this.fetchLoggedUser();
+    await this.fetchLoggedUser();
+    await this.fetchRounds();
   },
   mounted() {
     // if ((this.players, this.users, this.currentRound)) {

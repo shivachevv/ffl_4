@@ -1,5 +1,5 @@
-import { requestResource } from "../../utils/loadResource";
-import { GET_RECOURSE_PATH } from "../../common/apiRequests";
+import { requestResource } from "../../utils/resourceRequests";
+import { GET_RESOURCE_PATH } from "../../common/apiRequests";
 
 const state = {
   loggedUser: null,
@@ -11,7 +11,9 @@ const getters = {
 
 const actions = {
   async fetchLoggedUser({ commit }) {
-    const user = await requestResource(GET_RECOURSE_PATH.USER_PROFILE);
+    const user = await requestResource({
+      resourcePath: GET_RESOURCE_PATH.USER_PROFILE,
+    });
     commit("setLoggedUser", user);
   },
 };
