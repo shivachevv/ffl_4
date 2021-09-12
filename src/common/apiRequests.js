@@ -1,6 +1,6 @@
 export const API_URL = "api.ff-legends.com/api/";
 
-export const GET_RECOURSE_PATH = {
+export const GET_RESOURCE_PATH = {
   USER_PROFILE: "profile",
   SEASONS_ALL: "seasons",
   ROUNDS_ALL: "rounds",
@@ -28,4 +28,53 @@ export const GET_RECOURSE_PATH = {
   CUP_STATS_BY_ROUNDS_AND_BY_USER: "cup-rounds-stats",
   CUP_SEASON_MATCHING: "cup-matching",
   CUP_MATCHING_BY_ROUND: "cup-matching",
+};
+
+export const POST_RESOURCE_PATH = {
+  LOGIN: "login",
+  LOGOUT: "logout",
+  USER_REGISTER: "register",
+  USER_UPDATE_PROFILE: "update-profile",
+  USER_CHANGE_PASSWORD: "change-password",
+  SEASON_CREATE: "seasons",
+  ROUND_CREATE: "round",
+  PLAYER_CREATE: "champ_players",
+  PLAYERS_WILDCARD_ACTIVATE: "activate_wildcard",
+  PLAYERS_SUPER_CPTN_ACTIVATE: "activate_cpt",
+  TRANSFERS_USER_TR_REQUEST: "transfer_request",
+  LEAGUES_CREATE_USER_LEAGUE: "leagues",
+  H2H_ADD_USER: "hth-users",
+  H2H_ADD_COMPETITORS: "hth-matching",
+  H2H_USERS_ADD_PLAYER: "hth-players",
+  H2H_USERS_REQUEST_TRANSFER: "hth-transfers",
+  FOOTBALL_PLAYERS_STORE_POINTS: "points",
+  FOOTBALL_PLAYERS_CREATE_PLAYER: "players",
+  CUP_CREATE_GROUP: "cup-groups",
+  CUP_ADD_GROUP_TEAMS: "cup-group-teams",
+  CUP_CREATE_ROUND: "cup-rounds",
+  CUP_ADD_PLAYERS: "cup-players",
+  CUP_ADD_COMPETITORS: "cup-matching",
+};
+
+export const PUT_RESOURCE_PATH = {
+  USER_ASSIGN_TO_LEAGUE: "assign-league",
+  SEASON_UPDATE: "seasons",
+  ROUND_UPDATE: "rounds",
+  LEAGUES_UPDATE: "leagues",
+  H2H_ROUND_UPDATE: "hth-users",
+  H2H_TRANSFERS_UPDATE: "hth-transfers",
+  FOOTBALL_PLAYER_POINTS_CORRECTION: "points",
+  FOOTBALL_PLAYER_UPDATE: "players",
+  CUP_GROUP_UPDATE: "cup-group-team",
+  CUP_ROUND_UPDATE: "cup-rounds",
+  CUP_PLAYER_UPDATE: "cup-matching",
+};
+
+export const DELETE_RESOURCE_PATH = {
+  TRANSFER_DELETE: "transfer_delete",
+  H2H_USER_DELETE: "hth-users",
+  H2H_COMPETITOR_DELETE: "hth-matching",
+  H2H_TRANSFER_DELETE: "hth-transfers",
+  FOOTBALL_PLAYER_DELETE: "players",
+  CUP_COMPETITOR_DELETE: "cup-matching",
 };

@@ -1,10 +1,19 @@
-import { requestResource } from "../../utils/loadResource";
-import { GET_RECOURSE_PATH } from "../../common/apiRequests";
+import {
+  requestResource,
+  postResource,
+  putResource,
+} from "../../utils/resourceRequests";
+import {
+  GET_RESOURCE_PATH,
+  POST_RESOURCE_PATH,
+  PUT_RESOURCE_PATH,
+} from "../../common/apiRequests";
+import { DateTime } from "luxon";
 
 const state = {
   rounds: [],
   roundsH2H: [],
-  currentRoundIndex: 8,
+  currentRoundIndex: null,
   currentH2HRoundIndex: null,
 };
 
@@ -26,20 +35,49 @@ const getters = {
 
 const actions = {
   async fetchRounds({ commit }) {
-    const rounds = await requestResource(GET_RECOURSE_PATH.ROUNDS_ALL);
+    let rounds;
+    await requestResource({
+      resourcePath: GET_RESOURCE_PATH.ROUNDS_ALL,
+    }).then((response) => {
+      rounds = response.data.data;
+    });
     commit("setRounds", rounds);
+  },
+  async createRound({ dispatch }, payload) {
+    await postResource({
+      resourcePath: POST_RESOURCE_PATH.ROUND_CREATE,
+      payload,
+    })
+      .then(() => dispatch("fetchRounds"))
+      .catch((err) => console.log(err.message));
+  },
+  async editRound({ dispatch }, payload) {
+    await putResource({
+      resourcePath: PUT_RESOURCE_PATH.ROUND_UPDATE,
+      mainId: payload.id,
+      payload,
+    })
+      .then(() => dispatch("fetchRounds"))
+      .catch((err) => console.log(err.message));
   },
 };
 
 const mutations = {
-  setCurrentRound: (state, r) => {
-    state.currentRound = r;
-  },
   setRounds: (state, rounds) => {
     state.rounds = rounds;
     state.roundsH2H = rounds.filter(function getH2HRounds(round) {
       return round.h2h;
     });
+    const currentRound = rounds.find(function findCurrentRound(round) {
+      return (
+        DateTime.fromISO(round.from_date) <=
+          // DateTime.now() <=
+          DateTime.fromISO("2021-05-06") &&
+        // DateTime.now()
+        DateTime.fromISO("2021-05-06") <= DateTime.fromISO(round.to_date)
+      );
+    });
+    state.currentRoundIndex = rounds.indexOf(currentRound);
   },
 };
 
