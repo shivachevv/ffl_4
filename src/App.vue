@@ -7,7 +7,7 @@
         </v-col>
       </v-row>
       <div id="app">
-        <button @click.prevent="logIn()">Log In</button>
+        <button @click.prevent="logIn">Log In</button>
         <Header />
         <Logos />
         <transition name="slide-left" mode="out-in">
@@ -35,9 +35,7 @@ export default {
     NavBar,
   },
 
-  data: () => ({
-    //
-  }),
+  data: () => ({}),
   methods: {
     logIn() {
       let data = JSON.stringify({

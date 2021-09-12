@@ -62,27 +62,48 @@
       ></v-pagination>
     </div>
     <v-row class="buttons">
-      <v-btn elevation="2" outlined x-large class="green" min-width="150"
+      <v-btn
+        elevation="2"
+        outlined
+        x-large
+        class="green"
+        min-width="150"
+        @click.stop="createRoundModal"
         >CREATE</v-btn
       >
-      <v-btn elevation="2" outlined x-large class="yellow" min-width="150"
+      <v-btn
+        elevation="2"
+        outlined
+        x-large
+        class="yellow"
+        min-width="150"
+        @click.stop="editRoundModal"
         >EDIT</v-btn
       >
-      <v-btn elevation="2" outlined x-large class="red" min-width="150"
-        >DELETE</v-btn
-      >
     </v-row>
+    <RoundsModal
+      v-model="showModal"
+      @close-modal="toggleModal"
+      @create-round="createRound"
+      @edit-round="editRound"
+      :passedRound="passedRound"
+      :seasons="seasons"
+    >
+    </RoundsModal>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import RoundsModal from "../../common/Modal/RoundsModal.vue";
+
 export default {
   name: "Rounds",
-  components: {},
+  components: { RoundsModal },
   data() {
     return {
       labelColor: "red--text",
+      showModal: false,
       showRound: undefined,
       players: undefined,
       users: undefined,
@@ -90,9 +111,42 @@ export default {
       success: false,
       error: false,
       errorMsg: "",
+      passedRound: {},
+      blankRound: {
+        id: "",
+        name: "",
+        season_id: "",
+        from_date: "",
+        to_date: "",
+        head_to_head: "",
+      },
+      testSeasons: ["S01", "S02", "S03", "SO4"],
     };
   },
   methods: {
+    ...mapActions({
+      createRoundAction: "createRound",
+      editRoundAction: "editRound",
+    }),
+    editRoundModal() {
+      this.passedRound = this.showRoundData;
+      this.toggleModal();
+    },
+    createRoundModal() {
+      this.passedRound = this.blankRound;
+      this.toggleModal();
+    },
+    toggleModal() {
+      this.showModal = !this.showModal;
+    },
+    editRound(round) {
+      console.log("EDITING: ", round);
+      this.editRoundAction(round);
+    },
+    createRound(round) {
+      console.log("CREATING: ", round);
+      this.createRoundAction(round);
+    },
     nextCard() {
       this.showRound++;
     },
@@ -101,9 +155,12 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getAllRounds", "getCurrentRoundIndex"]),
+    ...mapGetters(["getAllRounds", "getCurrentRoundIndex", "getSeasons"]),
     rounds() {
       return this.getAllRounds;
+    },
+    seasons() {
+      return this.getSeasons;
     },
     currentRound() {
       const currentRoundIndex = this.getCurrentRoundIndex;
@@ -111,12 +168,13 @@ export default {
       return { index: currentRoundIndex, data: currentRound };
     },
     roundLabel() {
-      const roundLabelText =
-        this.showRoundData == this.currentRound.data
-          ? `${this.showRoundData.name} - Current Round`
-          : this.showRoundData.name;
-      const isColored = this.showRoundData == this.currentRound.data;
-      return { text: roundLabelText, isColored };
+      return {
+        text:
+          this.showRoundData == this.currentRound.data
+            ? `${this.showRoundData.name} - Current Round`
+            : this.showRoundData.name,
+        isColored: this.showRoundData == this.currentRound.data,
+      };
     },
     showRoundData() {
       return this.rounds
@@ -133,6 +191,7 @@ export default {
   },
   async created() {
     await this.$store.dispatch("fetchRounds");
+    await this.$store.dispatch("fetchSeasons");
     this.showRound = this.currentRound.index + 1;
   },
 };
