@@ -1,19 +1,27 @@
 <template>
-  <div>
-    <h2>{{ endtime }}</h2>
-    <h2>
+  <div class="timer">
+    <span class="timer__deadline">Monday {{ endtime | prettyDate }}</span>
+    <span class="timer__time-remaining">
       {{ days }} days, {{ hours }} hrs, {{ minutes }} mins, {{ seconds }} secs.
-    </h2>
+    </span>
   </div>
 </template>
 
 <script>
 export default {
   name: "Timer",
-  props: ["starttime", "endtime", "trans", "endtimeRaw"],
+  props: {
+    starttime: {
+      type: String,
+      required: true,
+    },
+    endtime: {
+      type: String,
+      required: true,
+    },
+  },
   data: function () {
     return {
-      timer: "",
       start: "",
       end: "",
       interval: "",
@@ -22,49 +30,25 @@ export default {
       hours: "",
       seconds: "",
       message: "",
-      statusType: "",
-      statusText: "",
+      oneDayInMilliseconds: 86400000,
     };
   },
-  computed: {
-    // deadlineToShow() {
-    //   let a = new Date(this.endtimeRaw).getTime() - 1000 * 60;
-    //   return new Date(a);
-    // }
-  },
-  mounted() {
-    this.start = new Date(this.starttime).getTime();
-    this.end = new Date(this.endtime).getTime();
-    // Update the count down every 1 second
-    this.timerCount(this.start, this.end);
-    this.interval = setInterval(() => {
-      this.timerCount(this.start, this.end);
-    }, 1000);
-  },
+  computed: {},
   methods: {
     timerCount: function (start, end) {
       // Get todays date and time
-      var now = new Date().getTime();
+      const now = new Date().getTime();
       // Find the distance between now an the count down date
-      var distance = start - now;
-      var passTime = end - now;
+      const distance = start - now;
+      const passTime = end - now;
       if (distance < 0 && passTime < 0) {
-        this.message = this.trans.expired;
-        this.statusType = "expired";
-        this.statusText = this.trans.status.expired;
         clearInterval(this.interval);
         // HERE IS THE MOMENT WHERE THE COUNTDOWN CAN DO STH BEFORE EXPIRATION
         return;
       } else if (distance < 0 && passTime > 0) {
         this.calcTime(passTime);
-        this.message = this.trans.running;
-        this.statusType = "running";
-        this.statusText = this.trans.status.running;
       } else if (distance > 0 && passTime > 0) {
         this.calcTime(distance);
-        this.message = this.trans.upcoming;
-        this.statusType = "upcoming";
-        this.statusText = this.trans.status.upcoming;
       }
     },
     calcTime: function (dist) {
@@ -77,15 +61,49 @@ export default {
       this.seconds = Math.floor((dist % (1000 * 60)) / 1000);
     },
   },
+  filters: {
+    prettyDate(date) {
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const [year, month, day] = date.split("-");
+      const monthName = monthNames[+month - 1];
+      return `${day} ${monthName} ${year}`;
+    },
+  },
+  mounted() {
+    this.start = new Date(this.starttime).getTime();
+    this.end = new Date(this.endtime).getTime() + this.oneDayInMilliseconds;
+    // Update the count down every 1 second
+    this.timerCount(this.start, this.end);
+    this.interval = setInterval(() => {
+      this.timerCount(this.start, this.end);
+    }, 1000);
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-div {
+.timer {
   width: 100%;
   padding: 0 0 0 40px;
-  h2 {
+  .timer__deadline,
+  .timer__time-remaining {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 1.15rem;
     width: 100%;
     text-align: left;
     color: lightgrey;

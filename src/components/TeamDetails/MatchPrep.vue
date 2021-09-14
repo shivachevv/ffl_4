@@ -11,8 +11,6 @@
       <Timer
         :starttime="getRound.from_date"
         :endtime="getRound.to_date"
-        :trans="trans"
-        :endtimeRaw="getRound.to_date"
       ></Timer>
     </div>
     <!-- <div class="captain-selected" v-if="isThisLoggedTeam || isAdminLogged">

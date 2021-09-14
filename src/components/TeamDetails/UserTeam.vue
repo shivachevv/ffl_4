@@ -442,7 +442,7 @@ export default {
   ******************      FIELD WITH PLAYERS *************************/
 .team {
   width: 100%;
-  background-image: url(/img/pitch1.99a888dc.png);
+  background-image: url("../../assets/images/user-page/pitch1.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
