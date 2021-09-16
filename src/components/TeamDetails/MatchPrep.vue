@@ -6,36 +6,19 @@
     <div class="deadline up">
       <span>Deadline for round {{ currentRound + 1 }}</span>
     </div>
-    <div class="countdown-cont">
+    <div v-if="getRound.from_date && getRound.to_date" class="countdown-cont">
       <img src="@/assets/images/user-page/swords.png" alt="countdown-img" />
       <Timer
         :starttime="getRound.from_date"
         :endtime="getRound.to_date"
       ></Timer>
     </div>
-    <!-- <div class="captain-selected" v-if="isThisLoggedTeam || isAdminLogged">
+    <div class="captain-selected" v-if="isThisLoggedTeam">
       <h2>Next Round Captains:</h2>
-      <h2>
-        Captain:
-        {{
-          userRoundStats.cpt
-            ? players[userRoundStats.cpt].name
-            : "Not Selected!"
-        }}
-      </h2>
-      <h2>
-        Vice Captain:
-        {{
-          userRoundStats.viceCpt
-            ? players[userRoundStats.viceCpt].name
-            : "Not Selected!"
-        }}
-      </h2>
-      <h2>
-        Super Captain:
-        {{ userRoundStats.superCpt ? "Activated!" : "Not Activated!" }}
-      </h2>
-    </div> -->
+      <h2>Captain: Del Piero</h2>
+      <h2>Vice Captain: Del Piero</h2>
+      <h2>Super Captain: Not Active</h2>
+    </div>
 
     <!---------------- CAPTAIN SELECTION -------------------------------------->
     <!-- <form
@@ -121,14 +104,14 @@ export default {
     //   type: Boolean,
     //   required: true,
     // },
-    // isThisLoggedTeam: {
-    //   type: Boolean,
-    //   required: true,
-    // },
-    // owner: {
-    //   type: String,
-    //   required: true,
-    // },
+    isThisLoggedTeam: {
+      type: Boolean,
+      required: true,
+    },
+    roundPlayers: {
+      type: Object,
+      required: true,
+    },
     user: {
       type: Object,
       required: true,

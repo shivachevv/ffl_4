@@ -1,5 +1,5 @@
 <template>
-  <v-row class="no-gutters" v-if="user">
+  <v-row class="no-gutters" v-if="!loading">
     <!---------------- USER TEAM SECTION -------------------------------------->
     <v-col cols="8">
       <!---------------- USER TEAM SECTION -------------------------------------->
@@ -13,6 +13,8 @@
         :user="user"
         :currentRound="currentRoundIndex + 1"
         :isAdminLogged="true"
+        :roundPlayers="roundPlayers"
+        :isThisLoggedTeam="isThisLoggedTeam"
       ></MatchPrep>
 
       <!-- TRANSFERS INFORMATION  -->
@@ -56,7 +58,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("user", ["fetchLoggedUser"]),
+    ...mapActions("user", ["fetchLoggedUser", "fetchUserPlayers"]),
     ...mapActions("rounds", ["fetchRounds"]),
     // "fetchLeagues",
     // "fetchPlayers",
@@ -76,15 +78,21 @@ export default {
     // },
   },
   computed: {
-    ...mapState("user", ["loggedUser"]),
+    ...mapState("user", ["loggedUser", "userPlayers"]),
     ...mapState("rounds", ["currentRoundIndex"]),
-    // isThisLoggedTeam() {
-    //   // console.log(this.user, this.loggedUser);
-    //   // return this.user.uid === this.loggedUser.uid;
-    //   return true;
-    // },
+    isThisLoggedTeam() {
+      // console.log(this.user, this.loggedUser);
+      // return this.user.uid === this.loggedUser.uid;
+      return true;
+    },
     user() {
       return this.loggedUser?.data?.data;
+    },
+    roundPlayers() {
+      return this.userPlayers?.data?.data[0];
+    },
+    loading() {
+      return !this.user || !this.roundPlayers;
     },
   },
   watch: {
@@ -116,6 +124,7 @@ export default {
     // this.fetchUsers();
     await this.fetchLoggedUser();
     await this.fetchRounds();
+    await this.fetchUserPlayers(this.user?.id);
   },
   mounted() {
     // if ((this.players, this.users, this.currentRound)) {
