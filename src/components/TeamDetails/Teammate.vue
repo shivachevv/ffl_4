@@ -10,7 +10,7 @@
       :elevation="hover ? 5 : 0"
       rounded="lg"
     >
-      <span class="position">MC</span>
+      <span class="position up">{{ position | prettyPosition }}</span>
       <span v-if="isCap && !isTripple && !isVCap" class="captain">C</span>
       <span v-if="!isCap && !isTripple && isVCap" class="captain">VC</span>
       <span v-if="(isCap || isVCap) && isTripple" class="captain">SC</span>
@@ -25,9 +25,11 @@
 
       <v-divider></v-divider>
 
-      <v-card-title class="player-name"> DEL PIERO </v-card-title>
+      <v-card-title class="player-name"> {{ player.name }} </v-card-title>
 
-      <v-card-subtitle class="player-points"> 10 pts</v-card-subtitle>
+      <v-card-subtitle class="player-points">
+        {{ calculatedPlayerPts }} pts</v-card-subtitle
+      >
     </v-card>
   </div>
 </template>
@@ -42,6 +44,10 @@ export default {
     // },
     player: {
       type: Object,
+      required: true,
+    },
+    position: {
+      type: String,
       required: true,
     },
     isTripple: {
@@ -64,7 +70,7 @@ export default {
   },
   computed: {
     calculatedPlayerPts() {
-      return 10;
+      return this.player?.player_points[0]?.round_pts || 0;
       // const { isTripple, isCap, isVCap, isVCActive, player, tmpRndShow } = this;
       // const pts = Number(player.points[`r${tmpRndShow}`].roundPts);
       // const multiplier = isTripple ? 3 : 2;
@@ -86,7 +92,11 @@ export default {
       // }
     },
   },
-  methods: {},
+  filters: {
+    prettyPosition(value) {
+      return value.length === 2 ? value : value.substring(0, 2);
+    },
+  },
   watch: {},
   created() {},
 };
@@ -147,7 +157,7 @@ export default {
   justify-content: center;
   font-weight: bold;
   color: white !important;
-  background-color: #154c1b;
+  background-color: #2e6333;
 }
 
 .card-active {

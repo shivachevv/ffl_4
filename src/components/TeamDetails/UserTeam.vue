@@ -36,15 +36,18 @@
       <div class="team" v-if="rndShow">
         <!------------------ TEAMMATE  ----------------->
         <Teammate
-          class="gk"
-          :player="{}"
+          v-for="{ position, player } in roundPlayersArray"
+          :key="position"
+          :class="position"
+          :position="position"
+          :player="player"
           :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
+          :isCap="isCap(player)"
+          :isVCap="isVCap(player)"
           :isVCActive="false"
           :tempRndShow="tempRndShow"
         ></Teammate>
-        <Teammate
+        <!-- <Teammate
           class="dl2"
           :player="{}"
           :isTripple="false"
@@ -178,7 +181,7 @@
           :isVCap="false"
           :isVCActive="false"
           :tempRndShow="tempRndShow"
-        ></Teammate>
+        ></Teammate> -->
         <!-- <Teammate
           v-for="(pl, i) in Object.entries(rndShow.team)"
           :class="pl[0]"
@@ -214,6 +217,10 @@ export default {
   },
   props: {
     user: {
+      type: Object,
+      required: true,
+    },
+    roundPlayers: {
       type: Object,
       required: true,
     },
@@ -255,6 +262,31 @@ export default {
       // );
       return 100;
     },
+    roundPlayersArray() {
+      const positions = [
+        "dc1",
+        "dc2",
+        "dl1",
+        "dl2",
+        "dr1",
+        "dr2",
+        "gk",
+        "mc1",
+        "mc2",
+        "ml1",
+        "ml2",
+        "mr1",
+        "mr2",
+        "st1",
+        "st2",
+        "st3",
+      ];
+      return Object.entries(this.roundPlayers)
+        .filter(([position]) => positions.includes(position))
+        .map(([position, player]) => {
+          return { position, player: player[0] };
+        });
+    },
   },
   methods: {
     ...mapActions("rounds", ["fetchRounds"]),
@@ -263,6 +295,12 @@ export default {
     },
     nextRound() {
       if (this.tempRndShow < this.currentRound) this.tempRndShow++;
+    },
+    isCap({ id }) {
+      return id === this.roundPlayers?.cpt[0]?.id;
+    },
+    isVCap({ id }) {
+      return id === this.roundPlayers?.vice_cpt[0]?.id;
     },
     // playerPopupHandler(p) {
     //   return this.$emit("playerPopupHandler", p);

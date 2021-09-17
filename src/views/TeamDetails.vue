@@ -3,7 +3,11 @@
     <!---------------- USER TEAM SECTION -------------------------------------->
     <v-col cols="8">
       <!---------------- USER TEAM SECTION -------------------------------------->
-      <UserTeam :currentRound="currentRoundIndex + 1" :user="user"></UserTeam>
+      <UserTeam
+        :currentRound="currentRoundIndex + 1"
+        :user="user"
+        :roundPlayers="roundPlayers"
+      ></UserTeam>
     </v-col>
     <v-col cols="4" class="pl-4">
       <UserInfo :user="user" :currentRound="currentRoundIndex + 1"></UserInfo>
