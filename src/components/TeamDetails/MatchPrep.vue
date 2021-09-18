@@ -19,16 +19,13 @@
       <h2>Vice Captain: Del Piero</h2>
       <h2>Super Captain: Not Active</h2>
     </div>
-
+{{captainsError}}
     <!---------------- CAPTAIN SELECTION -------------------------------------->
-    <!-- <form
-      class="captain-select"
-      v-if="isThisLoggedTeam || isAdminLogged"
-      @submit.prevent="captainHandler"
-    >
+    {{ nextRound }}
+    <form class="captain-select" v-if="isThisLoggedTeam">
       <div class="form-up">
         <img
-          v-if="!nextRnd.superCpt"
+          v-if="!nextRound.superCpt"
           src="@/assets/images/user-page/cpt.png"
           alt="captain-img"
           id="cpt-image"
@@ -40,45 +37,53 @@
           id="cpt-image"
         />
 
-        <vs-alert :active.sync="cptError" closable close-icon="close"
-          >Captain and Vice Captain cannot be the same player!</vs-alert
+        <v-select
+          label="Choose your Captain!"
+          class="cpt-field"
+          attach=".cpt-field"
+          v-model="nextRound.cpt"
+          :items="teamDropdownData"
+          chips
+          :menu-props="{ bottom: true, offsetY: true }"
+          :rules="[validation.areCaptainsTheSame]"
         >
-        <label class="select">
-          Choose your Captain!
-          <select class="cpt-field" v-model="nextRnd.cpt" icon>
-            <option :value="p" v-for="(p, i) of userRoundStats.team" :key="i">
-              {{ players[p].name }}
-            </option>
-          </select>
-        </label>
-        <label class="select">
-          Choose your Vice Captain!
-          <select class="cpt-field" v-model="nextRnd.viceCpt" icon>
-            <option :value="p" v-for="(p, i) of userRoundStats.team" :key="i">
-              {{ players[p].name }}
-            </option>
-          </select>
-        </label>
+        </v-select>
+
+        <v-select
+          label="Choose your Vice Captain!"
+          class="vice-cpt-field"
+          attach=".vice-cpt-field"
+          v-model="nextRound.viceCpt"
+          :items="teamDropdownData"
+          chips
+          :menu-props="{ bottom: true, offsetY: true }"
+          :rules="[validation.areCaptainsTheSame]"
+          ref="viceCaptainSelect"
+        >
+        </v-select>
       </div>
       <div class="form-down">
         <div v-if="isSuperCptAvailable">
-          <input
-            class="check"
-            type="checkbox"
-            name="superCpt"
-            id="superCpt"
-            v-model="nextRnd.superCpt"
-          />
-          <label for="superCpt" class="up">SUPER CAPTAIN</label>
+          <v-checkbox
+            v-model="nextRound.superCpt"
+            label="SUPER CAPTAIN"
+          ></v-checkbox>
         </div>
         <div v-else>
           <label class="up">SUPER CAPTAIN<br />TAKEN</label>
         </div>
-        <vs-button color="#59A95D" type="relief" size="normal" button="submit"
-          >SUBMIT CAPTAINS</vs-button
+
+        <v-btn
+          :disabled="captainsError"
+          color="#59A95D"
+          class="white--text"
+          @click.prevent="captainHandler"
         >
+          Select Captains
+          <v-icon right dark> fas fa-paper-plane </v-icon>
+        </v-btn>
       </div>
-    </form> -->
+    </form>
     <!---------------- CAPTAIN SELECTION END -------------------------------------->
 
     <!-- <div v-if="!isThisLoggedTeam && !isAdminLogged" class="please-login">
@@ -100,26 +105,18 @@ export default {
   name: "MatchPrep",
   components: { Timer },
   props: {
-    // isAdminLogged: {
-    //   type: Boolean,
-    //   required: true,
-    // },
     isThisLoggedTeam: {
       type: Boolean,
       required: true,
     },
-    roundPlayers: {
-      type: Object,
+    roundPlayersArray: {
+      type: Array,
       required: true,
     },
     user: {
       type: Object,
       required: true,
     },
-    // players: {
-    //   type: Object,
-    //   required: true,
-    // },
     currentRound: {
       type: Number,
       required: true,
@@ -127,33 +124,42 @@ export default {
   },
   data() {
     return {
-      //   starttime: deadline.now,
-      //   endtime: deadline.next.toLocaleString(),
-      // endtimeRaw: deadline.next,
-      trans: {
-        day: "Day",
-        hours: "Hours",
-        minutes: "Minuts",
-        seconds: "Seconds",
-        expired: "",
-        running: "",
-        upcoming: "",
-        status: {
-          expired: "",
-          running: "",
-          upcoming: "",
-        },
-      },
-      nextRnd: {
+      nextRound: {
         cpt: "",
         viceCpt: "",
         superCpt: false,
       },
       cptError: false,
+      validation: {
+        required: (v) => !!v || "Required",
+        areCaptainsTheSame: () => {
+          return (
+            !this.captainsError ||
+            "Captain and Vice Captains cannot be the same!"
+          );
+        },
+      },
     };
   },
   computed: {
     ...mapGetters("rounds", ["getRound"]),
+    teamDropdownData() {
+      return this.roundPlayersArray.map(
+        ({ position, player: { name, id } }) => {
+          return {
+            text: `${this.prettyPosition(position)}: ${name}`,
+            value: id,
+          };
+        }
+      );
+    },
+    captainsError() {
+      const isNothingChosen =
+        this.nextRound.cpt.length === 0 && this.nextRound.viceCpt.length === 0;
+      const areCaptainsSame = this.nextRound.viceCpt === this.nextRound.cpt;
+
+      return areCaptainsSame && !isNothingChosen;
+    },
     // userRoundStats() {
     //   if (this.user && this.currentRound) {
     //     let result = this.user.rounds[`r${this.currentRound}`].nextRndInfo;
@@ -165,49 +171,51 @@ export default {
     //     return undefined;
     //   }
     // },
-    // isSuperCptAvailable() {
-    //   if (this.currentRound && this.user) {
-    //     const arrayNumber = isItFirstHalfSeason(this.currentRound) ? 1 : 2;
-    //     return !this.user.superCpt[arrayNumber];
-    //   } else return undefined;
-    // },
+    isSuperCptAvailable() {
+      return true;
+    },
   },
   methods: {
     // ...mapActions(["fetchUsers"]),
     // addSuperCpt() {
     //   return (this.superCpt = !this.superCpt);
     // },
-    // mergeCaptains(_old, _new) {
-    //   let result = {};
-    //   Object.keys(_old).forEach((atttr) => {
-    //     if (_new[atttr]) {
-    //       result[atttr] = _new[atttr];
-    //     } else {
-    //       result[atttr] = _old[atttr];
-    //     }
-    //     result["superCpt"] = _new["superCpt"];
-    //   });
-    //   return result;
-    // },
-    // captainHandler() {
-    //   const merged = this.mergeCaptains(this.userRoundStats, this.nextRnd);
-    //   // console.log(merged);
-    //   this.updateSuperCptArray(this.user, this.currentRound);
-    //   if (merged.cpt !== merged.viceCpt) {
-    //     return this.$vs.dialog({
-    //       color: "success",
-    //       title: "Confirm Captains",
-    //       text: this.showSuccessMsg(merged),
-    //       accept: () => this.fetchCaptains(merged),
-    //     });
-    //   } else {
-    //     return this.$vs.dialog({
-    //       color: "danger",
-    //       title: "Please change Captain and ViceCaptain!",
-    //       text: "Captain and Vice Captain cannot be the same player!",
-    //     });
-    //   }
-    // },
+    mergeCaptains(_old, _new) {
+      let result = {};
+      Object.keys(_old).forEach((atttr) => {
+        if (_new[atttr]) {
+          result[atttr] = _new[atttr];
+        } else {
+          result[atttr] = _old[atttr];
+        }
+        result["superCpt"] = _new["superCpt"];
+      });
+      return result;
+    },
+    prettyPosition(value) {
+      return value.length === 2
+        ? value.toUpperCase()
+        : value.substring(0, 2).toUpperCase();
+    },
+    captainHandler() {
+      const merged = this.mergeCaptains(this.userRoundStats, this.nextRound);
+      // console.log(merged);
+      this.updateSuperCptArray(this.user, this.currentRound);
+      if (merged.cpt !== merged.viceCpt) {
+        return this.$vs.dialog({
+          color: "success",
+          title: "Confirm Captains",
+          text: this.showSuccessMsg(merged),
+          accept: () => this.fetchCaptains(merged),
+        });
+      } else {
+        return this.$vs.dialog({
+          color: "danger",
+          title: "Please change Captain and ViceCaptain!",
+          text: "Captain and Vice Captain cannot be the same player!",
+        });
+      }
+    },
     // showSuccessMsg({ cpt, viceCpt, superCpt }) {
     //   return `Are you sure you want to update next round team:
     //          Captain: ${cpt ? this.players[cpt].name : "not selected"},
@@ -219,7 +227,7 @@ export default {
     // updateSuperCptArray(user, round) {
     //   const arrayNumber = isItFirstHalfSeason(round) ? 1 : 2;
     //   let superCptArr = user.superCpt;
-    //   superCptArr[arrayNumber] = this.nextRnd.superCpt;
+    //   superCptArr[arrayNumber] = this.nextRound.superCpt;
     //   const payload = {
     //     superCpt: superCptArr,
     //   };
@@ -273,13 +281,13 @@ export default {
     // },
   },
   watch: {
-    // "nextRnd.cpt": function (nv) {
-    //   if (nv === this.nextRnd.viceCpt) {
+    // "nextRound.cpt": function (nv) {
+    //   if (nv === this.nextRound.viceCpt) {
     //     this.cptError = true;
     //   }
     // },
-    // "nextRnd.viceCpt": function (nv) {
-    //   if (nv === this.nextRnd.cpt) {
+    // "nextRound.viceCpt": function (nv) {
+    //   if (nv === this.nextRound.cpt) {
     //     this.cptError = true;
     //   }
     // },

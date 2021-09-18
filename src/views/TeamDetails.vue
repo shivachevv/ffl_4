@@ -6,7 +6,9 @@
       <UserTeam
         :currentRound="currentRoundIndex + 1"
         :user="user"
-        :roundPlayers="roundPlayers"
+        :roundPlayersArray="roundPlayersArray"
+        :captain="captain"
+        :viceCaptain="viceCaptain"
       ></UserTeam>
     </v-col>
     <v-col cols="4" class="pl-4">
@@ -17,7 +19,7 @@
         :user="user"
         :currentRound="currentRoundIndex + 1"
         :isAdminLogged="true"
-        :roundPlayers="roundPlayers"
+        :roundPlayersArray="roundPlayersArray"
         :isThisLoggedTeam="isThisLoggedTeam"
       ></MatchPrep>
 
@@ -94,6 +96,39 @@ export default {
     },
     roundPlayers() {
       return this.userPlayers?.data?.data[0];
+    },
+    roundPlayersArray() {
+      const positions = [
+        "dc1",
+        "dc2",
+        "dl1",
+        "dl2",
+        "dr1",
+        "dr2",
+        "gk",
+        "mc1",
+        "mc2",
+        "ml1",
+        "ml2",
+        "mr1",
+        "mr2",
+        "st1",
+        "st2",
+        "st3",
+      ];
+      return this.roundPlayers
+        ? Object.entries(this.roundPlayers)
+            .filter(([position]) => positions.includes(position))
+            .map(([position, player]) => {
+              return { position, player: player[0] };
+            })
+        : [];
+    },
+    captain() {
+      return this.roundPlayers?.cpt[0];
+    },
+    viceCaptain() {
+      return this.roundPlayers?.vice_cpt[0];
     },
     loading() {
       return !this.user || !this.roundPlayers;
