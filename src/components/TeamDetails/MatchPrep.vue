@@ -19,60 +19,52 @@
       <h2>Vice Captain: Del Piero</h2>
       <h2>Super Captain: Not Active</h2>
     </div>
-{{captainsError}}
     <!---------------- CAPTAIN SELECTION -------------------------------------->
-    {{ nextRound }}
     <form class="captain-select" v-if="isThisLoggedTeam">
-      <div class="form-up">
-        <img
-          v-if="!nextRound.superCpt"
-          src="@/assets/images/user-page/cpt.png"
-          alt="captain-img"
-          id="cpt-image"
-        />
-        <img
-          v-else
-          src="@/assets/images/user-page/cpt1.png"
-          alt="captain-img"
-          id="cpt-image"
-        />
+      <!-- <img
+        v-if="!nextRound.superCpt"
+        src="@/assets/images/user-page/cpt.png"
+        alt="captain-img"
+        id="cpt-image"
+      />
+      <img
+        v-else
+        src="@/assets/images/user-page/cpt1.png"
+        alt="captain-img"
+        id="cpt-image"
+      /> -->
 
-        <v-select
-          label="Choose your Captain!"
-          class="cpt-field"
-          attach=".cpt-field"
-          v-model="nextRound.cpt"
-          :items="teamDropdownData"
-          chips
-          :menu-props="{ bottom: true, offsetY: true }"
-          :rules="[validation.areCaptainsTheSame]"
-        >
-        </v-select>
+      <v-select
+        :label="`Choose your ${nextRound.superCpt ? 'SUPER' : ''} Captain!`"
+        class="captain-select__cpt"
+        attach=".captain-select__cpt"
+        v-model="nextRound.cpt"
+        :items="teamDropdownData"
+        chips
+        :menu-props="{ bottom: true, offsetY: true }"
+        :rules="[validation.areCaptainsTheSame]"
+      >
+      </v-select>
 
-        <v-select
-          label="Choose your Vice Captain!"
-          class="vice-cpt-field"
-          attach=".vice-cpt-field"
-          v-model="nextRound.viceCpt"
-          :items="teamDropdownData"
-          chips
-          :menu-props="{ bottom: true, offsetY: true }"
-          :rules="[validation.areCaptainsTheSame]"
-          ref="viceCaptainSelect"
-        >
-        </v-select>
-      </div>
-      <div class="form-down">
+      <v-select
+        label="Choose your Vice Captain!"
+        class="captain-select__vice-cpt"
+        attach=".captain-select__vice-cpt"
+        v-model="nextRound.viceCpt"
+        :items="teamDropdownData"
+        chips
+        :menu-props="{ bottom: true, offsetY: true }"
+        :rules="[validation.areCaptainsTheSame]"
+        ref="viceCaptainSelect"
+      >
+      </v-select>
+      <div class="captain-select__bottom">
         <div v-if="isSuperCptAvailable">
           <v-checkbox
             v-model="nextRound.superCpt"
             label="SUPER CAPTAIN"
           ></v-checkbox>
         </div>
-        <div v-else>
-          <label class="up">SUPER CAPTAIN<br />TAKEN</label>
-        </div>
-
         <v-btn
           :disabled="captainsError"
           color="#59A95D"
@@ -86,21 +78,34 @@
     </form>
     <!---------------- CAPTAIN SELECTION END -------------------------------------->
 
-    <!-- <div v-if="!isThisLoggedTeam && !isAdminLogged" class="please-login">
+    <div v-if="!isThisLoggedTeam" class="please-login">
       <img src="@/assets/images/user-page/sad-face.png" alt />
-      <h2>You should be the coach of {{ owner }} <br />to view this panel!</h2>
-    </div> -->
+      <h2>You should be the coach to view this panel!</h2>
+    </div>
+    <v-bottom-navigation
+      v-model="value"
+      background-color="#93ab90"
+      @change="additionalTournamentsHandler"
+    >
+      <v-btn value="cup">
+        <span>Cup Squad</span>
+
+        <v-icon>fas fa-trophy</v-icon>
+      </v-btn>
+
+      <v-btn value="h2h">
+        <span>H2H squad</span>
+
+        <v-icon>fas fa-heading</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 const Timer = () => import("./Timer.vue");
-// const Timer = () => import("./Timer");
-// import deadline from "../../utils/deadlineHelper";
 // import { mapActions } from "vuex";
-// import { DATA_URL } from "../../common";
-// import isItFirstHalfSeason from "../../utils/isItFirstHalfSeason";
 export default {
   name: "MatchPrep",
   components: { Timer },
@@ -124,6 +129,7 @@ export default {
   },
   data() {
     return {
+      value: null,
       nextRound: {
         cpt: "",
         viceCpt: "",
@@ -216,6 +222,9 @@ export default {
         });
       }
     },
+    additionalTournamentsHandler(event){
+      console.log(event);
+    }
     // showSuccessMsg({ cpt, viceCpt, superCpt }) {
     //   return `Are you sure you want to update next round team:
     //          Captain: ${cpt ? this.players[cpt].name : "not selected"},
@@ -406,50 +415,26 @@ export default {
 ************   FORM   *********************/
 .captain-select {
   width: 100%;
-  // height: 90px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   background-color: #d3d3d3;
-  padding: 10px 20px 0 66px;
+  padding: 10px;
   margin: 0 0 0 0;
   position: relative;
   @media #{$mobile} {
     padding: 10px 20px 0 60px;
   }
-  .form-up {
+  .captain-select__cpt,
+  .captain-select__vice-cpt {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    .select {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      margin: 20px 0 0 0;
-      select {
-        padding: 5px;
-        border-radius: 5px;
-        font-size: 1rem;
-        option {
-          padding: 2px;
-        }
-      }
-    }
-    img {
-      position: absolute;
-      left: 10px;
-      width: 36px;
-    }
-    .cpt-field {
-      margin: 10px 0 0 0;
-    }
   }
-  .form-down {
+  .captain-select__bottom {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -461,249 +446,14 @@ export default {
     }
   }
 }
-// .captain-select > div {
-//   width: 100%;
-//   height: 50%;
-//   display: flex;
-//   flex-direction: row;
-//   // justify-content: flex-start;
-//   align-items: center;
-// }
-// .captain-select > div:first-child {
-//   margin: 16px 0 0 0;
-// }
-// .captain-select img {
-//   position: absolute;
-//   left: 10px;
-//   width: 36px;
-// }
-// .captain-select select {
-//   width: 100%;
-//   height: 30px;
-//   background-color: #c6c6c6;
-//   font-size: 0.9rem;
-//   text-transform: uppercase;
-//   padding: 5px 0 5px 5px;
-//   border: none;
-// }
-// input.check {
-//   transform: scale(1.5);
-// }
-// .captain-select label {
-//   font-size: 0.875rem;
-//   margin: 0 0 0 5px;
-// }
-// .user-email {
-//   width: 100%;
-//   height: 50%;
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: flex-start;
-//   align-items: center;
-//   padding: 0 0 0 66px;
-// }
-// .user-email input {
-//   margin: 15px 0 20px 0;
-//   width: 90%;
-//   height: 30px;
-//   color: #3c474d;
-//   background-color: #c6c6c6;
-//   border: none;
-//   font-size: 1rem;
-//   line-height: 24px;
-//   padding: 0 0 0 10px;
-// }
-// .row2 {
-//   width: 100%;
-//   margin: 2px 0 0 0;
-//   background-color: #d3d3d3;
-//   position: relative;
-// }
-// .transfers {
-//   width: 100%;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: flex-start;
-//   padding: 16px 0 0 66px;
-//   background-color: #d3d3d3;
-// }
-// .transfers span {
-//   color: #3c474d;
-//   font-size: 1rem;
-// }
-// .transfers textarea {
-//   width: 90%;
-//   height: 30px;
-//   color: #3c474d;
-//   background-color: #c6c6c6;
-//   border: none;
-//   font-size: 0.85rem;
-//   line-height: 24px;
-//   padding: 0 0 0 10px;
-//   resize: none;
-//   font-weight: bold;
-//   margin: 5px 0;
-// }
-// .textarea-div1 textarea {
-//   border-bottom: 2px solid #5b745b;
-//   /* margin:15px 0 0 0; */
-// }
-// .textarea-div2 textarea {
-//   border-bottom: 2px solid #8a4e50;
-// }
-// .textarea-div1 {
-//   width: 100%;
-//   position: relative;
-//   margin: 20px 0 20px 0;
-// }
-// .textarea-div2 {
-//   width: 100%;
-//   position: relative;
-//   margin: 20px 0 20px 0;
-// }
-// .textarea-div1::before {
-//   position: absolute;
-//   content: "";
-//   left: -12%;
-//   top: 13px;
-//   width: 40px;
-//   height: 17px;
-//   border-bottom: 15px solid #5b745b;
-//   border-top: 0px solid transparent;
-//   border-left: 20px solid transparent;
-//   border-right: 20px solid transparent;
-// }
-// .textarea-div2::before {
-//   position: absolute;
-//   content: "";
-//   left: -12%;
-//   top: 13px;
-//   width: 40px;
-//   height: 17px;
-//   border-top: 15px solid #8e5e60;
-//   border-bottom: 0px solid transparent;
-//   border-left: 20px solid transparent;
-//   border-right: 20px solid transparent;
-// }
-// .row3 {
-//   width: 100%;
-//   height: 65px;
-//   margin: 2px 0 0 0;
-//   background-color: #d3d3d3;
-// }
-// .row3 > div {
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: space-between;
-//   align-items: center;
-//   width: 91%;
-//   height: 65px;
-//   padding: 0 0 0 66px;
-//   font-size: 0.75rem;
-//   background-color: #d3d3d3;
-//   color: #3c474d;
-// }
-// .row3 input {
-//   transform: scale(1.5);
-// }
-// .row3 label {
-//   font-size: 0.875rem;
-//   margin: 0 0 0 5px;
-// }
-// .row3 > div > div {
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: flex-start;
-//   align-items: center;
-//   font-size: 0.875rem;
-// }
-// .row3 button {
-//   -webkit-border-radius: 0;
-//   -moz-border-radius: 0;
-//   border-radius: 0px;
-//   color: #d3d3d3;
-//   background: #3c474d;
-//   padding: 0px 0 0 10px;
-//   border: none;
-//   text-decoration: none;
-//   font-size: 1rem;
-//   width: 120px;
-//   height: 35px;
-//   line-height: 35px;
-//   transition: all 0.3s;
-//   -moz-box-shadow: inset 0px 0px 0px 0px #3c474d;
-//   -webkit-box-shadow: inset 0px 0px 0px 0px #3c474d;
-//   box-shadow: inset 0px 0px 0px 0px #3c474d;
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: space-between;
-//   align-items: center;
-// }
-// .row3 button:hover {
-//   -moz-box-shadow: inset 0px -2px 0px 0px #3c474d;
-//   -webkit-box-shadow: inset 0px -2px 0px 0px #3c474d;
-//   box-shadow: inset 0px -2px 0px 0px #3c474d;
-//   background-color: #c6c6c6;
-//   color: #3c474d;
-//   cursor: pointer;
-// }
-// .row3 button div {
-//   height: 35px;
-//   width: 35%;
-//   background-color: #4d5a61;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-// }
-// .row3 button img {
-//   height: 22px;
-// }
-// .row3 button:hover > div {
-//   -moz-box-shadow: inset 0px -2px 0px 0px #3c474d;
-//   -webkit-box-shadow: inset 0px -2px 0px 0px #3c474d;
-//   box-shadow: inset 0px -2px 0px 0px #3c474d;
-//   background-color: #9fa5a9;
-//   color: #3c474d;
-// }
-// .please-login {
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   padding: 20px;
-//   h2 {
-//     width: 100%;
-//     font-size: 1.4rem;
-//     border-top: 1px solid #3c474d;
-//     padding: 20px;
-//     text-align: center;
-//   }
-//   img {
-//     width: 30%;
-//     margin: 0 0 20px 0;
-//   }
-// }
-// .form-down {
-//   justify-content: space-between;
-//   margin: 20px 0 0 0;
-//   .button {
-//     padding: 10px 20px;
-//     background-color: #3c474d;
-//     color: lightgrey;
-//     font-size: 1rem;
-//     font-family: "Montserrat", sans-serif;
-//     text-transform: uppercase;
-//     border: none;
-//     border-radius: 7px;
-//     transition: all 0.3s;
-//     &:hover {
-//       background-color: #b8b8b8;
-//       color: #3c474d;
-//       cursor: pointer;
-//       font-weight: bold;
-//       box-shadow: 3px 3px 10px -5px rgba(0, 0, 0, 0.43);
-//     }
-//   }
-// }
+
+::v-deep .v-btn--active {
+  background-color: #184d18 !important;
+  span {
+    color: #d3d3d3;
+  }
+  i {
+    margin: 0 0 5px 0;
+  }
+}
 </style>
