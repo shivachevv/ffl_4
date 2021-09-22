@@ -1,5 +1,5 @@
 <template>
-  <div class="user-stats">
+  <div class="user-stats elevation-8">
     <div class="user-name">
       <img src="@/assets/images/user-page/user-head.png" alt="user-head" />
       <h2 class="up">{{ `${user.first_name} ${user.last_name}` }}</h2>
@@ -251,7 +251,7 @@ export default {
 }
 .total-pts {
   border-top: 2px solid #3a454b;
-  margin: 20px 0 2px 0;
+  margin: 5px 0 2px 0;
 }
 .curr-round {
   margin: 0px;

@@ -1,5 +1,5 @@
 <template>
-  <v-row class="no-gutters" v-if="!loading">
+  <v-row class="no-gutters mt-4" v-if="!loading">
     <!---------------- USER TEAM SECTION -------------------------------------->
     <v-col cols="8">
       <!---------------- USER TEAM SECTION -------------------------------------->

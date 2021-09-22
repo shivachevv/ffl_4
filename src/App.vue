@@ -69,4 +69,7 @@ export default {
 .up {
   text-transform: uppercase;
 }
+.theme--light.v-application {
+  background: #eaeaea !important;
+}
 </style>

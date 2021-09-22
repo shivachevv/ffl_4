@@ -1,8 +1,8 @@
 <template>
-  <section>
+  <section class="elevation-8">
     <TeamHeader :user="user"></TeamHeader>
 
-    <div class="user-team sha">
+    <div class="user-team">
       <!-- <Keypress key-event="keyup" :key-code="37" @success="previousRound()" />
       <Keypress key-event="keyup" :key-code="39" @success="nextRound()" /> -->
 
@@ -351,7 +351,6 @@ export default {
 @import "@/common/breakpoints.scss";
 /********************  USER TEAM **********************/
 .user-team {
-  height: 900px;
   width: 100%;
   display: flex;
   flex-direction: column;

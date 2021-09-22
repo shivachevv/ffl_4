@@ -1,8 +1,6 @@
 <template>
-  <div class="preparation sha">
-    <div class="prep-header up">
-      <h2>Next round preparation</h2>
-    </div>
+  <div class="preparation elevation-8">
+    <h2 class="prep-header up">Next round preparation</h2>
     <div class="deadline up">
       <span>Deadline for round {{ currentRound + 1 }}</span>
     </div>
@@ -13,27 +11,53 @@
         :endtime="getRound.to_date"
       ></Timer>
     </div>
+    <div class="additional-tournaments">
+      <span class="additional-tournaments__header">
+        Additional tournaments squad choice!
+      </span>
+      <div class="additional-tournaments__buttons">
+        <v-badge
+          color="error"
+          icon="fas fa-exclamation"
+          overlap
+          left
+          content=""
+        >
+          <v-btn
+            color="#59A95D"
+            class="white--text"
+            @click.prevent="toggleAdditionalTournamentsPopup(true)"
+          >
+            Cup Squad
+            <v-icon right dark> fas fa-trophy </v-icon>
+          </v-btn>
+        </v-badge>
+        <v-badge
+          color="error"
+          icon="fas fa-exclamation"
+          overlap
+          left
+          content="Choose"
+        >
+          <v-btn
+            color="#59A95D"
+            class="white--text"
+            @click.prevent="toggleAdditionalTournamentsPopup(true)"
+          >
+            H2H Squad
+            <v-icon right dark> far fa-futbol </v-icon>
+          </v-btn>
+        </v-badge>
+      </div>
+    </div>
     <div class="captain-selected" v-if="isThisLoggedTeam">
-      <h2>Next Round Captains:</h2>
-      <h2>Captain: Del Piero</h2>
-      <h2>Vice Captain: Del Piero</h2>
-      <h2>Super Captain: Not Active</h2>
+      <span>Next Round Captains:</span>
+      <span>Captain: Del Piero</span>
+      <span>Vice Captain: Del Piero</span>
+      <span>Super Captain: Not Active</span>
     </div>
     <!---------------- CAPTAIN SELECTION -------------------------------------->
     <form class="captain-select" v-if="isThisLoggedTeam">
-      <!-- <img
-        v-if="!nextRound.superCpt"
-        src="@/assets/images/user-page/cpt.png"
-        alt="captain-img"
-        id="cpt-image"
-      />
-      <img
-        v-else
-        src="@/assets/images/user-page/cpt1.png"
-        alt="captain-img"
-        id="cpt-image"
-      /> -->
-
       <v-select
         :label="`Choose your ${nextRound.superCpt ? 'SUPER' : ''} Captain!`"
         class="captain-select__cpt"
@@ -82,33 +106,22 @@
       <img src="@/assets/images/user-page/sad-face.png" alt />
       <h2>You should be the coach to view this panel!</h2>
     </div>
-    <v-bottom-navigation
-      v-model="value"
-      background-color="#93ab90"
-      @change="additionalTournamentsHandler"
-    >
-      <v-btn value="cup">
-        <span>Cup Squad</span>
-
-        <v-icon>fas fa-trophy</v-icon>
-      </v-btn>
-
-      <v-btn value="h2h">
-        <span>H2H squad</span>
-
-        <v-icon>fas fa-heading</v-icon>
-      </v-btn>
-    </v-bottom-navigation>
+    <SquadChoiceModal
+      :model="additionalTournamentsPopup"
+      @close-modal="toggleAdditionalTournamentsPopup(false)"
+      :squad="roundPlayersArray"
+    ></SquadChoiceModal>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 const Timer = () => import("./Timer.vue");
+const SquadChoiceModal = () => import("../common/Modal/SquadChoiceModal.vue");
 // import { mapActions } from "vuex";
 export default {
   name: "MatchPrep",
-  components: { Timer },
+  components: { Timer, SquadChoiceModal },
   props: {
     isThisLoggedTeam: {
       type: Boolean,
@@ -129,7 +142,7 @@ export default {
   },
   data() {
     return {
-      value: null,
+      // value: null,
       nextRound: {
         cpt: "",
         viceCpt: "",
@@ -145,6 +158,7 @@ export default {
           );
         },
       },
+      additionalTournamentsPopup: false,
     };
   },
   computed: {
@@ -222,9 +236,15 @@ export default {
         });
       }
     },
-    additionalTournamentsHandler(event){
+    cupSquadHandler(event) {
       console.log(event);
-    }
+    },
+    h2hSquadHandler(event) {
+      console.log(event);
+    },
+    toggleAdditionalTournamentsPopup(state) {
+      this.additionalTournamentsPopup = state;
+    },
     // showSuccessMsg({ cpt, viceCpt, superCpt }) {
     //   return `Are you sure you want to update next round team:
     //          Captain: ${cpt ? this.players[cpt].name : "not selected"},
@@ -326,7 +346,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  margin: 20px 0 0 0;
+  margin: 5px 0 0 0;
   .please-login {
     display: flex;
     flex-direction: column;
@@ -389,13 +409,36 @@ export default {
     width: 350px;
   }
 }
+.additional-tournaments {
+  width: 100%;
+  margin: 2px 0 0 0;
+  background-color: #184d18;
+
+  .additional-tournaments__header {
+    width: 100%;
+    display: inline-block;
+    background-color: #3d7f33;
+    text-align: center;
+    color: white;
+    padding: 10px 0;
+  }
+  .additional-tournaments__buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 15px 5px;
+  }
+}
 .captain-selected {
   margin: 2px 0;
   width: 100%;
   background-color: #184d18;
-  color: lightgrey;
-  h2 {
-    // margin: 20px 10px;
+  color: white;
+  span {
+    width: 100%;
+    display: block;
     padding: 10px 0 10px 0;
     text-align: center;
     font-size: 1.1rem;

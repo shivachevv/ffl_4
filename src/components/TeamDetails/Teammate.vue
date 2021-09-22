@@ -16,7 +16,7 @@
       <span v-if="(isCap || isVCap) && isTripple" class="captain">SC</span>
       <div text-align="center" class="text-center player-shirt">
         <img
-          :src="`https://ff-legends.com/team-kits/10.png?version=1`"
+          src="@/assets/images/user-page/10.png"
           alt="player-shirt"
           width="30%"
           class="mt-2"
