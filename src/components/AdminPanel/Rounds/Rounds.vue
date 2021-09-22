@@ -108,7 +108,6 @@ export default {
       players: undefined,
       users: undefined,
       h2hrounds: undefined,
-      success: false,
       error: false,
       errorMsg: "",
       passedRound: {},
@@ -120,7 +119,6 @@ export default {
         to_date: "",
         head_to_head: "",
       },
-      testSeasons: ["S01", "S02", "S03", "SO4"],
     };
   },
   methods: {
