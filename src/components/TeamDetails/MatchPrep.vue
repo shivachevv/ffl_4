@@ -26,7 +26,7 @@
           <v-btn
             color="#59A95D"
             class="white--text"
-            @click.prevent="toggleAdditionalTournamentsPopup(true)"
+            @click.prevent="toggleAdditionalTournamentsPopup(true, 'cup')"
           >
             Cup Squad
             <v-icon right dark> fas fa-trophy </v-icon>
@@ -42,7 +42,7 @@
           <v-btn
             color="#59A95D"
             class="white--text"
-            @click.prevent="toggleAdditionalTournamentsPopup(true)"
+            @click.prevent="toggleAdditionalTournamentsPopup(true, 'h2h')"
           >
             H2H Squad
             <v-icon right dark> far fa-futbol </v-icon>
@@ -110,6 +110,7 @@
       :model="additionalTournamentsPopup"
       @close-modal="toggleAdditionalTournamentsPopup(false)"
       :squad="roundPlayersArray"
+      :type="additionalTournamentsType"
     ></SquadChoiceModal>
   </div>
 </template>
@@ -159,6 +160,7 @@ export default {
         },
       },
       additionalTournamentsPopup: false,
+      additionalTournamentsType: "",
     };
   },
   computed: {
@@ -242,8 +244,9 @@ export default {
     h2hSquadHandler(event) {
       console.log(event);
     },
-    toggleAdditionalTournamentsPopup(state) {
+    toggleAdditionalTournamentsPopup(state, type) {
       this.additionalTournamentsPopup = state;
+      this.additionalTournamentsType = type;
     },
     // showSuccessMsg({ cpt, viceCpt, superCpt }) {
     //   return `Are you sure you want to update next round team:

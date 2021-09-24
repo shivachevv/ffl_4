@@ -9,6 +9,7 @@
       max-width="100%"
       :elevation="hover ? 5 : 0"
       rounded="lg"
+      @click.prevent="clickHandler"
     >
       <span class="position up">{{ position | prettyPosition }}</span>
       <span v-if="isCap && !isTripple && !isVCap" class="captain">C</span>
@@ -27,7 +28,7 @@
 
       <v-card-title class="player-name"> {{ player.name }} </v-card-title>
 
-      <v-card-subtitle class="player-points">
+      <v-card-subtitle class="player-points" v-if="!isAdditional">
         {{ calculatedPlayerPts }} pts</v-card-subtitle
       >
     </v-card>
@@ -52,15 +53,23 @@ export default {
     },
     isTripple: {
       type: Boolean,
+      required: false,
     },
     isCap: {
       type: Boolean,
+      required: false,
     },
     isVCap: {
       type: Boolean,
+      required: false,
     },
     isVCActive: {
       type: Boolean,
+      required: false,
+    },
+    isAdditional: {
+      type: Boolean,
+      required: false,
     },
   },
   data() {
@@ -69,8 +78,26 @@ export default {
     };
   },
   computed: {
+    cap() {
+      return (
+        !this.isAdditional && this.isCap && !this.isTripple && !this.isVCap
+      );
+    },
+    vCap() {
+      return (
+        !this.isAdditional && !this.isCap && !this.isTripple && this.isVCap
+      );
+    },
+    superCap() {
+      return (
+        !this.isAdditional && (this.isCap || this.isVCap) && this.isTripple
+      );
+    },
     calculatedPlayerPts() {
-      return this.player?.player_points[0]?.round_pts || 0;
+      if (this.player.player_points) {
+        return this.player?.player_points[0]?.round_pts || 0;
+      }
+      return 0;
       // const { isTripple, isCap, isVCap, isVCActive, player, tmpRndShow } = this;
       // const pts = Number(player.points[`r${tmpRndShow}`].roundPts);
       // const multiplier = isTripple ? 3 : 2;
@@ -91,6 +118,11 @@ export default {
       //   return pts;
       // }
     },
+  },
+  methods: {
+    clickHandler(){
+      this.$emit("player-action", this.player)
+    }
   },
   filters: {
     prettyPosition(value) {
