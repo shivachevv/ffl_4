@@ -1,12 +1,14 @@
 import {
   requestResource,
-  // postResource,
-  // putResource,
+  postResource,
+  putResource,
+  deleteResource,
 } from "../../utils/resourceRequests";
 import {
   GET_RESOURCE_PATH,
-  // POST_RESOURCE_PATH,
-  // PUT_RESOURCE_PATH,
+  POST_RESOURCE_PATH,
+  PUT_RESOURCE_PATH,
+  DELETE_RESOURCE_PATH,
 } from "../../common/apiRequests";
 
 const state = {
@@ -109,6 +111,32 @@ const actions = {
       commit("setFootballPlayer", player);
     });
   },
+  async createPlayer({ dispatch }, payload) {
+    await postResource({
+      resourcePath: POST_RESOURCE_PATH.FOOTBALL_PLAYERS_CREATE_PLAYER,
+      payload,
+    })
+      .then(() => dispatch("fetchPlayersByLeague", payload.football_league_id))
+      .catch((err) => console.log(err.message));
+  },
+  async editPlayer({ dispatch }, payload) {
+    await putResource({
+      resourcePath: PUT_RESOURCE_PATH.FOOTBALL_PLAYER_UPDATE,
+      mainId: payload.id,
+      payload,
+    })
+      .then(() => dispatch("fetchAllPlayers", payload.football_league_id))
+      .catch((err) => console.log(err.message));
+  },
+  async deletePlayer({ dispatch }, payload) {
+    console.log("deletePlayer");
+    await deleteResource({
+      resourcePath: DELETE_RESOURCE_PATH.FOOTBALL_PLAYER_DELETE,
+      mainId: payload.id,
+    })
+      .then(() => dispatch("fetchAllPlayers", payload.football_league_id))
+      .catch((err) => console.log(err.message));
+  }
 };
 
 const mutations = {

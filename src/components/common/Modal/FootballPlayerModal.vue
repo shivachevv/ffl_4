@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" @click:outside="close" max-width="500px">
+  <v-dialog v-model="show" @click:outside="close" max-width="700px">
     <v-card>
       <div class="modal-container">
         <div>
@@ -10,7 +10,6 @@
             <v-text-field
               v-model="footballPlayer.name"
               label="Name"
-              hide-details="auto"
             ></v-text-field>
             <v-select
               v-model="playerLeague"
@@ -24,19 +23,52 @@
               :items="leagueClubs"
               label="Club"
             ></v-select>
+            <v-select
+              v-model="footballPlayer.position"
+              :items="getPositions"
+              label="Position"
+            ></v-select>
+            <v-text-field
+              v-model="footballPlayer.shirt"
+              label="Shirt-slug"
+            ></v-text-field>
+            <v-text-field
+              v-model="footballPlayer.whoscored_id"
+              label='"WhoScored" ID'
+            ></v-text-field>
           </ModalBody>
           <ModalFooter>
-            <v-row justify="center">
+            <v-row justify="center" class="mt-5">
               <v-btn
                 large
-                class="round-modal-button"
+                min-width="136"
+                class="player-modal-button white--text"
                 color="accent"
                 @click.stop="handleSave()"
                 >SAVE</v-btn
               >
               <v-btn
+                v-if="footballPlayer.id"
                 large
-                class="round-modal-button"
+                min-width="136"
+                class="player-modal-button white--text"
+                color="red darken-1"
+                @click.stop="handleDelete()"
+                >DELETE</v-btn
+              >
+              <v-btn
+                v-if="footballPlayer.id"
+                large
+                min-width="136"
+                class="player-modal-button white--text"
+                color="lime darken-1"
+                @click.stop="handelEditPoints()"
+                >EDIT POINTS</v-btn
+              >
+              <v-btn
+                large
+                min-width="136"
+                class="player-modal-button white--text"
                 color="secondary"
                 @click.stop="close()"
                 >CLOSE</v-btn
@@ -79,9 +111,17 @@ export default {
       }
       this.close();
     },
+    handleDelete() {
+      this.$emit("delete-player", this.footballPlayer);
+      this.close();
+    },
+    handelEditPoints() {
+      this.$emit("edit-points", this.footballPlayer);
+      this.close();
+    },
   },
   computed: {
-    ...mapGetters(["getLeagues", "getClubsByLeague"]),
+    ...mapGetters(["getLeagues", "getClubsByLeague", "getPositions"]),
     leagueClubs() {
       return this.footballPlayer.football_league_id
         ? Object.keys(
@@ -118,6 +158,16 @@ export default {
         this.footballPlayer = new FootballPlayer(this.passedPlayer);
       },
     },
+    playerLeague: {
+      handler: function () {
+        this.footballPlayer.football_league_id &&
+          !this.leagueClubs.length &&
+          this.$store.dispatch(
+            "fetchPlayersByLeague",
+            this.footballPlayer.football_league_id
+          );
+      },
+    },
   },
   created() {
     this.footballPlayer = new FootballPlayer(this.passedPlayer);
@@ -128,10 +178,7 @@ export default {
 .modal-container {
   padding: 4rem 3rem;
 }
-.round-dates {
-  margin: -12px 0px;
-}
-.round-modal-button {
-  margin: 0.5rem 2rem;
+.player-modal-button {
+  margin: 0.5rem 0.5rem;
 }
 </style>

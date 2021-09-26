@@ -15,7 +15,7 @@
 
         <h1 class="text-center font-weight-black text-h3">{{ topLabel }}</h1>
         <div class="mt-20">
-          <v-btn x-large> NEW PLAYER </v-btn>
+          <v-btn @click="createPlayerModal" x-large> NEW PLAYER </v-btn>
         </div>
       </v-row>
       <!-- <v-row class="league-panel" justify="center" no-gutters>
@@ -117,6 +117,10 @@
     <FootballPlayerModal
       v-model="showModal"
       @close-modal="toggleModal"
+      @edit-player="editPlayer"
+      @create-player="createPlayer"
+      @delete-player="deletePlayer"
+      @edit-points="editPlayerPoints"
       :passedPlayer="passedPlayer"
     >
     </FootballPlayerModal>
@@ -142,16 +146,27 @@ export default {
       focusedLeagueId: undefined,
       showModal: false,
       passedPlayer: {},
+      blankPlayer: {
+        id: "",
+        name: "",
+        football_league_id: "",
+        club: "",
+        position: "",
+        shirt: "",
+        whoscored_id: "",
+      },
     };
   },
   methods: {
     ...mapActions({
       fetchAllPlayersAction: "fetchAllPlayers",
+      createPlayerAction: "createPlayer",
+      editPlayerAction: "editPlayer",
+      deletePlayerAction: "deletePlayer",
     }),
     toggleModal() {
       this.showModal = !this.showModal;
     },
-
     async focusLeague(leagueIndex) {
       this.itemsForList = [];
       this.focusedLeagueId = this.showLeagues[leagueIndex].id;
@@ -167,6 +182,16 @@ export default {
         this.listItemsProps = { itemType: "club" };
       }
     },
+    focusClub(clubKey) {
+      this.itemsForList = this.showClubs[clubKey];
+      this.selectedPath.push({ type: "club", name: clubKey });
+      this.listItemsProps = { itemType: "player" };
+    },
+    focusPlayer(playerIndex) {
+      const player = this.showClubs[this.selectedPath[1].name][playerIndex];
+      this.passedPlayer = player;
+      this.toggleModal();
+    },
     traverseBack() {
       const backFrom = this.selectedPath.pop();
       switch (backFrom.type) {
@@ -180,16 +205,24 @@ export default {
           break;
       }
     },
-    focusClub(clubKey) {
-      this.itemsForList = this.showClubs[clubKey];
-      this.selectedPath.push({ type: "club", name: clubKey });
-      this.listItemsProps = { itemType: "player" };
-    },
-    focusPlayer(playerIndex) {
-      const player = this.showClubs[this.selectedPath[1].name][playerIndex];
-      console.log(player);
-      this.passedPlayer = player;
+    createPlayerModal() {
+      this.passedPlayer = this.blankPlayer;
       this.toggleModal();
+    },
+    editPlayer(player) {
+      console.log("EDIT PLAYER: ", player);
+      this.editPlayerAction(player);
+    },
+    createPlayer(player) {
+      console.log("CREATE PLAYER: ", player);
+      this.createPlayerAction(player);
+    },
+    deletePlayer(player) {
+      console.log("DELETE PLAYER: ", player);
+      this.deletePlayerAction(player);
+    },
+    editPlayerPoints(player) {
+      console.log("EDIT PLAYER POINTS: ", player);
     },
   },
   computed: {

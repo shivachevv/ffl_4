@@ -8,7 +8,12 @@ import footballPlayers from "./modules/footballPlayers";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
+  state: {
+    positions: ["GK", "DL", "DC", "DR", "ML", "MC", "MR", "ST"],
+  },
+  getters: {
+    getPositions: (state) => state.positions,
+  },
   mutations: {},
   actions: {},
   modules: { rounds, seasons, leagues, footballPlayers },
