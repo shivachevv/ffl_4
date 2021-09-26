@@ -110,7 +110,8 @@
       :model="additionalTournamentsPopup"
       @close-modal="toggleAdditionalTournamentsPopup(false)"
       :squad="roundPlayersArray"
-      :type="additionalTournamentsType"
+      :isCup="additionalTournamentsType === 'cup'"
+      :isH2h="additionalTournamentsType === 'h2h'"
     ></SquadChoiceModal>
   </div>
 </template>
@@ -118,7 +119,7 @@
 <script>
 import { mapGetters } from "vuex";
 const Timer = () => import("./Timer.vue");
-const SquadChoiceModal = () => import("../common/Modal/SquadChoiceModal.vue");
+const SquadChoiceModal = () => import("../common/Modal/SquadChoiceModal/SquadChoiceModal.vue");
 // import { mapActions } from "vuex";
 export default {
   name: "MatchPrep",
