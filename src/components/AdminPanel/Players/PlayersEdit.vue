@@ -115,8 +115,8 @@
       </template> -->
     </list-comp>
     <FootballPlayerModal
-      v-model="showModal"
-      @close-modal="toggleModal"
+      v-model="showModal.player"
+      @close-modal="toggleModal('player')"
       @edit-player="editPlayer"
       @create-player="createPlayer"
       @delete-player="deletePlayer"
@@ -124,6 +124,12 @@
       :passedPlayer="passedPlayer"
     >
     </FootballPlayerModal>
+    <PlayerPointsModal
+      v-model="showModal.playerPoints"
+      @close-modal="toggleModal('playerPoints')"
+      :passedPlayer="passedPlayer"
+    >
+    </PlayerPointsModal>
   </div>
 </template>
 
@@ -131,12 +137,14 @@
 import { mapGetters, mapActions } from "vuex";
 import ListComp from "../../common/ListComp.vue";
 import FootballPlayerModal from "../../common/Modal/FootballPlayerModal.vue";
+import PlayerPointsModal from "../../common/Modal/PlayerPointsModal.vue";
 
 export default {
   name: "PlayersEdit",
   components: {
     ListComp,
     FootballPlayerModal,
+    PlayerPointsModal,
   },
   data() {
     return {
@@ -144,7 +152,10 @@ export default {
       listItemsProps: {},
       itemsForList: [],
       focusedLeagueId: undefined,
-      showModal: false,
+      showModal: {
+        player: false,
+        playerPoints: false,
+      },
       passedPlayer: {},
       blankPlayer: {
         id: "",
@@ -164,8 +175,8 @@ export default {
       editPlayerAction: "editPlayer",
       deletePlayerAction: "deletePlayer",
     }),
-    toggleModal() {
-      this.showModal = !this.showModal;
+    toggleModal(name) {
+      this.showModal[name] = !this.showModal[name];
     },
     async focusLeague(leagueIndex) {
       this.itemsForList = [];
@@ -190,7 +201,7 @@ export default {
     focusPlayer(playerIndex) {
       const player = this.showClubs[this.selectedPath[1].name][playerIndex];
       this.passedPlayer = player;
-      this.toggleModal();
+      this.toggleModal("player");
     },
     traverseBack() {
       const backFrom = this.selectedPath.pop();
@@ -207,7 +218,7 @@ export default {
     },
     createPlayerModal() {
       this.passedPlayer = this.blankPlayer;
-      this.toggleModal();
+      this.toggleModal("player");
     },
     editPlayer(player) {
       console.log("EDIT PLAYER: ", player);
@@ -221,8 +232,9 @@ export default {
       console.log("DELETE PLAYER: ", player);
       this.deletePlayerAction(player);
     },
-    editPlayerPoints(player) {
-      console.log("EDIT PLAYER POINTS: ", player);
+    editPlayerPoints() {
+      console.log("EDIT PLAYER POINTS:");
+      this.toggleModal("playerPoints");
     },
   },
   computed: {

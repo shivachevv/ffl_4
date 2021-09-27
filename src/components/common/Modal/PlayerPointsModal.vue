@@ -3,48 +3,47 @@
     <v-card>
       <div class="modal-container">
         <div>
-          <ModalHeader>
-            {{ label }}
-          </ModalHeader>
+          <ModalHeader> EDIT PLAYER POINTS </ModalHeader>
           <ModalBody>
-            <v-form v-model="isFormValid">
-              <v-text-field
-                v-model="footballPlayer.name"
-                label="Name"
-                :rules="playerNameRules"
-              ></v-text-field>
-              <v-select
-                v-model="playerLeague"
-                :rules="requiredFieldRules"
-                :items="getLeagues"
-                item-text="name"
-                item-value="id"
-                label="League"
-              ></v-select>
-              <v-select
-                v-model="footballPlayer.club"
-                :disabled="!leagueClubs.length"
-                :rules="requiredFieldRules"
-                :items="leagueClubs"
-                label="Club"
-              ></v-select>
-              <v-select
-                v-model="footballPlayer.position"
-                :rules="requiredFieldRules"
-                :items="getPositions"
-                label="Position"
-              ></v-select>
-              <v-text-field
-                v-model="footballPlayer.shirt"
-                :rules="requiredFieldRules"
-                label="Shirt-slug"
-              ></v-text-field>
-              <v-text-field
-                v-model="footballPlayer.whoscored_id"
-                :rules="requiredFieldRules"
-                label='"WhoScored" ID'
-              ></v-text-field>
-            </v-form>
+            <v-row justify="center" class="my-2">
+              <h2>PLAYER: {{ footballPlayer.name }}</h2>
+            </v-row>
+            <v-row justify="space-between" class="mx-2">
+              <v-form v-model="isFormValid">
+                <v-select
+                  v-model="playerLeague"
+                  :rules="requiredFieldRules"
+                  :items="getLeagues"
+                  item-text="name"
+                  item-value="id"
+                  label="League"
+                ></v-select>
+                <v-select
+                  v-model="footballPlayer.club"
+                  :disabled="!leagueClubs.length"
+                  :rules="requiredFieldRules"
+                  :items="leagueClubs"
+                  label="Club"
+                ></v-select>
+                <v-select
+                  v-model="footballPlayer.position"
+                  :rules="requiredFieldRules"
+                  :items="getPositions"
+                  label="Position"
+                ></v-select>
+                <v-text-field
+                  v-model="footballPlayer.shirt"
+                  :rules="requiredFieldRules"
+                  label="Shirt-slug"
+                ></v-text-field>
+                <v-text-field
+                  v-model="footballPlayer.whoscored_id"
+                  :rules="requiredFieldRules"
+                  label='"WhoScored" ID'
+                ></v-text-field>
+              </v-form>
+              <div>SCORE CALCULATOR</div>
+            </v-row>
           </ModalBody>
           <ModalFooter>
             <v-row justify="center" class="mt-5">
@@ -56,24 +55,6 @@
                 color="accent"
                 @click.stop="handleSave()"
                 >SAVE</v-btn
-              >
-              <v-btn
-                v-if="footballPlayer.id"
-                large
-                min-width="136"
-                class="player-modal-button white--text"
-                color="red darken-1"
-                @click.stop="handleDelete()"
-                >DELETE</v-btn
-              >
-              <v-btn
-                v-if="footballPlayer.id"
-                large
-                min-width="136"
-                class="player-modal-button white--text"
-                color="lime darken-1"
-                @click.stop="handelEditPoints()"
-                >EDIT POINTS</v-btn
               >
               <v-btn
                 large
