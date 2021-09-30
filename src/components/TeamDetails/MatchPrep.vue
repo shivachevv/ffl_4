@@ -107,11 +107,11 @@
       <h2>You should be the coach to view this panel!</h2>
     </div>
     <SquadChoiceModal
-      :model="additionalTournamentsPopup"
       @close-modal="toggleAdditionalTournamentsPopup(false)"
       :squad="roundPlayersArray"
       :isCup="additionalTournamentsType === 'cup'"
       :isH2h="additionalTournamentsType === 'h2h'"
+      :isModalOpen="additionalTournamentsPopup"
     ></SquadChoiceModal>
   </div>
 </template>
@@ -119,7 +119,8 @@
 <script>
 import { mapGetters } from "vuex";
 const Timer = () => import("./Timer.vue");
-const SquadChoiceModal = () => import("../common/Modal/SquadChoiceModal/SquadChoiceModal.vue");
+const SquadChoiceModal = () =>
+  import("../common/Modal/SquadChoiceModal/SquadChoiceModal.vue");
 // import { mapActions } from "vuex";
 export default {
   name: "MatchPrep",

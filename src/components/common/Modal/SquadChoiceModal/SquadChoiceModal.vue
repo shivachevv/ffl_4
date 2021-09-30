@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="model" @click:outside="close" max-width="100%">
+  <v-dialog
+    v-model="isModalOpen"
+    @click:outside="close"
+    max-width="100%"
+    v-if="isModalOpen"
+  >
     <v-card>
       <div class="modal">
         <div>
@@ -9,10 +14,11 @@
           <ModalBody>
             <div class="modal__body">
               <v-select
+                v-if="isH2h"
                 label="Choose formation"
                 class="modal__body__formation"
                 attach=".modal__body__formation"
-                v-model="h2hFormation"
+                v-model="formation"
                 :items="h2hFormations"
                 chips
                 :full-width="false"
@@ -22,7 +28,7 @@
               </v-select>
               <div class="modal__body__field">
                 <div class="modal__body__field__st">
-                  <div v-for="count in h2hFormation.st" :key="count">
+                  <div v-for="count in formation.st" :key="count">
                     <SquadChoiceTeammate
                       position="ST"
                       :player="
@@ -49,7 +55,7 @@
                   </div>
                 </div>
                 <div class="modal__body__field__mid">
-                  <div v-for="count in h2hFormation.mid" :key="count">
+                  <div v-for="count in formation.mid" :key="count">
                     <SquadChoiceTeammate
                       position="MID"
                       :player="
@@ -76,7 +82,7 @@
                   </div>
                 </div>
                 <div class="modal__body__field__def">
-                  <div v-for="count in h2hFormation.def" :key="count">
+                  <div v-for="count in formation.def" :key="count">
                     <SquadChoiceTeammate
                       position="DEF"
                       :player="
@@ -151,10 +157,6 @@ export default {
     // CustomSquadDroprown,
   },
   props: {
-    model: {
-      type: Boolean,
-      required: true,
-    },
     squad: {
       type: Array,
       required: true,
@@ -167,10 +169,16 @@ export default {
       type: Boolean,
       required: true,
     },
+    isModalOpen: {
+      type: Boolean,
+      required: true,
+    },
   },
   data: () => ({
     showDropdown: false,
-    h2hFormation: { def: 4, mid: 4, st: 2 },
+    h2hDefaultFormation: { def: 4, mid: 4, st: 2 },
+    cupDefaultFormation: { def: 3, mid: 3, st: 1 },
+    formation: null,
     h2hFormations: [
       { text: "3-5-2", value: { def: 3, mid: 5, st: 2 } },
       { text: "3-4-3", value: { def: 3, mid: 4, st: 3 } },
@@ -303,14 +311,26 @@ export default {
       );
     },
     title() {
-      return this.type === "cup" ? "Cup" : "Head to Head";
+      return this.isCup ? "Cup" : "Head to Head";
     },
   },
-  watch: {},
+  watch: {
+    isModalOpen(newValue) {
+      this.formation = newValue
+        ? this.isCup
+          ? this.cupDefaultFormation
+          : this.h2hDefaultFormation
+        : this.cupDefaultFormation;
+    },
+  },
   created() {},
+  mounted() {},
 };
 </script>
 <style scoped lang="scss">
+::v-deep .v-dialog {
+  overflow: hidden !important;
+}
 .modal {
   width: 100%;
   .modal__title {

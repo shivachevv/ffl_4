@@ -13,12 +13,11 @@
         </v-btn> -->
 
         <v-btn
-          class="close-button"
+          :class="[{ hidden: !isSelected }, 'close-button']"
           fab
           xSmall
           color="error elevation-10"
           @click="deselectPlayer"
-          v-if="isNotGK"
         >
           <v-icon dark> fas fa-times </v-icon>
         </v-btn>
@@ -33,14 +32,17 @@
           rounded="lg"
           v-bind="attrs"
           v-on="on"
-          @click.prevent="openDropdown"
+          @click.prevent="toggleDropdown(true)"
         >
           <span class="position up">{{ position }}</span>
           <div text-align="center" class="text-center player-shirt">
             <img
-              src="@/assets/images/user-page/10.png"
+              :src="
+                require(`@/assets/images/user-page/${
+                  isSelected ? '10' : 'none'
+                }.png`)
+              "
               alt="player-shirt"
-              width="30%"
               class="mt-2"
             />
           </div>
@@ -54,7 +56,7 @@
         <v-list-item
           v-for="{ player } in dropdownItems"
           :key="player.id"
-          @click.stop="selectItem(player)"
+          @click.stop="selectPlayer(player)"
         >
           <v-list-item-title v-text="player.name"></v-list-item-title>
         </v-list-item>
@@ -86,29 +88,34 @@ export default {
   },
   data() {
     return {
-      show: false,
+      showDropdown: false,
       hover: false,
+      isSelected: false,
     };
   },
   computed: {
-    isNotGK(){
-      return this.player?.position !== 'GK'
-    }
+    isNotGK() {
+      return this.player?.position !== "GK";
+    },
   },
   methods: {
     deselectPlayer() {
-      this.show = false;
+      this.toggleDropdown(false);
       this.$emit("deselect-player", this.player);
     },
-    openDropdown() {
-      this.show = true;
+    toggleDropdown(state) {
+      this.showDropdown = state;
     },
-    selectItem(player) {
-      this.show = false;
+    selectPlayer(player) {
+      this.toggleDropdown(false);
       this.$emit("select-player", player);
     },
   },
-  watch: {},
+  watch: {
+    player(newPlayer) {
+      this.isSelected = newPlayer?.id;
+    },
+  },
   created() {},
 };
 </script>
@@ -214,5 +221,9 @@ export default {
   top: -15px;
   right: -15px;
   z-index: 100;
+  transition: opacity 0.2s;
+}
+.hidden {
+  opacity: 0;
 }
 </style>
