@@ -173,7 +173,8 @@
 </template>
 
 <script>
-// const PlayersEdit = () => import("./Players/PlayersEdit");
+const PlayersEdit = () =>
+  import("../components/AdminPanel/Players/PlayersEdit");
 // const PlayersPoints = () => import("./Players/PlayersPoints");
 // const SyncPoints = () => import("./Players/SyncPoints");
 // const Rounds = () => import("./Rounds/Rounds");
@@ -187,14 +188,15 @@
 // const CupMatchPoints = () => import("./Cup/CupMatchPoints");
 // const Matching = () => import("./Matching/Matching");
 // const AdminHomeSection = () => import("./AdminHomeSection/AdminHomeSection");
-import Rounds from "../components/AdminPanel/Rounds/Rounds.vue";
-import AdminHomeSection from "../components/AdminPanel/AdminHomeSection/AdminHomeSection.vue";
+const Rounds = () => import("../components/AdminPanel/Rounds/Rounds.vue");
+const AdminHomeSection = () =>
+  import("../components/AdminPanel/AdminHomeSection/AdminHomeSection.vue");
 
 export default {
   name: "AdminPanel",
   components: {
     Rounds,
-    // PlayersEdit,
+    PlayersEdit,
     // PlayersPoints,
     // SyncPoints,
     // UsersPersonal,
