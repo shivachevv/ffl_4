@@ -108,6 +108,7 @@
     </div>
     <SquadChoiceModal
       @close-modal="toggleAdditionalTournamentsPopup(false)"
+      :currentRound='currentRound'
       :squad="roundPlayersArray"
       :isCup="additionalTournamentsType === 'cup'"
       :isH2h="additionalTournamentsType === 'h2h'"

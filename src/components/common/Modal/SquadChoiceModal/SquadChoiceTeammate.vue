@@ -33,13 +33,14 @@
           v-bind="attrs"
           v-on="on"
           @click.prevent="toggleDropdown(true)"
+          :ripple="isNotGK"
         >
           <span class="position up">{{ position }}</span>
           <div text-align="center" class="text-center player-shirt">
             <img
               :src="
                 require(`@/assets/images/user-page/${
-                  isSelected ? '10' : 'none'
+                  isSelected || !isNotGK ? '10' : 'none'
                 }.png`)
               "
               alt="player-shirt"

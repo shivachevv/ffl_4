@@ -3,7 +3,7 @@
     v-model="isModalOpen"
     @click:outside="close"
     max-width="100%"
-    v-if="isModalOpen"
+    v-if="isModalOpen && formation"
   >
     <v-card>
       <div class="modal">
@@ -32,10 +32,10 @@
                     <SquadChoiceTeammate
                       position="ST"
                       :player="
-                        h2hSquadselection.striker[`st${count}`] ||
+                        squadSelection.striker[`st${count}`] ||
                         makeEmptyPlayer('Striker')
                       "
-                      :dropdownItems="calculatedDroprownItems.strikers"
+                      :dropdownItems="calculatedDroprownH2HItems.strikers"
                       :uniqueId="`striker${count}`"
                       @select-player="
                         playerChangeHandler($event, {
@@ -59,10 +59,14 @@
                     <SquadChoiceTeammate
                       position="MID"
                       :player="
-                        h2hSquadselection.midfielder[`mid${count}`] ||
+                        squadSelection.midfielder[`mid${count}`] ||
                         makeEmptyPlayer('Midfielder')
                       "
-                      :dropdownItems="calculatedDroprownItems.midfielders"
+                      :dropdownItems="
+                        isCup
+                          ? calculatedDroprownCupItems[`mid${count}`]
+                          : calculatedDroprownH2HItems.midfielders
+                      "
                       :uniqueId="`midfielder${count}`"
                       @select-player="
                         playerChangeHandler($event, {
@@ -86,10 +90,14 @@
                     <SquadChoiceTeammate
                       position="DEF"
                       :player="
-                        h2hSquadselection.defender[`def${count}`] ||
+                        squadSelection.defender[`def${count}`] ||
                         makeEmptyPlayer('Defender')
                       "
-                      :dropdownItems="calculatedDroprownItems.defenders"
+                      :dropdownItems="
+                        isCup
+                          ? calculatedDroprownCupItems[`def${count}`]
+                          : calculatedDroprownH2HItems.defenders
+                      "
                       :uniqueId="`defender${count}`"
                       @select-player="
                         playerChangeHandler($event, {
@@ -128,7 +136,13 @@
                 <v-icon left dark> fas fa-chevron-left </v-icon>
                 Back
               </v-btn>
-              <v-btn color="#59A95D" class="white--text" large>
+              <v-btn
+                color="#59A95D"
+                class="white--text"
+                large
+                :disabled="!isSquadReady"
+                @click.prevent="submitSquadHandler"
+              >
                 <v-icon left dark> fas fa-check </v-icon>
                 Submit Squad
               </v-btn>
@@ -145,7 +159,11 @@ import ModalHeader from "../ModalHeader.vue";
 import ModalFooter from "../ModalFooter.vue";
 import ModalBody from "../ModalBody.vue";
 import SquadChoiceTeammate from "./SquadChoiceTeammate.vue";
-// import CustomSquadDroprown from "./CustomSquadDroprown.vue";
+import {
+  H2HSquadPayload,
+  CupSquadPayload,
+} from "../../../../common/entitiesClasses";
+import { mapActions } from "vuex";
 
 export default {
   name: "SquadChoiceModal",
@@ -154,7 +172,6 @@ export default {
     ModalBody,
     ModalFooter,
     SquadChoiceTeammate,
-    // CustomSquadDroprown,
   },
   props: {
     squad: {
@@ -171,6 +188,10 @@ export default {
     },
     isModalOpen: {
       type: Boolean,
+      required: true,
+    },
+    currentRound: {
+      type: Number,
       required: true,
     },
   },
@@ -195,12 +216,7 @@ export default {
       mid: ["mr1", "mr2", "mc1", "mc2", "ml1", "ml2"],
       st: ["st1", "st2", "st3"],
     },
-    h2hSquadModel: {
-      strikers: [],
-      midfielders: [],
-      defenders: [],
-    },
-    h2hSquadselection: {
+    squadSelection: {
       striker: {
         st1: null,
         st2: null,
@@ -223,8 +239,10 @@ export default {
     },
   }),
   methods: {
+    ...mapActions("h2h", ["addH2HTeam"]),
+
     clearSquad() {
-      this.h2hSquadselection = {
+      this.squadSelection = {
         striker: {
           st1: null,
           st2: null,
@@ -251,17 +269,14 @@ export default {
       // const playerObject = this.strikers.find(
       //   ({ player }) => player.name === lastPlayerName
       // )?.player;
-      // const isThePlayerTaken = Object.values(this.h2hSquadselection[post]).find(
+      // const isThePlayerTaken = Object.values(this.squadSelection[post]).find(
       //   (player) => player?.name === lastPlayerName
       // );
       if (isSelect) {
-        this.h2hSquadselection[post][position] = player;
-      } else {
-        this.h2hSquadselection[post][position] = null;
+        this.squadSelection[post][position] = player;
+        return;
       }
-    },
-    selectPlayerHandler(player) {
-      console.log(player);
+      this.squadSelection[post][position] = null;
     },
     close() {
       this.$emit("close-modal");
@@ -271,23 +286,135 @@ export default {
         name,
       };
     },
+    getPlayers(allPlayers, selectedPlayers) {
+      return allPlayers.filter(
+        ({ player: { id } }) =>
+          !Object.values(selectedPlayers)
+            .map((player) => player?.id)
+            .includes(id)
+      );
+    },
+    getPlayersByPos(allPlayers, selectedPlayers, position) {
+      return allPlayers.filter(
+        ({ player: { id, position: playerPosition } }) =>
+          !Object.values(selectedPlayers)
+            .map((selectedPlayer) => selectedPlayer?.id)
+            .includes(id) &&
+          position.toLowerCase() === playerPosition.toLowerCase()
+      );
+    },
+    createH2hSquadPayload() {
+      let result = {};
+      for (let i = 1; i <= this.formation.st; i++) {
+        const playerId = this.squadSelection.striker[`st${i}`]?.whoscored_id;
+        result[`whoscored_id_${i}`] = playerId;
+      }
+      for (let i = 1; i <= this.formation.mid; i++) {
+        const nextPosition = +this.formation.st + i;
+        const playerId =
+          this.squadSelection.midfielder[`mid${i}`]?.whoscored_id;
+        console.log(i, this.squadSelection.midfielder[`mid${i}`], nextPosition);
+        result[`whoscored_id_${nextPosition}`] = playerId;
+      }
+      for (let i = 1; i <= this.formation.def; i++) {
+        const nextPosition = +this.formation.st + +this.formation.mid + i;
+        const playerId = this.squadSelection.defender[`def${i}`]?.whoscored_id;
+        result[`whoscored_id_${nextPosition}`] = playerId;
+      }
+      result.whoscored_id_11 = this.goalkeeper.whoscored_id;
+      result.round_id = this.currentRound;
+      result.scheme = "2";
+      return result;
+    },
+    async submitSquadHandler() {
+      if (this.isSquadReady) {
+        const payload = this.isCup
+          ? new CupSquadPayload({
+              round_id: this.currentRound,
+              gk: this.goalkeeper.whoscored_id,
+              dl: this.squadSelection?.defender?.def1?.whoscored_id,
+              dc: this.squadSelection?.defender?.def2?.whoscored_id,
+              dr: this.squadSelection?.defender?.def3?.whoscored_id,
+              ml: this.squadSelection?.midfielder?.mid1?.whoscored_id,
+              mc: this.squadSelection?.midfielder?.mid2?.whoscored_id,
+              mr: this.squadSelection?.midfielder?.mid3?.whoscored_id,
+              st: this.squadSelection?.striker?.st1?.whoscored_id,
+            })
+          : new H2HSquadPayload(this.createH2hSquadPayload());
+
+        try {
+          console.log(payload);
+          const result = await this.addH2HTeam(payload);
+          console.log(result);
+          this.close();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
   },
   computed: {
-    calculatedDroprownItems() {
-      const getPlayers = (allPlayers, selectedPlayers) =>
-        allPlayers.filter(
-          ({ player: { id } }) =>
-            !Object.values(selectedPlayers)
-              .map((player) => player?.id)
-              .includes(id)
-        );
+    isSquadReady() {
+      const areStrikersOk =
+        Object.keys(this.squadSelection.striker).filter(
+          (position) => !!this.squadSelection.striker[position]
+        ).length === this.formation?.st;
+      const areMidfieldersOk =
+        Object.keys(this.squadSelection.midfielder).filter(
+          (position) => !!this.squadSelection.midfielder[position]
+        ).length === this.formation?.mid;
+      const areDefendersOk =
+        Object.keys(this.squadSelection.defender).filter(
+          (position) => !!this.squadSelection.defender[position]
+        ).length === this.formation?.def;
+      return areStrikersOk && areMidfieldersOk && areDefendersOk;
+    },
+    calculatedDroprownH2HItems() {
       return {
-        strikers: getPlayers(this.strikers, this.h2hSquadselection.striker),
-        midfielders: getPlayers(
+        strikers: this.getPlayers(this.strikers, this.squadSelection.striker),
+        midfielders: this.getPlayers(
           this.midfielders,
-          this.h2hSquadselection.midfielder
+          this.squadSelection.midfielder
         ),
-        defenders: getPlayers(this.defenders, this.h2hSquadselection.defender),
+        defenders: this.getPlayers(
+          this.defenders,
+          this.squadSelection.defender
+        ),
+      };
+    },
+    calculatedDroprownCupItems() {
+      return {
+        st: this.getPlayers(this.strikers, this.squadSelection.striker),
+        mid1: this.getPlayersByPos(
+          this.midfielders,
+          this.squadSelection.midfielder,
+          "ml"
+        ),
+        mid2: this.getPlayersByPos(
+          this.midfielders,
+          this.squadSelection.midfielder,
+          "mc"
+        ),
+        mid3: this.getPlayersByPos(
+          this.midfielders,
+          this.squadSelection.midfielder,
+          "mr"
+        ),
+        def1: this.getPlayersByPos(
+          this.defenders,
+          this.squadSelection.defender,
+          "dl"
+        ),
+        def2: this.getPlayersByPos(
+          this.defenders,
+          this.squadSelection.defender,
+          "dc"
+        ),
+        def3: this.getPlayersByPos(
+          this.defenders,
+          this.squadSelection.defender,
+          "dr"
+        ),
       };
     },
     goalkeeper() {
@@ -329,7 +456,7 @@ export default {
 </script>
 <style scoped lang="scss">
 ::v-deep .v-dialog {
-  overflow: hidden !important;
+  overflow-x: hidden !important;
 }
 .modal {
   width: 100%;
