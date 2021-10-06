@@ -7,6 +7,8 @@ const requester = {
     axios.post(`http://${API_URL}${path}`, payload, { headers }),
   put: (path, payload, headers) =>
     axios.put(`http://${API_URL}${path}`, payload, { headers }),
+  delete: (path, headers) =>
+    axios.delete(`http://${API_URL}${path}`, { headers }),
 };
 
 export default requester;

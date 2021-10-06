@@ -6,12 +6,19 @@ import seasons from "./modules/seasons";
 import h2h from "./modules/h2h";
 import cup from "./modules/cup";
 import transfers from "./modules/transfers";
+import leagues from "./modules/leagues";
+import footballPlayers from "./modules/footballPlayers";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
+  state: {
+    positions: ["GK", "DL", "DC", "DR", "ML", "MC", "MR", "ST"],
+  },
+  getters: {
+    getPositions: (state) => state.positions,
+  },
   mutations: {},
   actions: {},
-  modules: { rounds, user, seasons, h2h, cup, transfers },
+  modules: { rounds, user, seasons, h2h, cup, transfers, leagues, footballPlayers },
 });

@@ -13,6 +13,8 @@
         <transition name="slide-left" mode="out-in">
           <router-view />
         </transition>
+        <button @click.prevent="fetch">fetch</button>
+        <button @click.prevent="fetchPlayer">fetch League</button>
         <Footer />
       </div>
     </v-main>
@@ -37,6 +39,12 @@ export default {
 
   data: () => ({}),
   methods: {
+    async fetch() {
+      await this.$store.dispatch("getClubsByLeague");
+    },
+    async fetchPlayer() {
+      await this.$store.dispatch("fetchPlayersByLeague", 4);
+    },
     logIn() {
       let data = JSON.stringify({
         email: "superadmin@info.dev",

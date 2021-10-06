@@ -27,7 +27,6 @@ const getters = {
         : H2H
         ? state.currentH2HRoundIndex
         : state.currentRoundIndex;
-    console.log(index);
     return index || index == 0 ? rounds[index] : {};
   },
   getCurrentRoundIndex: (state) => state.currentRoundIndex,
@@ -40,8 +39,8 @@ const actions = {
       resourcePath: GET_RESOURCE_PATH.ROUNDS_ALL,
     }).then((response) => {
       rounds = response.data.data;
+      commit("setRounds", rounds);
     });
-    commit("setRounds", rounds);
   },
   async createRound({ dispatch }, payload) {
     await postResource({
