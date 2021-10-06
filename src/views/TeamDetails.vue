@@ -13,14 +13,15 @@
     </v-col>
     <v-col cols="4" class="pl-4">
       <UserInfo :user="user" :currentRound="currentRoundIndex + 1"></UserInfo>
-
       <!---------------- MATCH PREPARATION -------------------------------------->
       <MatchPrep
         :user="user"
         :currentRound="currentRoundIndex + 1"
         :isAdminLogged="true"
-        :roundPlayersArray="roundPlayersArray"
+        :roundPlayersArray="nextRoundUserTeam"
         :isThisLoggedTeam="isThisLoggedTeam"
+        :nextH2hRoundId="nextH2hRoundId"
+        :nextCupRoundId="nextCupRoundId"
       ></MatchPrep>
 
       <!-- TRANSFERS INFORMATION  -->
@@ -44,9 +45,9 @@
 const UserTeam = () => import("../components/TeamDetails/UserTeam.vue");
 const UserInfo = () => import("../components/TeamDetails/UserInfo.vue");
 const MatchPrep = () => import("../components/TeamDetails/MatchPrep.vue");
-// const TeamTransfers = () => import("./TeamTransfers");
 // const PlayerPopup = () => import("../Popup/PlayerPopup");
 import { mapState, mapActions } from "vuex";
+
 export default {
   name: "TeamDetails",
   components: {
@@ -66,6 +67,8 @@ export default {
   methods: {
     ...mapActions("user", ["fetchLoggedUser", "fetchUserPlayers"]),
     ...mapActions("rounds", ["fetchRounds"]),
+    ...mapActions("cup", ["fetchCupRounds"]),
+    ...mapActions("transfers", ["fetchTransfers"]),
     // "fetchLeagues",
     // "fetchPlayers",
     //   "fetchCurrentRound",
@@ -85,7 +88,9 @@ export default {
   },
   computed: {
     ...mapState("user", ["loggedUser", "userPlayers"]),
-    ...mapState("rounds", ["currentRoundIndex"]),
+    ...mapState("rounds", ["currentRoundIndex", "rounds"]),
+    ...mapState("cup", ["cupRounds"]),
+    ...mapState("transfers", ["transfers"]),
     isThisLoggedTeam() {
       // console.log(this.user, this.loggedUser);
       // return this.user.uid === this.loggedUser.uid;
@@ -133,6 +138,46 @@ export default {
     loading() {
       return !this.user || !this.roundPlayers;
     },
+    nextH2hRoundId() {
+      const isNextRoundH2h =
+        this.rounds[this.currentRoundIndex + 1]?.head_to_head;
+      return isNextRoundH2h
+        ? this.rounds[this.currentRoundIndex + 1]?.id
+        : null;
+    },
+    nextCupRoundId() {
+      const nextRoundEndDate = this.rounds[this.currentRoundIndex + 1]?.to_date;
+      return this.cupRounds.find(
+        (cupRound) => cupRound.to_date == nextRoundEndDate
+      )?.id;
+    },
+    nextRoundUserTeam() {
+      const newPlayers = this.transfers
+        .filter(
+          ({ round_id, user_id }) =>
+            +round_id === this.currentRoundIndex + 1 &&
+            +this.user.id === +user_id
+          // && status === "approved"
+        )
+        .reduce((acc, { to_player, position }) => {
+          acc[position] = to_player;
+          return acc;
+        }, {});
+
+      const updatedPlayers = this.roundPlayersArray.map(
+        ({ position, player }) => {
+          if (newPlayers[position]) {
+            return {
+              position,
+              player: newPlayers[position],
+            };
+          }
+          return { position, player };
+        }
+      );
+
+      return updatedPlayers;
+    },
   },
   watch: {
     // loggedUser(nv){
@@ -159,18 +204,13 @@ export default {
     // },
   },
   async created() {
-    // this.$vs.loading();
-    // this.fetchUsers();
+    await this.fetchCupRounds();
+    await this.fetchTransfers();
     await this.fetchLoggedUser();
     await this.fetchRounds();
     await this.fetchUserPlayers(this.user?.id);
   },
-  mounted() {
-    // if ((this.players, this.users, this.currentRound)) {
-    //   this.$vs.loading.close();
-    //   console.log('here');
-    // }
-  },
+  mounted() {},
 };
 </script>
 

@@ -22,6 +22,7 @@
           overlap
           left
           content=""
+          v-if="!!nextCupRoundId"
         >
           <v-btn
             color="#59A95D"
@@ -38,6 +39,7 @@
           overlap
           left
           content="Choose"
+          v-if="!!nextH2hRoundId"
         >
           <v-btn
             color="#59A95D"
@@ -108,11 +110,13 @@
     </div>
     <SquadChoiceModal
       @close-modal="toggleAdditionalTournamentsPopup(false)"
-      :currentRound='currentRound'
+      :currentRound="currentRound"
       :squad="roundPlayersArray"
       :isCup="additionalTournamentsType === 'cup'"
       :isH2h="additionalTournamentsType === 'h2h'"
       :isModalOpen="additionalTournamentsPopup"
+      :nextH2hRoundId="nextH2hRoundId"
+      :nextCupRoundId="nextCupRoundId"
     ></SquadChoiceModal>
   </div>
 </template>
@@ -143,10 +147,15 @@ export default {
       type: Number,
       required: true,
     },
+    nextH2hRoundId: {
+      type: Number,
+    },
+    nextCupRoundId: {
+      type: Number,
+    },
   },
   data() {
     return {
-      // value: null,
       nextRound: {
         cpt: "",
         viceCpt: "",
@@ -240,12 +249,6 @@ export default {
           text: "Captain and Vice Captain cannot be the same player!",
         });
       }
-    },
-    cupSquadHandler(event) {
-      console.log(event);
-    },
-    h2hSquadHandler(event) {
-      console.log(event);
     },
     toggleAdditionalTournamentsPopup(state, type) {
       this.additionalTournamentsPopup = state;

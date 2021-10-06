@@ -66,7 +66,7 @@ const mutations = {
   setRounds: (state, rounds) => {
     state.rounds = rounds;
     state.roundsH2H = rounds.filter(function getH2HRounds(round) {
-      return round.h2h;
+      return round.head_to_head;
     });
     const currentRound = rounds.find(function findCurrentRound(round) {
       return (

@@ -194,6 +194,12 @@ export default {
       type: Number,
       required: true,
     },
+    nextH2hRoundId: {
+      type: Number,
+    },
+    nextCupRoundId: {
+      type: Number,
+    },
   },
   data: () => ({
     showDropdown: false,
@@ -240,6 +246,7 @@ export default {
   }),
   methods: {
     ...mapActions("h2h", ["addH2HTeam"]),
+    ...mapActions("cup", ["addCupTeam"]),
 
     clearSquad() {
       this.squadSelection = {
@@ -303,6 +310,19 @@ export default {
           position.toLowerCase() === playerPosition.toLowerCase()
       );
     },
+    createCupSquadPayload() {
+      return {
+        gk: this.goalkeeper.whoscored_id,
+        dl: this.squadSelection?.defender?.def1?.whoscored_id,
+        dc: this.squadSelection?.defender?.def2?.whoscored_id,
+        dr: this.squadSelection?.defender?.def3?.whoscored_id,
+        ml: this.squadSelection?.midfielder?.mid1?.whoscored_id,
+        mc: this.squadSelection?.midfielder?.mid2?.whoscored_id,
+        mr: this.squadSelection?.midfielder?.mid3?.whoscored_id,
+        st: this.squadSelection?.striker?.st1?.whoscored_id,
+        round_id: this.nextCupRoundId,
+      };
+    },
     createH2hSquadPayload() {
       let result = {};
       for (let i = 1; i <= this.formation.st; i++) {
@@ -313,7 +333,6 @@ export default {
         const nextPosition = +this.formation.st + i;
         const playerId =
           this.squadSelection.midfielder[`mid${i}`]?.whoscored_id;
-        console.log(i, this.squadSelection.midfielder[`mid${i}`], nextPosition);
         result[`whoscored_id_${nextPosition}`] = playerId;
       }
       for (let i = 1; i <= this.formation.def; i++) {
@@ -321,35 +340,27 @@ export default {
         const playerId = this.squadSelection.defender[`def${i}`]?.whoscored_id;
         result[`whoscored_id_${nextPosition}`] = playerId;
       }
+      const scheme = `${this.formation.def}${this.formation.mid}${this.formation.st}`;
       result.whoscored_id_11 = this.goalkeeper.whoscored_id;
-      result.round_id = this.currentRound;
-      result.scheme = "2";
+      result.round_id = this.nextH2hRoundId;
+      result.scheme = scheme;
       return result;
     },
     async submitSquadHandler() {
       if (this.isSquadReady) {
-        const payload = this.isCup
-          ? new CupSquadPayload({
-              round_id: this.currentRound,
-              gk: this.goalkeeper.whoscored_id,
-              dl: this.squadSelection?.defender?.def1?.whoscored_id,
-              dc: this.squadSelection?.defender?.def2?.whoscored_id,
-              dr: this.squadSelection?.defender?.def3?.whoscored_id,
-              ml: this.squadSelection?.midfielder?.mid1?.whoscored_id,
-              mc: this.squadSelection?.midfielder?.mid2?.whoscored_id,
-              mr: this.squadSelection?.midfielder?.mid3?.whoscored_id,
-              st: this.squadSelection?.striker?.st1?.whoscored_id,
-            })
-          : new H2HSquadPayload(this.createH2hSquadPayload());
-
         try {
-          console.log(payload);
-          const result = await this.addH2HTeam(payload);
-          console.log(result);
-          this.close();
+          if (this.isCup) {
+            // calculate correct CUP round
+            const payload = new CupSquadPayload(this.createCupSquadPayload());
+            await this.addCupTeam(payload);
+          } else {
+            const payload = new H2HSquadPayload(this.createH2hSquadPayload());
+            await this.addH2HTeam(payload);
+          }
         } catch (error) {
           console.log(error);
         }
+        this.close();
       }
     },
   },
@@ -450,7 +461,8 @@ export default {
         : this.cupDefaultFormation;
     },
   },
-  created() {},
+  created() {
+  },
   mounted() {},
 };
 </script>
@@ -478,7 +490,7 @@ export default {
       flex-direction: column;
       justify-content: flex-start;
       align-items: center;
-      padding: 20px 90px;
+      padding: 20px 120px;
       background-image: url("../../../../assets/images/user-page/pitch1.png");
       background-size: cover;
       background-repeat: no-repeat;

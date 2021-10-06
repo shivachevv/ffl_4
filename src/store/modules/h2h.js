@@ -15,9 +15,6 @@ const actions = {
 };
 
 const mutations = {
-  setRounds: (state, rounds) => {
-    state.rounds = rounds;
-  },
 };
 
 export default {
