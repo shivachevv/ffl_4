@@ -195,6 +195,14 @@ export default {
     },
     focusClub(clubKey) {
       this.itemsForList = this.showClubs[clubKey];
+      let positions = this.getPositions;
+      this.itemsForList.sort(function sortPlayers(a, b) {
+        if (positions.indexOf(a.position) < positions.indexOf(b.position))
+          return -1;
+        if (positions.indexOf(a.position) > positions.indexOf(b.position))
+          return 1;
+        return 0;
+      });
       this.selectedPath.push({ type: "club", name: clubKey });
       this.listItemsProps = { itemType: "player" };
     },
@@ -238,7 +246,12 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getPlayersByLeague", "getClubsByLeague", "getLeagues"]),
+    ...mapGetters([
+      "getPlayersByLeague",
+      "getClubsByLeague",
+      "getLeagues",
+      "getPositions",
+    ]),
 
     topLabel() {
       let label;
