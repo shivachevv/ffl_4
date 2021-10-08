@@ -12,9 +12,7 @@
       ></Timer>
     </div>
     <div class="additional-tournaments">
-      <span class="additional-tournaments__header">
-        Additional tournaments squad choice!
-      </span>
+      <span class="header"> Additional tournaments squad choice! </span>
       <div class="additional-tournaments__buttons">
         <v-badge
           color="error"
@@ -53,35 +51,45 @@
       </div>
     </div>
     <div class="captain-selected" v-if="isThisLoggedTeam">
-      <span>Next Round Captains:</span>
+      <span class="header">Next Round Captains:</span>
       <span>Captain: Del Piero</span>
       <span>Vice Captain: Del Piero</span>
       <span>Super Captain: Not Active</span>
     </div>
     <!---------------- CAPTAIN SELECTION -------------------------------------->
-    <form class="captain-select" v-if="isThisLoggedTeam">
+    <v-form v-model="valid" class="captain-select" v-if="isThisLoggedTeam">
+      <v-alert
+        dense
+        outlined
+        type="error"
+        v-if="sameCaptainsError"
+        transition="scale-transition"
+      >
+        The captain and the vice captain should not be the same player!
+      </v-alert>
       <v-select
         :label="`Choose your ${nextRound.superCpt ? 'SUPER' : ''} Captain!`"
-        class="captain-select__cpt"
+        class="captain-select__cpt mt-4"
         attach=".captain-select__cpt"
         v-model="nextRound.cpt"
         :items="teamDropdownData"
         chips
+        dense
         :menu-props="{ bottom: true, offsetY: true }"
-        :rules="[validation.areCaptainsTheSame]"
+        :rules="[validation.required]"
       >
       </v-select>
 
       <v-select
         label="Choose your Vice Captain!"
-        class="captain-select__vice-cpt"
+        class="captain-select__vice-cpt mt-4"
         attach=".captain-select__vice-cpt"
         v-model="nextRound.viceCpt"
         :items="teamDropdownData"
         chips
+        dense
         :menu-props="{ bottom: true, offsetY: true }"
-        :rules="[validation.areCaptainsTheSame]"
-        ref="viceCaptainSelect"
+        :rules="[validation.required]"
       >
       </v-select>
       <div class="captain-select__bottom">
@@ -92,18 +100,35 @@
           ></v-checkbox>
         </div>
         <v-btn
-          :disabled="captainsError"
+          :disabled="sameCaptainsError || !valid"
           color="#59A95D"
           class="white--text"
           @click.prevent="captainHandler"
         >
-          Select Captains
+          Confirm
           <v-icon right dark> fas fa-paper-plane </v-icon>
         </v-btn>
       </div>
-    </form>
+    </v-form>
     <!---------------- CAPTAIN SELECTION END -------------------------------------->
-
+    <div class="transfers-info">
+      <span class="header">Next round transfers</span>
+      <div class="transfers-info__details">
+        <span class="transfers-info__transfer-count"
+          >Transfers left: {{ transfersMade - 2 }}</span
+        >
+        <router-link :to="`/transfers/${user.id}`" tag="button">
+          <v-btn
+            large
+            :disabled="transfersMade === 3"
+            color="#59A95D"
+            class="white--text"
+          >
+            Transfers<br />center
+          </v-btn>
+        </router-link>
+      </div>
+    </div>
     <div v-if="!isThisLoggedTeam" class="please-login">
       <img src="@/assets/images/user-page/sad-face.png" alt />
       <h2>You should be the coach to view this panel!</h2>
@@ -111,7 +136,7 @@
     <SquadChoiceModal
       @close-modal="toggleAdditionalTournamentsPopup(false)"
       :currentRound="currentRound"
-      :squad="roundPlayersArray"
+      :squad="nextRoundUserTeam"
       :isCup="additionalTournamentsType === 'cup'"
       :isH2h="additionalTournamentsType === 'h2h'"
       :isModalOpen="additionalTournamentsPopup"
@@ -122,10 +147,11 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 const Timer = () => import("./Timer.vue");
 const SquadChoiceModal = () =>
   import("../common/Modal/SquadChoiceModal/SquadChoiceModal.vue");
+import { squadPayload } from "../../common/entitiesClasses";
 // import { mapActions } from "vuex";
 export default {
   name: "MatchPrep",
@@ -135,7 +161,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    roundPlayersArray: {
+    nextRoundUserTeam: {
       type: Array,
       required: true,
     },
@@ -153,9 +179,13 @@ export default {
     nextCupRoundId: {
       type: Number,
     },
+    transfersMade: {
+      type: Number,
+    },
   },
   data() {
     return {
+      valid: false,
       nextRound: {
         cpt: "",
         viceCpt: "",
@@ -164,12 +194,6 @@ export default {
       cptError: false,
       validation: {
         required: (v) => !!v || "Required",
-        areCaptainsTheSame: () => {
-          return (
-            !this.captainsError ||
-            "Captain and Vice Captains cannot be the same!"
-          );
-        },
       },
       additionalTournamentsPopup: false,
       additionalTournamentsType: "",
@@ -178,159 +202,59 @@ export default {
   computed: {
     ...mapGetters("rounds", ["getRound"]),
     teamDropdownData() {
-      return this.roundPlayersArray.map(
-        ({ position, player: { name, id } }) => {
+      return this.nextRoundUserTeam.map(
+        ({ position, player: { name, whoscored_id } }) => {
           return {
             text: `${this.prettyPosition(position)}: ${name}`,
-            value: id,
+            value: whoscored_id,
           };
         }
       );
     },
-    captainsError() {
-      const isNothingChosen =
-        this.nextRound.cpt.length === 0 && this.nextRound.viceCpt.length === 0;
-      const areCaptainsSame = this.nextRound.viceCpt === this.nextRound.cpt;
-
-      return areCaptainsSame && !isNothingChosen;
+    sameCaptainsError() {
+      return (
+        this.nextRound.viceCpt === this.nextRound.cpt &&
+        (!!this.nextRound.viceCpt || !!this.nextRound.cpt)
+      );
     },
-    // userRoundStats() {
-    //   if (this.user && this.currentRound) {
-    //     let result = this.user.rounds[`r${this.currentRound}`].nextRndInfo;
-    //     if (!result.team) {
-    //       result.team = this.user.rounds[`r${this.currentRound}`].team;
-    //     }
-    //     return result;
-    //   } else {
-    //     return undefined;
-    //   }
-    // },
     isSuperCptAvailable() {
       return true;
     },
   },
   methods: {
-    // ...mapActions(["fetchUsers"]),
-    // addSuperCpt() {
-    //   return (this.superCpt = !this.superCpt);
-    // },
-    mergeCaptains(_old, _new) {
-      let result = {};
-      Object.keys(_old).forEach((atttr) => {
-        if (_new[atttr]) {
-          result[atttr] = _new[atttr];
-        } else {
-          result[atttr] = _old[atttr];
-        }
-        result["superCpt"] = _new["superCpt"];
-      });
-      return result;
-    },
+    ...mapActions("userPlayers", ["createNextRoundPlayers", "setSuperCpt"]),
     prettyPosition(value) {
       return value.length === 2
         ? value.toUpperCase()
         : value.substring(0, 2).toUpperCase();
     },
-    captainHandler() {
-      const merged = this.mergeCaptains(this.userRoundStats, this.nextRound);
-      // console.log(merged);
-      this.updateSuperCptArray(this.user, this.currentRound);
-      if (merged.cpt !== merged.viceCpt) {
-        return this.$vs.dialog({
-          color: "success",
-          title: "Confirm Captains",
-          text: this.showSuccessMsg(merged),
-          accept: () => this.fetchCaptains(merged),
-        });
-      } else {
-        return this.$vs.dialog({
-          color: "danger",
-          title: "Please change Captain and ViceCaptain!",
-          text: "Captain and Vice Captain cannot be the same player!",
-        });
+    async captainHandler() {
+      const teamPlayers = this.nextRoundUserTeam.reduce(
+        (acc, { player: { whoscored_id }, position }) => {
+          acc[position] = whoscored_id;
+          return acc;
+        },
+        {}
+      );
+      const newSquadPayload = new squadPayload({
+        league_id: this.user?.league_id,
+        round_id: +this.currentRound + 1,
+        cpt: this.nextRound.cpt,
+        vice_cpt: this.nextRound.viceCpt,
+        ...teamPlayers,
+      });
+      const result = await this.createNextRoundPlayers(newSquadPayload);
+      if (this.nextRound.superCpt) {
+        await this.setSuperCpt({ round_id: +this.currentRound + 1 });
       }
+      console.log(newSquadPayload, result);
+      return;
     },
     toggleAdditionalTournamentsPopup(state, type) {
       this.additionalTournamentsPopup = state;
       this.additionalTournamentsType = type;
     },
-    // showSuccessMsg({ cpt, viceCpt, superCpt }) {
-    //   return `Are you sure you want to update next round team:
-    //          Captain: ${cpt ? this.players[cpt].name : "not selected"},
-    //          Vice Captain: ${
-    //            viceCpt ? this.players[viceCpt].name : "not selected"
-    //          },
-    //          Super Captain: ${superCpt ? "activated:" : "not activated"}?`;
-    // },
-    // updateSuperCptArray(user, round) {
-    //   const arrayNumber = isItFirstHalfSeason(round) ? 1 : 2;
-    //   let superCptArr = user.superCpt;
-    //   superCptArr[arrayNumber] = this.nextRound.superCpt;
-    //   const payload = {
-    //     superCpt: superCptArr,
-    //   };
-    //   return fetch(`${DATA_URL}users/${user.uid}/.json`, {
-    //     method: "PATCH",
-    //     mode: "cors",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(payload),
-    //   })
-    //     .then((response) => response.json())
-    //     .then(async () => {
-    //       console.log("Success:");
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error:", error);
-    //       this.error = true;
-    //       this.errorMsg = error;
-    //     });
-    // },
-    // fetchCaptains(payload) {
-    //   const { uid } = this.user;
-    //   const round = this.currentRound;
-    //   if (payload.superCpt) {
-    //     this.updateSuperCptArray(this.user, round);
-    //   }
-    //   return fetch(
-    //     `${DATA_URL}users/${uid}/rounds/r${round}/nextRndInfo.json`,
-    //     {
-    //       method: "PATCH",
-    //       mode: "cors",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify(payload),
-    //     }
-    //   )
-    //     .then((response) => response.json())
-    //     .then(async () => {
-    //       console.log("Success:");
-    //       this.$vs.loading();
-    //       await this.fetchUsers();
-    //       this.$vs.loading.close();
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error:", error);
-    //       this.error = true;
-    //       this.errorMsg = error;
-    //     });
-    // },
   },
-  watch: {
-    // "nextRound.cpt": function (nv) {
-    //   if (nv === this.nextRound.viceCpt) {
-    //     this.cptError = true;
-    //   }
-    // },
-    // "nextRound.viceCpt": function (nv) {
-    //   if (nv === this.nextRound.cpt) {
-    //     this.cptError = true;
-    //   }
-    // },
-  },
-  async created() {},
 };
 </script>
 
@@ -339,16 +263,7 @@ export default {
 @import "../../common/breakpoints.scss";
 /********************************************************
 ***************   MATCH PREPARATION   ******************/
-// .con-vs-alert-primary {
-//   width: 98%;
-//   margin: 10px;
-//   background-color: #e5000059;
-//   color: white;
-//   .con-vs-alert-primary .con-x {
-//     background-color: #3b454b;
-//     color: #fff;
-//   }
-// }
+
 .preparation {
   width: 100%;
   display: flex;
@@ -423,14 +338,6 @@ export default {
   margin: 2px 0 0 0;
   background-color: #184d18;
 
-  .additional-tournaments__header {
-    width: 100%;
-    display: inline-block;
-    background-color: #3d7f33;
-    text-align: center;
-    color: white;
-    padding: 10px 0;
-  }
   .additional-tournaments__buttons {
     width: 100%;
     display: flex;
@@ -443,25 +350,24 @@ export default {
 .captain-selected {
   margin: 2px 0;
   width: 100%;
-  background-color: #184d18;
-  color: white;
   span {
+    background-color: #184d18;
+    color: white;
     width: 100%;
     display: block;
     padding: 10px 0 10px 0;
     text-align: center;
-    font-size: 1.1rem;
     line-height: normal;
-    &:first-child {
-      background-color: #3d7f33;
-    }
-    &:nth-child(2) {
-      border-bottom: 2px solid #3d7f33;
-    }
-    &:nth-child(3) {
-      border-bottom: 2px solid #3d7f33;
-    }
+    border-bottom: 2px solid #3d7f33;
   }
+}
+.header {
+  width: 100% !important;
+  display: inline-block !important;
+  background-color: #3d7f33 !important;
+  text-align: center !important;
+  color: white !important;
+  padding: 10px 0 !important;
 }
 /*******************************************
 ************   FORM   *********************/
@@ -491,7 +397,7 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin: 20px 0 20px 0;
+    margin: 10px 0 10px 0;
     width: 100%;
     input {
       margin: 0 5px 0 0;
@@ -499,13 +405,30 @@ export default {
   }
 }
 
-::v-deep .v-btn--active {
-  background-color: #184d18 !important;
-  span {
-    color: #d3d3d3;
-  }
-  i {
-    margin: 0 0 5px 0;
+.transfers-info {
+  margin: 2px 0 0 0;
+  width: 100%;
+  background-color: lightgrey;
+
+  .transfers-info__details {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 10px;
+
+    .transfers-info__transfer-count {
+      font-size: 1rem;
+    }
   }
 }
+
+// ::v-deep .v-btn--active {
+//   background-color: #184d18 !important;
+//   span {
+//     color: #d3d3d3;
+//   }
+//   i {
+//     margin: 0 0 5px 0;
+//   }
+// }
 </style>

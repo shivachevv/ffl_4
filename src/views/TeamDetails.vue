@@ -18,10 +18,11 @@
         :user="user"
         :currentRound="currentRoundIndex + 1"
         :isAdminLogged="true"
-        :roundPlayersArray="nextRoundUserTeam"
+        :nextRoundUserTeam="nextRoundUserTeam"
         :isThisLoggedTeam="isThisLoggedTeam"
         :nextH2hRoundId="nextH2hRoundId"
         :nextCupRoundId="nextCupRoundId"
+        :transfersMade='transfersMade'
       ></MatchPrep>
 
       <!-- TRANSFERS INFORMATION  -->
@@ -177,6 +178,13 @@ export default {
       );
 
       return updatedPlayers;
+    },
+    transfersMade() {
+      return this.transfers.filter(
+        ({ round_id, user_id }) =>
+          +round_id === this.currentRoundIndex + 1 && +this.user.id === +user_id
+        // && status === "approved"
+      ).length;
     },
   },
   watch: {

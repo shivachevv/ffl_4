@@ -9,13 +9,13 @@
       <div id="app">
         <button @click.prevent="logIn">Log In</button>
         <Header />
-        <Logos />
+        <!-- <Logos /> -->
         <transition name="slide-left" mode="out-in">
           <router-view />
         </transition>
         <button @click.prevent="fetch">fetch</button>
         <button @click.prevent="fetchPlayer">fetch League</button>
-        <Footer />
+        <!-- <Footer /> -->
       </div>
     </v-main>
   </v-app>
@@ -25,15 +25,15 @@
 import axios from "axios";
 import NavBar from "./components/NavBar.vue";
 import Header from "./components/common/Header";
-import Footer from "./components/common/Footer";
-import Logos from "./components/common/Logos/Logos";
+// import Footer from "./components/common/Footer";
+// import Logos from "./components/common/Logos/Logos";
 
 export default {
   name: "App",
   components: {
     Header,
-    Footer,
-    Logos,
+    // Footer,
+    // Logos,
     NavBar,
   },
 

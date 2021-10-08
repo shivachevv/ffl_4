@@ -8,6 +8,7 @@ import cup from "./modules/cup";
 import transfers from "./modules/transfers";
 import leagues from "./modules/leagues";
 import footballPlayers from "./modules/footballPlayers";
+import userPlayers from "./modules/userPlayers";
 
 Vue.use(Vuex);
 
@@ -20,5 +21,15 @@ export default new Vuex.Store({
   },
   mutations: {},
   actions: {},
-  modules: { rounds, user, seasons, h2h, cup, transfers, leagues, footballPlayers },
+  modules: {
+    rounds,
+    user,
+    seasons,
+    h2h,
+    cup,
+    transfers,
+    leagues,
+    footballPlayers,
+    userPlayers,
+  },
 });

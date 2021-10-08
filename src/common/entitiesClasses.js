@@ -52,6 +52,53 @@ export class CupSquadPayload {
     this.st = st;
   }
 }
+
+export class squadPayload {
+  constructor({
+    league_id,
+    round_id,
+    cpt,
+    vice_cpt,
+    dc1,
+    dc2,
+    dl1,
+    dl2,
+    dr1,
+    dr2,
+    gk,
+    mc1,
+    mc2,
+    ml1,
+    ml2,
+    mr1,
+    mr2,
+    st1,
+    st2,
+    st3,
+  }) {
+    this.season_id = 1;
+    this.league_id = league_id;
+    this.round_id = round_id;
+    this.cpt = cpt;
+    this.vice_cpt = vice_cpt;
+    this.dc1 = dc1;
+    this.dc2 = dc2;
+    this.dl1 = dl1;
+    this.dl2 = dl2;
+    this.dr1 = dr1;
+    this.dr2 = dr2;
+    this.gk = gk;
+    this.mc1 = mc1;
+    this.mc2 = mc2;
+    this.ml1 = ml1;
+    this.ml2 = ml2;
+    this.mr1 = mr1;
+    this.mr2 = mr2;
+    this.st1 = st1;
+    this.st2 = st2;
+    this.st3 = st3;
+  }
+}
 export class FootballPlayer {
   constructor({
     id,

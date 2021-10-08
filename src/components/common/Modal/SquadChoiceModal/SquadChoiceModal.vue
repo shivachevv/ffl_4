@@ -155,9 +155,9 @@
 </template>
 
 <script>
-import ModalHeader from "../ModalHeader.vue";
-import ModalFooter from "../ModalFooter.vue";
-import ModalBody from "../ModalBody.vue";
+import ModalHeader from "../ModalElements/ModalHeader.vue";
+import ModalFooter from "../ModalElements/ModalFooter.vue";
+import ModalBody from "../ModalElements/ModalBody.vue";
 import SquadChoiceTeammate from "./SquadChoiceTeammate.vue";
 import {
   H2HSquadPayload,
