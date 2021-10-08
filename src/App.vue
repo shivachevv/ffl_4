@@ -18,6 +18,7 @@
         <!-- <Footer /> -->
       </div>
     </v-main>
+    <Notification />>
   </v-app>
 </template>
 
@@ -25,7 +26,8 @@
 import axios from "axios";
 import NavBar from "./components/NavBar.vue";
 import Header from "./components/common/Header";
-// import Footer from "./components/common/Footer";
+import Notification from "./components/common/Notification";
+// import Logos from "./components/common/Logos/Logos";
 // import Logos from "./components/common/Logos/Logos";
 
 export default {
@@ -33,7 +35,7 @@ export default {
   components: {
     Header,
     // Footer,
-    // Logos,
+    Notification,
     NavBar,
   },
 
@@ -70,6 +72,7 @@ export default {
         });
     },
   },
+  computed: {},
 };
 </script>
 

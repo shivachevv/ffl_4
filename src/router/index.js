@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import AdminPanel from "../views/AdminPanel.vue";
 import TeamDetails from "../views/TeamDetails.vue";
+import store from "@/store";
 
 Vue.use(VueRouter);
 
@@ -31,6 +32,13 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (store.getters["notifications/notifications"]?.length) {
+    store.dispatch("notifications/clearNotifications");
+  }
+  next();
 });
 
 export default router;

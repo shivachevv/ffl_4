@@ -1,4 +1,5 @@
 import requester from "./requester";
+import store from "../store";
 
 export const requestResource = async ({
   resourcePath,
@@ -43,9 +44,22 @@ export const postResource = async ({
 
   try {
     const response = await requester.post(resourceUrl, payload, headers);
-
+    store.dispatch("notifications/addNotifications", [
+      {
+        text: "Successfully saved settings",
+        type: "success",
+        visible: true,
+      },
+    ]);
     return response.data.data;
   } catch (error) {
+    store.dispatch("notifications/addNotifications", [
+      {
+        text: "Error saving settings",
+        type: "error",
+        visible: true,
+      },
+    ]);
     console.log(error.message);
   }
 };
@@ -67,9 +81,22 @@ export const putResource = async ({
     : resourcePath;
   try {
     const response = await requester.put(resourceUrl, payload, headers);
-
+    store.dispatch("notifications/addNotifications", [
+      {
+        text: "Successfully saved settings",
+        type: "success",
+        visible: true,
+      },
+    ]);
     return response.data.data;
   } catch (error) {
+    store.dispatch("notifications/addNotifications", [
+      {
+        text: "Error editing settings",
+        type: "error",
+        visible: true,
+      },
+    ]);
     console.log(error.message);
   }
 };
@@ -86,9 +113,22 @@ export const deleteResource = async ({ resourcePath, mainId, secondaryId }) => {
     : resourcePath;
   try {
     const response = await requester.delete(resourceUrl, headers);
-
+    store.dispatch("notifications/addNotifications", [
+      {
+        text: "Successfully deleted settings",
+        type: "success",
+        visible: true,
+      },
+    ]);
     return response.data.data;
   } catch (error) {
+    store.dispatch("notifications/addNotifications", [
+      {
+        text: "Error deleting settings",
+        type: "error",
+        visible: true,
+      },
+    ]);
     console.log(error.message);
   }
 };
