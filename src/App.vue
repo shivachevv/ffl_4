@@ -72,3 +72,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+#app {
+  background-color: lightgrey
+}
+</style>
