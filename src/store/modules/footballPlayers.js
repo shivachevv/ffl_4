@@ -37,7 +37,7 @@ const getters = {
     const playersArr = state[league.leaguePlayers]
       ? state[league.leaguePlayers]
       : [];
-    const testArr = playersArr.reduce((acc, player) => {
+    return playersArr.reduce((acc, player) => {
       if (!acc[player.club]) {
         acc[player.club] = [];
         acc[player.club].name = player.club;
@@ -45,8 +45,6 @@ const getters = {
       acc[player.club].push(player);
       return acc;
     }, {});
-    console.log("HERE: ", testArr);
-    return testArr;
   },
 };
 
@@ -136,7 +134,7 @@ const actions = {
     })
       .then(() => dispatch("fetchAllPlayers", payload.football_league_id))
       .catch((err) => console.log(err.message));
-  }
+  },
 };
 
 const mutations = {

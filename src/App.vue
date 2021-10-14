@@ -83,4 +83,7 @@ export default {
 .theme--light.v-application {
   background: #eaeaea !important;
 }
+#app {
+  background-color: lightgrey;
+}
 </style>

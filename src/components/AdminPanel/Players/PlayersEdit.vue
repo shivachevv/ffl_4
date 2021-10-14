@@ -93,7 +93,7 @@
         </div>
       </v-row> -->
     </div>
-    <list-comp
+    <ListComp
       :passedItems="itemsForList"
       :itemProps="listItemsProps"
       @focus-club="focusClub"
@@ -113,7 +113,7 @@
           >
         </div>
       </template> -->
-    </list-comp>
+    </ListComp>
     <FootballPlayerModal
       v-model="showModal.player"
       @close-modal="toggleModal('player')"
@@ -150,7 +150,7 @@ export default {
     return {
       selectedPath: [],
       listItemsProps: {},
-      itemsForList: [],
+      itemsForList: null,
       focusedLeagueId: undefined,
       showModal: {
         player: false,
@@ -179,7 +179,7 @@ export default {
       this.showModal[name] = !this.showModal[name];
     },
     async focusLeague(leagueIndex) {
-      this.itemsForList = [];
+      this.itemsForList = null;
       this.focusedLeagueId = this.showLeagues[leagueIndex].id;
       this.selectedPath.push({
         type: "league",
@@ -195,6 +195,14 @@ export default {
     },
     focusClub(clubKey) {
       this.itemsForList = this.showClubs[clubKey];
+      let positions = this.getPositions;
+      this.itemsForList.sort(function sortPlayers(a, b) {
+        if (positions.indexOf(a.position) < positions.indexOf(b.position))
+          return -1;
+        if (positions.indexOf(a.position) > positions.indexOf(b.position))
+          return 1;
+        return 0;
+      });
       this.selectedPath.push({ type: "club", name: clubKey });
       this.listItemsProps = { itemType: "player" };
     },
@@ -238,7 +246,12 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getPlayersByLeague", "getClubsByLeague", "getLeagues"]),
+    ...mapGetters([
+      "getPlayersByLeague",
+      "getClubsByLeague",
+      "getLeagues",
+      "getPositions",
+    ]),
 
     topLabel() {
       let label;
