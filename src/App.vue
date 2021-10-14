@@ -7,7 +7,7 @@
         </v-col>
       </v-row>
       <div id="app">
-        <button @click.prevent="logIn">Log In</button>
+        <v-btn @click.prevent="logIn" color="green" class="ml-16">Log In</v-btn>
         <Header />
         <!-- <Logos /> -->
         <transition name="slide-left" mode="out-in">
@@ -55,7 +55,7 @@ export default {
 
       let config = {
         method: "post",
-        url: "http://api.ff-legends.com/api/login",
+        url: "https://api.ff-legends.com/api/login",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
