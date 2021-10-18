@@ -27,7 +27,26 @@
                 :rules="requiredFieldRules"
                 :items="leagueClubs"
                 label="Club"
-              ></v-select>
+                v-if="!isNewClub"
+              >
+                <template v-slot:append-outer>
+                  <v-btn small @click="isNewClub = true" color="accent"
+                    >New Club</v-btn
+                  >
+                </template>
+              </v-select>
+              <v-text-field
+                v-if="isNewClub"
+                v-model="footballPlayer.club"
+                label="New Club"
+                :rules="requiredFieldRules"
+              >
+                <template v-slot:append-outer>
+                  <v-btn small @click="isNewClub = false" color="accent"
+                    >Old Club</v-btn
+                  >
+                </template></v-text-field
+              >
               <v-select
                 v-model="footballPlayer.position"
                 :rules="requiredFieldRules"
@@ -108,6 +127,7 @@ export default {
       (value) => (value || "").length <= 30 || "Max 30 characters",
     ],
     requiredFieldRules: [(value) => !!value || "Required."],
+    isNewClub: false,
   }),
   props: {
     value: Boolean,
