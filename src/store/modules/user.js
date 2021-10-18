@@ -13,17 +13,25 @@ const getters = {
 
 const actions = {
   async fetchLoggedUser({ commit }) {
-    const user = await requestResource({
+    const response = await requestResource({
       resourcePath: GET_RESOURCE_PATH.USER_PROFILE,
     });
-    commit("setLoggedUser", user);
+    commit("setLoggedUser", response?.data?.data);
   },
-  async fetchUserPlayers({ commit }, { userId }) {
-    const userPlayers = await requestResource({
-      resourcePath: GET_RESOURCE_PATH.USER_PLAYERS_BY_USER,
+  async fetchUser(_, { userId }) {
+    const response = await requestResource({
+      resourcePath: GET_RESOURCE_PATH.USER,
       mainId: userId,
     });
-    commit("setUserPlayers", userPlayers);
+    return response?.data?.data;
+  },
+  async fetchUserPlayers({ commit }, { userId, round_id }) {
+    const response = await requestResource({
+      resourcePath: GET_RESOURCE_PATH.USER_PLAYERS_BY_USER,
+      mainId: userId,
+      queryParams: { round_id },
+    });
+    commit("setUserPlayers", response?.data?.data);
   },
 };
 

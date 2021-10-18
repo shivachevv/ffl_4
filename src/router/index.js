@@ -17,7 +17,7 @@ const routes = [
     component: AdminPanel,
   },
   {
-    path: "/team-details",
+    path: "/team-details/:userId",
     component: TeamDetails,
     props: true,
     name: "UserPage",

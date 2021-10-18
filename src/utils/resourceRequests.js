@@ -1,20 +1,29 @@
 import requester from "./requester";
 import store from "../store";
 
+export const queryParamsString = (object) => {
+  return object
+    ? Object.entries(object).map(([label, round]) => `?${label}=${round}`)
+    : "";
+};
+
 export const requestResource = async ({
   resourcePath,
   mainId,
   secondaryId,
+  queryParams,
 }) => {
   let headers = {};
   let accessToken = localStorage.getItem("Access-Token");
   headers["Authorization"] = `Bearer ${accessToken}`;
 
   let resourceUrl = secondaryId
-    ? `${resourcePath}/${mainId}/${secondaryId}`
+    ? `${resourcePath}/${mainId}/${secondaryId}${queryParamsString(
+        queryParams
+      )}`
     : mainId
-    ? `${resourcePath}/${mainId}`
-    : resourcePath;
+    ? `${resourcePath}/${mainId}${queryParamsString(queryParams)}`
+    : `${resourcePath}${queryParamsString(queryParams)}`;
 
   return requester.get(resourceUrl, headers);
   // try {
@@ -31,16 +40,17 @@ export const postResource = async ({
   mainId,
   secondaryId,
   payload,
+  queryParams,
 }) => {
   let headers = {};
   let accessToken = localStorage.getItem("Access-Token");
   headers["Authorization"] = `Bearer ${accessToken}`;
 
   let resourceUrl = secondaryId
-    ? `${resourcePath}/${mainId}/${secondaryId}`
+    ? `${resourcePath}/${mainId}/${secondaryId}${queryParams(queryParams)}`
     : mainId
-    ? `${resourcePath}/${mainId}`
-    : resourcePath;
+    ? `${resourcePath}/${mainId}${queryParams(queryParams)}`
+    : `${resourcePath}${queryParams(queryParams)}`;
 
   try {
     const response = await requester.post(resourceUrl, payload, headers);

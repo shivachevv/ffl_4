@@ -122,7 +122,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions({
+    ...mapActions("rounds", {
       createRoundAction: "createRound",
       editRoundAction: "editRound",
     }),
@@ -153,7 +153,8 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getAllRounds", "getCurrentRoundIndex", "getSeasons"]),
+    ...mapGetters("rounds", ["getAllRounds", "getCurrentRoundIndex"]),
+    ...mapGetters("seasons", ["getSeasons"]),
     rounds() {
       return this.getAllRounds;
     },
@@ -188,8 +189,8 @@ export default {
     },
   },
   async created() {
-    await this.$store.dispatch("fetchRounds");
-    await this.$store.dispatch("fetchSeasons");
+    await this.$store.dispatch("rounds/fetchRounds");
+    await this.$store.dispatch("seasons/fetchSeasons");
     this.showRound = this.currentRound.index + 1;
   },
 };

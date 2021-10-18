@@ -4,11 +4,12 @@
     <v-col cols="8">
       <!---------------- USER TEAM SECTION -------------------------------------->
       <UserTeam
-        :currentRound="currentRoundIndex + 1"
+        :currentRound="10"
         :user="user"
         :roundPlayersArray="roundPlayersArray"
         :captain="captain"
         :viceCaptain="viceCaptain"
+        @selectedRound="changeSelectedRound"
       ></UserTeam>
     </v-col>
     <v-col cols="4" class="pl-4">
@@ -22,7 +23,7 @@
         :isThisLoggedTeam="isThisLoggedTeam"
         :nextH2hRoundId="nextH2hRoundId"
         :nextCupRoundId="nextCupRoundId"
-        :transfersMade='transfersMade'
+        :transfersMade="transfersMade"
       ></MatchPrep>
 
       <!-- TRANSFERS INFORMATION  -->
@@ -63,19 +64,18 @@ export default {
     return {
       popupShow: false,
       popupPlayer: "",
+      user: null,
+      selectedRound: null,
     };
   },
   methods: {
-    ...mapActions("user", ["fetchLoggedUser", "fetchUserPlayers"]),
+    ...mapActions("user", ["fetchLoggedUser", "fetchUserPlayers", "fetchUser"]),
     ...mapActions("rounds", ["fetchRounds"]),
     ...mapActions("cup", ["fetchCupRounds"]),
     ...mapActions("transfers", ["fetchTransfers"]),
-    // "fetchLeagues",
-    // "fetchPlayers",
-    //   "fetchCurrentRound",
-    //   "fetchUsers",
-    // "fetchStandings",
-    // "fetchLoggedUser"
+    changeSelectedRound(event) {
+      this.selectedRound = event;
+    },
     // playerPopupHandler(p) {
     //   this.popupShow = true;
     //   this.popupPlayer = this.players[p];
@@ -93,15 +93,8 @@ export default {
     ...mapState("cup", ["cupRounds"]),
     ...mapState("transfers", ["transfers"]),
     isThisLoggedTeam() {
-      // console.log(this.user, this.loggedUser);
-      // return this.user.uid === this.loggedUser.uid;
-      return true;
-    },
-    user() {
-      return this.loggedUser?.data?.data;
-    },
-    roundPlayers() {
-      return this.userPlayers?.data?.data[0];
+      return this.user.id === this.loggedUser.id;
+      // return true;
     },
     roundPlayersArray() {
       const positions = [
@@ -122,8 +115,8 @@ export default {
         "st2",
         "st3",
       ];
-      return this.roundPlayers
-        ? Object.entries(this.roundPlayers)
+      return this.userPlayers
+        ? Object.entries(this.userPlayers)
             .filter(([position]) => positions.includes(position))
             .map(([position, player]) => {
               return { position, player: player[0] };
@@ -131,13 +124,13 @@ export default {
         : [];
     },
     captain() {
-      return this.roundPlayers?.cpt[0];
+      return this.userPlayers?.cpt[0];
     },
     viceCaptain() {
-      return this.roundPlayers?.vice_cpt[0];
+      return this.userPlayers?.vice_cpt[0];
     },
     loading() {
-      return !this.user || !this.roundPlayers;
+      return !this.user || !this.userPlayers;
     },
     nextH2hRoundId() {
       const isNextRoundH2h =
@@ -153,12 +146,13 @@ export default {
       )?.id;
     },
     nextRoundUserTeam() {
+      console.log(this.transfers);
       const newPlayers = this.transfers
         .filter(
           ({ round_id, user_id }) =>
             +round_id === this.currentRoundIndex + 1 &&
             +this.user.id === +user_id
-          // && status === "approved"
+          // TO DO && status === "approved"
         )
         .reduce((acc, { to_player, position }) => {
           acc[position] = to_player;
@@ -186,111 +180,37 @@ export default {
         // && status === "approved"
       ).length;
     },
+    userId() {
+      return this.$route.params.userId;
+    },
   },
   watch: {
-    // loggedUser(nv){
-    //   if (nv) {
-    //     const WCStatus =  this.loggedUser.rounds[`r${this.currentRound}`].wildCard
-    //     this.wildcard = WCStatus
-    //     console.log(this.wildcard);
-    //   }
-    // },
-    // currentRound(nv) {
-    //   if (nv && this.players && this.users) {
-    //     this.$vs.loading.close();
-    //   }
-    // },
-    // players(nv) {
-    //   if (nv && this.users && this.currentRound) {
-    //     this.$vs.loading.close();
-    //   }
-    // },
-    // users(nv) {
-    //   if (nv && this.players && this.currentRound) {
-    //     this.$vs.loading.close();
-    //   }
-    // },
+    currentRoundIndex(newIndex) {
+      if (newIndex) {
+        this.selectedRound = +this.currentRoundIndex + 1;
+      }
+    },
+    async selectedRound(newRound) {
+      await this.fetchUserPlayers({
+        userId: this.user?.id,
+        round_id: newRound,
+      });
+    },
   },
   async created() {
+    this.user = await this.fetchUser({ userId: this.userId });
     await this.fetchCupRounds();
     await this.fetchTransfers();
     await this.fetchLoggedUser();
     await this.fetchRounds();
-    await this.fetchUserPlayers(this.user?.id);
+    await this.fetchUserPlayers({
+      userId: this.user?.id,
+      round_id: this.selectedRound,
+    });
   },
-  mounted() {},
 };
 </script>
 
 <style scoped lang="scss">
 @import "@/common/breakpoints.scss";
-
-// .main-container {
-//   display: flex;
-//   flex-direction: row;
-//   align-items: flex-start;
-//   justify-content: space-between;
-//   @media #{$mobile} {
-//     width: 100%;
-//     flex-direction: column;
-//     align-items: center;
-//   }
-//   .user-details {
-//     height: fit-content;
-//     width: 35%;
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//     justify-content: flex-start;
-//     margin: 0 0 0 20px;
-//     @media #{$mobile} {
-//       width: 96%;
-//       margin: 0px;
-//     }
-//   }
-// } //POPUP STYLES
-// .vs-popup {
-//   width: 50% !important;
-//   .vs-popup--content {
-//     font-size: 0.9em !important;
-//     -webkit-transition: all 0.23s ease 0.1s !important;
-//     transition: all 0.23s ease 0.1s !important;
-//     overflow: auto !important;
-//     max-height: calc(100vh - 100px) !important;
-//     padding: 0px !important;
-//     width: 100% !important;
-//     margin: 0px !important;
-//     background-color: red !important;
-//     // background-color: #e0e0e0;
-//   }
-// }
-// .fade-enter-active,
-// .fade-leave-active {
-//   transition-duration: 0.3s;
-//   transition-property: opacity;
-//   transition-timing-function: ease;
-// }
-// .fade-enter,
-// .fade-leave-active {
-//   opacity: 0;
-// }
-// .slide-left-enter-active,
-// .slide-left-leave-active,
-// .slide-right-enter-active,
-// .slide-right-leave-active {
-//   transition-duration: 0.2s;
-//   transition-property: height, opacity, transform;
-//   transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);
-//   overflow: hidden;
-// }
-// .slide-left-enter,
-// .slide-right-leave-active {
-//   opacity: 0;
-//   transform: translate(2em, 0);
-// }
-// .slide-left-leave-active,
-// .slide-right-enter {
-//   opacity: 0;
-//   transform: translate(-2em, 0);
-// }
 </style>

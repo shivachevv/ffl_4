@@ -18,8 +18,8 @@
             Previous
           </v-btn>
 
-          <span class="round up" v-if="tempRndShow"
-            >Round {{ tempRndShow }}</span
+          <span class="round up" v-if="selectedRound"
+            >Round {{ selectedRound }}</span
           >
           <v-btn
             :disabled="isShowingLastRnd"
@@ -45,155 +45,8 @@
           :isCap="isCap(player)"
           :isVCap="isVCap(player)"
           :isVCActive="false"
-          :tempRndShow="tempRndShow"
+          :selectedRound="selectedRound"
         ></Teammate>
-        <!-- <Teammate
-          class="dl2"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="dl1"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="dc1"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="dc2"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="dr1"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="dr2"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="ml1"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="ml2"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="mc1"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="mc2"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="mr1"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="mr2"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="st1"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="st2"
-          :player="{}"
-          :isTripple="false"
-          :isCap="false"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate>
-        <Teammate
-          class="st3"
-          :player="{}"
-          :isTripple="false"
-          :isCap="true"
-          :isVCap="false"
-          :isVCActive="false"
-          :tempRndShow="tempRndShow"
-        ></Teammate> -->
-        <!-- <Teammate
-          v-for="(pl, i) in Object.entries(rndShow.team)"
-          :class="pl[0]"
-          :player="players[pl[1]]"
-          :isTripple="!!rndShow.superCpt && rndShow.cpt === pl[1]"
-          :isCap="rndShow.cpt === pl[1]"
-          :isVCap="rndShow.viceCpt === pl[1]"
-          :isVCActive="isVCActive()"
-          :tempRndShow="tempRndShow"
-          :key="i"
-          @click.prevent.native="playerPopupHandler(pl[1])"
-        ></Teammate> -->
         <div class="round-total-points up elevation-5">
           {{ rndShowTotal }}
           <br />points
@@ -239,28 +92,28 @@ export default {
   },
   data() {
     return {
-      tempRndShow: 0,
+      selectedRound: 0,
     };
   },
   computed: {
     isShowingLastRnd() {
-      return Number(this.tempRndShow) === this.currentRound;
+      return Number(this.selectedRound) === this.currentRound;
     },
     isShowingFirstRnd() {
-      return Number(this.tempRndShow) === 1;
+      return Number(this.selectedRound) === 1;
     },
     rndShow: {
       get: function () {
         return {};
       },
       set: function (v) {
-        return (this.tempRndShow = v);
+        return (this.selectedRound = v);
       },
     },
     rndShowTotal() {
       // const total = roundPointsCalculator(
       //   this.rndShow,
-      //   this.tempRndShow,
+      //   this.selectedRound,
       //   this.players,
       //   false
       // );
@@ -295,10 +148,12 @@ export default {
   methods: {
     ...mapActions("rounds", ["fetchRounds"]),
     previousRound() {
-      if (this.tempRndShow > 1) this.tempRndShow--;
+      if (this.selectedRound > 1) this.selectedRound--;
+      this.$emit("selectedRound", this.selectedRound);
     },
     nextRound() {
-      if (this.tempRndShow < this.currentRound) this.tempRndShow++;
+      if (this.selectedRound < this.currentRound) this.selectedRound++;
+      this.$emit("selectedRound", this.selectedRound);
     },
     isCap({ id }) {
       return id === this.captain.id;
@@ -310,16 +165,16 @@ export default {
     //   return this.$emit("playerPopupHandler", p);
     // },
     // isVCActive() {
-    //   // const isLast = this.tempRndShow === this.currentRound;
+    //   // const isLast = this.selectedRound === this.currentRound;
     //   // if (!isLast) {
     //   if (!this.players[this.rndShow.cpt]) {
     //     // console.log("1a");
     //     return true;
     //   }
     //   const hasCptPlayed =
-    //     this.players[this.rndShow.cpt].points[`r${this.tempRndShow}`].roundStats
+    //     this.players[this.rndShow.cpt].points[`r${this.selectedRound}`].roundStats
     //       .starter ||
-    //     this.players[this.rndShow.cpt].points[`r${this.tempRndShow}`].roundStats
+    //     this.players[this.rndShow.cpt].points[`r${this.selectedRound}`].roundStats
     //       .sub;
     //   // console.log("2a");
     //   return !hasCptPlayed;
@@ -334,7 +189,7 @@ export default {
   },
   async created() {
     await this.fetchRounds();
-    this.tempRndShow = this.currentRound;
+    this.selectedRound = this.currentRound;
   },
   watch: {
     // user(nv) {
