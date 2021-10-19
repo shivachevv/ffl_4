@@ -2,31 +2,36 @@
   <div>
     <div>
       <v-row
-        justify="space-between"
         align="center"
+        justify="space-between"
         no-gutters
         class="mt-10 px-10"
       >
-        <div class="mt-20">
-          <v-btn @click="traverseBack" v-if="selectedPath.length" x-large>
-            BACK
-          </v-btn>
-        </div>
-
-        <h1 class="text-center font-weight-black text-h3">{{ topLabel }}</h1>
-        <div class="mt-20">
-          <v-btn @click="createPlayerModal" x-large> NEW PLAYER </v-btn>
+        <div>
+          <h1 class="font-weight-black text-h3">
+            {{ topLabel }}
+          </h1>
         </div>
       </v-row>
     </div>
-    <list-comp
-      :passedItems="itemsForList"
-      :itemProps="listItemsProps"
-      @focus-club="focusClub"
-      @focus-league="focusLeague"
-      @focus-player="focusPlayer"
-    >
-    </list-comp>
+    <div class="list-wrapper">
+      {{ itemsForTransfersList.length }}
+      <list-comp
+        :passedItems="itemsForList"
+        v-if="!itemsForTransfersList.length"
+        :itemProps="listItemsProps"
+        @focus-round="focusRound"
+        @focus-user-league="focusUserLeague"
+      >
+      </list-comp>
+      <transfers-list
+        :passedItems="itemsForTransfersList"
+        :itemProps="listItemsProps"
+        @focus-transfer="focusTransfer"
+      >
+      </transfers-list>
+    </div>
+
     <FootballPlayerModal
       v-model="showModal.player"
       @close-modal="toggleModal('player')"
@@ -51,6 +56,7 @@ import { mapGetters, mapActions } from "vuex";
 import ListComp from "../../common/ListComp.vue";
 import FootballPlayerModal from "../../common/Modal/FootballPlayerModal.vue";
 import PlayerPointsModal from "../../common/Modal/PlayerPointsModal.vue";
+import TransfersList from "../../common/TransfersList.vue";
 
 export default {
   name: "PlayersEdit",
@@ -58,13 +64,17 @@ export default {
     ListComp,
     FootballPlayerModal,
     PlayerPointsModal,
+    TransfersList,
   },
   data() {
     return {
       selectedPath: [],
       listItemsProps: {},
       itemsForList: [],
-      focusedLeagueId: undefined,
+      itemsForTransfersList: [],
+      secondItemsProps: {},
+      focusedUserLeagueId: undefined,
+      focusedRoundId: undefined,
       showModal: {
         player: false,
         playerPoints: false,
@@ -91,33 +101,33 @@ export default {
     toggleModal(name) {
       this.showModal[name] = !this.showModal[name];
     },
-    async focusLeague(leagueIndex) {
+    async focusUserLeague(userLeagueIndex) {
       this.itemsForList = [];
-      this.focusedLeagueId = this.showLeagues[leagueIndex].id;
+      this.focusedUserLeagueId = this.showUserLeagues[userLeagueIndex].id;
       this.selectedPath.push({
-        type: "league",
-        name: this.showLeagues[leagueIndex].name,
+        type: "user-league",
+        name: this.showUserLeagues[userLeagueIndex].name,
       });
-      if (this.showPlayers.length == 0) {
-        await this.fetchAllPlayersAction(this.focusedLeagueId);
-      }
       if (this.selectedPath.length == 1) {
-        this.itemsForList = this.showClubs;
-        this.listItemsProps = { itemType: "club" };
+        this.itemsForTransfersList = {
+          rounds: this.showRounds,
+          transfers: this.showTransfers,
+        };
+        this.listItemsProps = { itemType: "transfer" };
       }
     },
-    focusClub(clubKey) {
-      this.itemsForList = this.showClubs[clubKey];
-      let positions = this.getPositions;
-      this.itemsForList.sort(function sortPlayers(a, b) {
-        if (positions.indexOf(a.position) < positions.indexOf(b.position))
-          return -1;
-        if (positions.indexOf(a.position) > positions.indexOf(b.position))
-          return 1;
-        return 0;
-      });
-      this.selectedPath.push({ type: "club", name: clubKey });
-      this.listItemsProps = { itemType: "player" };
+    focusRound() {
+      this.itemsForTransfersList = this.showTransfers;
+      // let positions = this.getPositions;
+      // this.itemsForList.sort(function sortPlayers(a, b) {
+      //   if (positions.indexOf(a.position) < positions.indexOf(b.position))
+      //     return -1;
+      //   if (positions.indexOf(a.position) > positions.indexOf(b.position))
+      //     return 1;
+      //   return 0;
+      // });
+      // this.selectedPath.push({ type: "club", name: roundIndex });
+      // this.listItemsProps = { itemType: "player" };
     },
     focusPlayer(playerIndex) {
       const player = this.showClubs[this.selectedPath[1].name][playerIndex];
@@ -160,46 +170,60 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "getPlayersByLeague",
-      "getClubsByLeague",
-      "getLeagues",
-      "getPositions",
+      "getAllRounds",
+      "getUserLeagues",
+      "getSeasons",
+      "getTransfers",
     ]),
 
     topLabel() {
       let label;
       switch (this.selectedPath.length) {
         case 0:
-          label = "Select league";
+          label = "Select User League:";
           break;
         case 1:
           label = this.selectedPath[0].name;
           break;
-        case 2:
-          label = `${this.selectedPath[0].name} >> ${this.selectedPath[1].name}`;
       }
       return label;
     },
 
-    showLeagues() {
-      return this.getLeagues;
+    showUserLeagues() {
+      return this.getUserLeagues;
     },
-
-    showPlayers() {
-      return this.focusedLeagueId
-        ? this.getPlayersByLeague(this.focusedLeagueId)
+    showRounds() {
+      const allRounds = this.getAllRounds;
+      const activeSeason = this.getSeasons.find(({ active }) => active);
+      return activeSeason
+        ? allRounds.filter(({ season_id }) => season_id == activeSeason.id)
         : [];
     },
 
-    showClubs() {
-      return this.showPlayers.length
-        ? this.getClubsByLeague(this.focusedLeagueId)
-        : {};
+    showTransfers() {
+      return this.fousedRoundId
+        ? this.getTransfers
+            .filter(({ round_id }) => round_id == this.fousedRoundId)
+            .map((transfer) => {
+              transfer.name = `From user ${transfer.user_id}: Player ${transfer.from_player_id} for player ${transfer.to_player_id}`;
+              return transfer;
+            })
+        : [];
     },
   },
   async created() {
-    this.itemsForList = this.showLeagues;
-    this.listItemsProps = { itemType: "league" };
+    await Promise.all([
+      this.$store.dispatch("fetchUserLeagues"),
+      this.$store.dispatch("fetchRounds"),
+      this.$store.dispatch("fetchSeasons"),
+      this.$store.dispatch("fetchTransfers"),
+    ]);
+    this.itemsForList = this.showUserLeagues;
+    this.listItemsProps = { itemType: "user-league" };
+    // this.fousedRoundId = this.getSeasons.find(
+    //   ({ active }) => active
+    // ).current_round;
+    this.fousedRoundId = "7";
   },
 };
 </script>
@@ -236,6 +260,15 @@ $btn-color: #5ac683;
   .v-btn {
     margin: 0rem 0.5rem;
     width: 5rem;
+  }
+}
+.list-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  .v-list {
+    flex-grow: 2;
   }
 }
 </style>

@@ -1,4 +1,3 @@
-  <!-- eslint-disable vue/valid-v-for  -->
 <template>
   <v-list class="list-container">
     <div class="item-wrapper" :class="itemProps.itemType">

@@ -180,7 +180,8 @@ const PlayersEdit = () =>
 // const Rounds = () => import("./Rounds/Rounds");
 // const UsersPersonal = () => import("./Users/UsersPersonal");
 // const UsersTeams = () => import("./Users/UsersTeams");
-// const Transfers = () => import("./Transfers/Transfers");
+const Transfers = () =>
+  import("../components/AdminPanel/Transfers/Transfers.vue");
 // const Leagues = () => import("./Leagues/Leagues");
 // const H2HLeague = () => import("./H2HLeague/H2HLeague");
 // const CupGroupsAndRounds = () => import("./Cup/CupGroupsAndRounds");
@@ -201,7 +202,7 @@ export default {
     // SyncPoints,
     // UsersPersonal,
     // UsersTeams,
-    // Transfers,
+    Transfers,
     // Leagues,
     // H2HLeague,
     // CupGroupsAndRounds,
