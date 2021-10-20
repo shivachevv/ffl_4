@@ -47,10 +47,12 @@ export const postResource = async ({
   headers["Authorization"] = `Bearer ${accessToken}`;
 
   let resourceUrl = secondaryId
-    ? `${resourcePath}/${mainId}/${secondaryId}${queryParams(queryParams)}`
+    ? `${resourcePath}/${mainId}/${secondaryId}${queryParamsString(
+        queryParams
+      )}`
     : mainId
-    ? `${resourcePath}/${mainId}${queryParams(queryParams)}`
-    : `${resourcePath}${queryParams(queryParams)}`;
+    ? `${resourcePath}/${mainId}${queryParamsString(queryParams)}`
+    : `${resourcePath}${queryParamsString(queryParams)}`;
 
   try {
     const response = await requester.post(resourceUrl, payload, headers);

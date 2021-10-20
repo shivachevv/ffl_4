@@ -1,7 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import AdminPanel from "../views/AdminPanel.vue";
-import TeamDetails from "../views/TeamDetails.vue";
+const AdminPanel = () => import("../views/AdminPanel");
+const TeamDetails = () => import("../views/TeamDetails");
+const TransfersCenter = () => import("../views/TransfersCenter");
 import store from "@/store";
 
 Vue.use(VueRouter);
@@ -23,6 +24,16 @@ const routes = [
     name: "UserPage",
     beforeEnter(to, from, next) {
       document.title = "My Team";
+      next();
+    },
+  },
+  {
+    path: "/transfers-center/:userId",
+    component: TransfersCenter,
+    props: true,
+    name: "TransfersCenter",
+    beforeEnter(to, from, next) {
+      document.title = "Transfers Center";
       next();
     },
   },

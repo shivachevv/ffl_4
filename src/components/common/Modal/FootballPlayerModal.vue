@@ -55,8 +55,8 @@
               ></v-select>
               <v-text-field
                 v-model="footballPlayer.shirt"
-                :rules="requiredFieldRules"
                 label="Shirt-slug"
+                v-if="false"
               ></v-text-field>
               <v-text-field
                 v-model="footballPlayer.whoscored_id"
@@ -140,6 +140,7 @@ export default {
     },
     // TO DO: Form validation!!!!
     handleSave() {
+      this.footballPlayer.shirt = "1";
       if (this.label == "EDIT PLAYER") {
         this.$emit("edit-player", this.footballPlayer);
       } else {
