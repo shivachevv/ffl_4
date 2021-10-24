@@ -7,17 +7,18 @@
         </v-col>
       </v-row>
       <div id="app">
-        <button @click.prevent="logIn">Log In</button>
+        <v-btn @click.prevent="logIn" color="green" class="ml-16">Log In</v-btn>
         <Header />
-        <Logos />
+        <!-- <Logos /> -->
         <transition name="slide-left" mode="out-in">
           <router-view />
         </transition>
         <button @click.prevent="fetch">fetch</button>
         <button @click.prevent="fetchPlayer">fetch League</button>
-        <Footer />
+        <!-- <Footer /> -->
       </div>
     </v-main>
+    <Notification />>
   </v-app>
 </template>
 
@@ -25,15 +26,16 @@
 import axios from "axios";
 import NavBar from "./components/NavBar.vue";
 import Header from "./components/common/Header";
-import Footer from "./components/common/Footer";
-import Logos from "./components/common/Logos/Logos";
+import Notification from "./components/common/Notification";
+// import Logos from "./components/common/Logos/Logos";
+// import Logos from "./components/common/Logos/Logos";
 
 export default {
   name: "App",
   components: {
     Header,
-    Footer,
-    Logos,
+    // Footer,
+    Notification,
     NavBar,
   },
 
@@ -53,7 +55,7 @@ export default {
 
       let config = {
         method: "post",
-        url: "http://api.ff-legends.com/api/login",
+        url: "https://api.ff-legends.com/api/login",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -70,11 +72,18 @@ export default {
         });
     },
   },
+  computed: {},
 };
 </script>
 
 <style lang="scss">
+.up {
+  text-transform: uppercase;
+}
+.theme--light.v-application {
+  background: #eaeaea !important;
+}
 #app {
-  background-color: lightgrey
+  background-color: lightgrey;
 }
 </style>
