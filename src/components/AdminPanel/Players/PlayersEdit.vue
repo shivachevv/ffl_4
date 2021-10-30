@@ -19,14 +19,31 @@
         </div>
       </v-row>
     </div>
-    <list-comp
+    <ListComp
       :passedItems="itemsForList"
       :itemProps="listItemsProps"
       @focus-club="focusClub"
       @focus-league="focusLeague"
       @focus-player="focusPlayer"
     >
+<<<<<<< HEAD
     </list-comp>
+=======
+      <v-avatar size="80" tile
+        ><img src="../../../assets/images/user-transfers/leagues/ligue-1.png"
+      /></v-avatar>
+      <!-- <template v-slot:itemActions>
+        <div class="item-actions">
+          <v-btn elevation="2" outlined large class="amber darken-4 white--text"
+            >EDIT</v-btn
+          >
+          <v-btn elevation="2" outlined large class="red white--text"
+            >DELETE</v-btn
+          >
+        </div>
+      </template> -->
+    </ListComp>
+>>>>>>> d304ecb3ceb3d626025c0d7cd1caa87cbe74988e
     <FootballPlayerModal
       v-model="showModal.player"
       @close-modal="toggleModal('player')"
@@ -63,7 +80,7 @@ export default {
     return {
       selectedPath: [],
       listItemsProps: {},
-      itemsForList: [],
+      itemsForList: null,
       focusedLeagueId: undefined,
       showModal: {
         player: false,
@@ -92,7 +109,7 @@ export default {
       this.showModal[name] = !this.showModal[name];
     },
     async focusLeague(leagueIndex) {
-      this.itemsForList = [];
+      this.itemsForList = null;
       this.focusedLeagueId = this.showLeagues[leagueIndex].id;
       this.selectedPath.push({
         type: "league",
