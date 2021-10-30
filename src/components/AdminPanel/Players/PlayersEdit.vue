@@ -26,9 +26,6 @@
       @focus-league="focusLeague"
       @focus-player="focusPlayer"
     >
-<<<<<<< HEAD
-    </list-comp>
-=======
       <v-avatar size="80" tile
         ><img src="../../../assets/images/user-transfers/leagues/ligue-1.png"
       /></v-avatar>
@@ -43,7 +40,6 @@
         </div>
       </template> -->
     </ListComp>
->>>>>>> d304ecb3ceb3d626025c0d7cd1caa87cbe74988e
     <FootballPlayerModal
       v-model="showModal.player"
       @close-modal="toggleModal('player')"

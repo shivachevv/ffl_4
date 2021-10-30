@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-<!-- eslint-disable vue/valid-v-for  -->
->>>>>>> d304ecb3ceb3d626025c0d7cd1caa87cbe74988e
 <template>
   <div>
     <h1 class="ml-10" v-if="!passedItems">LOADING...</h1>
