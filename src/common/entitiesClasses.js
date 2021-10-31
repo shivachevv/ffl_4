@@ -122,3 +122,11 @@ export class FootballPlayer {
     this.whoscored_id = whoscored_id;
   }
 }
+export class TransferRequest {
+  constructor({ round_id, position, from, to }) {
+    this.round_id = round_id;
+    this.position = position;
+    this.from = from;
+    this.to = to;
+  }
+}

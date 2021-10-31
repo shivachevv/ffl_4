@@ -186,7 +186,9 @@ export default {
         name: this.showLeagues[leagueIndex].name,
       });
       if (this.showPlayers.length == 0) {
-        await this.fetchAllPlayersAction(this.focusedLeagueId);
+        await this.fetchAllPlayersAction({
+          priorityLeagueId: this.focusedLeagueId,
+        });
       }
       if (this.selectedPath.length == 1) {
         this.itemsForList = this.showClubs;

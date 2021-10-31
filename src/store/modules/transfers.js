@@ -1,5 +1,8 @@
-import { requestResource } from "../../utils/resourceRequests";
-import { GET_RESOURCE_PATH } from "../../common/apiRequests";
+import { requestResource, postResource } from "../../utils/resourceRequests";
+import {
+  GET_RESOURCE_PATH,
+  POST_RESOURCE_PATH,
+} from "../../common/apiRequests";
 
 const state = {
   transfers: null,
@@ -16,6 +19,16 @@ const actions = {
     });
 
     commit("setTransfers", rounds?.data?.data);
+  },
+  async createTransfer({ dispatch }, payload) {
+    console.log(payload);
+    await postResource({
+      resourcePath: POST_RESOURCE_PATH.TRANSFERS_USER_TR_REQUEST,
+      payload,
+    });
+
+    await dispatch("fetchTransfers");
+    // .catch((err) => console.log(err.message));
   },
 };
 

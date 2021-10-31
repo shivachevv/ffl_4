@@ -49,9 +49,14 @@ const getters = {
 };
 
 const actions = {
-  async fetchAllPlayers({ commit, dispatch, rootGetters }, priorityLeagueId) {
+  async fetchAllPlayers(
+    { commit, dispatch, rootGetters },
+    { priorityLeagueId, queryParams }
+  ) {
     let players = [];
-    let leagueIdsArr = rootGetters.getLeagues.map((league) => league.id);
+    let leagueIdsArr = rootGetters["leagues/getLeagues"].map(
+      (league) => league.id
+    );
     if (priorityLeagueId) {
       await dispatch("fetchPlayersByLeague", priorityLeagueId);
       players = state.footballPlayers.filter(
@@ -65,11 +70,12 @@ const actions = {
         await requestResource({
           resourcePath: GET_RESOURCE_PATH.PLAYERS_BY_LEAGUE,
           mainId: leagueId,
+          queryParams,
         })
     );
     Promise.allSettled(allLeaguesArr).then((response) => {
       response.forEach((leaguePlayers) => {
-        const league = rootGetters.getLeagues.find(
+        const league = rootGetters["leagues/getLeagues"].find(
           ({ id }) => id == leaguePlayers.value.data.data[0].football_league_id
         );
         players.push(...leaguePlayers.value.data.data);
@@ -83,7 +89,9 @@ const actions = {
   },
   async fetchPlayersByLeague({ commit, rootGetters }, leagueId) {
     let players = [];
-    const league = rootGetters.getLeagues.find(({ id }) => id == leagueId);
+    const league = rootGetters["leagues/getLeagues"].find(
+      ({ id }) => id == leagueId
+    );
     await requestResource({
       resourcePath: GET_RESOURCE_PATH.PLAYERS_BY_LEAGUE,
       mainId: leagueId,
@@ -123,7 +131,11 @@ const actions = {
       mainId: payload.id,
       payload,
     })
-      .then(() => dispatch("fetchAllPlayers", payload.football_league_id))
+      .then(() =>
+        dispatch("fetchAllPlayers", {
+          priorityLeagueId: payload.football_league_id,
+        })
+      )
       .catch((err) => console.log(err.message));
   },
   async deletePlayer({ dispatch }, payload) {
@@ -132,7 +144,11 @@ const actions = {
       resourcePath: DELETE_RESOURCE_PATH.FOOTBALL_PLAYER_DELETE,
       mainId: payload.id,
     })
-      .then(() => dispatch("fetchAllPlayers", payload.football_league_id))
+      .then(() =>
+        dispatch("fetchAllPlayers", {
+          priorityLeagueId: payload.football_league_id,
+        })
+      )
       .catch((err) => console.log(err.message));
   },
 };
@@ -161,4 +177,5 @@ export default {
   getters,
   actions,
   mutations,
+  namespaced: true,
 };
