@@ -2,6 +2,7 @@ import { requestResource } from "../../utils/resourceRequests";
 import { GET_RESOURCE_PATH } from "../../common/apiRequests";
 
 const state = {
+  users: null,
   loggedUser: null,
   userPlayers: null,
 };
@@ -12,6 +13,12 @@ const getters = {
 };
 
 const actions = {
+  async fetchUsers({ commit }) {
+    const response = await requestResource({
+      resourcePath: GET_RESOURCE_PATH.USER,
+    });
+    commit("setUsers", response?.data?.data);
+  },
   async fetchLoggedUser({ commit }) {
     const response = await requestResource({
       resourcePath: GET_RESOURCE_PATH.USER_PROFILE,
@@ -36,6 +43,9 @@ const actions = {
 };
 
 const mutations = {
+  setUsers: (state, users) => {
+    state.users = users;
+  },
   setLoggedUser: (state, u) => {
     state.loggedUser = u;
   },
