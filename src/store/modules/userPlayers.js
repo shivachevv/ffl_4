@@ -1,13 +1,9 @@
 import { postResource } from "../../utils/resourceRequests";
-import {
-  POST_RESOURCE_PATH,
-} from "../../common/apiRequests";
+import { POST_RESOURCE_PATH } from "../../common/apiRequests";
 
-const state = {
-};
+const state = {};
 
-const getters = {
-};
+const getters = {};
 
 const actions = {
   async createNextRoundPlayers(_, payload) {
@@ -24,8 +20,7 @@ const actions = {
   },
 };
 
-const mutations = {
-};
+const mutations = {};
 
 export default {
   state,

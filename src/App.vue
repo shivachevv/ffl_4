@@ -13,12 +13,10 @@
         <transition name="slide-left" mode="out-in">
           <router-view />
         </transition>
-        <button @click.prevent="fetch">fetch</button>
-        <button @click.prevent="fetchPlayer">fetch League</button>
         <!-- <Footer /> -->
       </div>
     </v-main>
-    <Notification />>
+    <Notification />
   </v-app>
 </template>
 
