@@ -14,23 +14,20 @@
         </div>
       </v-row>
     </div>
-    <div class="list-wrapper">
-      {{ itemsForTransfersList.length }}
-      <list-comp
-        :passedItems="itemsForList"
-        v-if="!itemsForTransfersList.length"
-        :itemProps="listItemsProps"
-        @focus-round="focusRound"
-        @focus-user-league="focusUserLeague"
-      >
-      </list-comp>
-      <transfers-list
-        :passedItems="itemsForTransfersList"
-        :itemProps="listItemsProps"
-        @focus-transfer="focusTransfer"
-      >
-      </transfers-list>
-    </div>
+    <list-comp
+      :passedItems="itemsForList"
+      v-if="!itemsForTransfersList.length"
+      :itemProps="listItemsProps"
+      @focus-user-league="focusUserLeague"
+    >
+    </list-comp>
+    <transfers-list
+      v-if="itemsForTransfersList.length"
+      :passedItems="itemsForTransfersList"
+      :itemProps="listItemsProps"
+      @focus-transfer="focusTransfer"
+    >
+    </transfers-list>
 
     <FootballPlayerModal
       v-model="showModal.player"
@@ -74,7 +71,6 @@ export default {
       itemsForTransfersList: [],
       secondItemsProps: {},
       focusedUserLeagueId: undefined,
-      focusedRoundId: undefined,
       showModal: {
         player: false,
         playerPoints: false,
@@ -97,6 +93,7 @@ export default {
       createPlayerAction: "createPlayer",
       editPlayerAction: "editPlayer",
       deletePlayerAction: "deletePlayer",
+      fetchUser: "user/fetchUser",
     }),
     toggleModal(name) {
       this.showModal[name] = !this.showModal[name];
@@ -109,30 +106,15 @@ export default {
         name: this.showUserLeagues[userLeagueIndex].name,
       });
       if (this.selectedPath.length == 1) {
-        this.itemsForTransfersList = {
-          rounds: this.showRounds,
-          transfers: this.showTransfers,
-        };
-        this.listItemsProps = { itemType: "transfer" };
+        this.itemsForTransfersList = this.getTransfers.filter(
+          ({ league_id }) => league_id == this.focusedUserLeagueId
+        );
       }
+      this.listItemsProps = { itemType: "transfer" };
+      console.log("items for transfers list: ", this.itemsForTransfersList);
     },
-    focusRound() {
-      this.itemsForTransfersList = this.showTransfers;
-      // let positions = this.getPositions;
-      // this.itemsForList.sort(function sortPlayers(a, b) {
-      //   if (positions.indexOf(a.position) < positions.indexOf(b.position))
-      //     return -1;
-      //   if (positions.indexOf(a.position) > positions.indexOf(b.position))
-      //     return 1;
-      //   return 0;
-      // });
-      // this.selectedPath.push({ type: "club", name: roundIndex });
-      // this.listItemsProps = { itemType: "player" };
-    },
-    focusPlayer(playerIndex) {
-      const player = this.showClubs[this.selectedPath[1].name][playerIndex];
-      this.passedPlayer = player;
-      this.toggleModal("player");
+    focusTransfer(transferId) {
+      console.log("FOCUSED: " + transferId);
     },
     traverseBack() {
       const backFrom = this.selectedPath.pop();
@@ -169,12 +151,9 @@ export default {
     },
   },
   computed: {
-    ...mapGetters([
-      "getAllRounds",
-      "getUserLeagues",
-      "getSeasons",
-      "getTransfers",
-    ]),
+    ...mapGetters("userLeagues", ["getUserLeagues"]),
+    ...mapGetters("seasons", ["getSeasons"]),
+    ...mapGetters("transfers", ["getTransfers"]),
 
     topLabel() {
       let label;
@@ -192,38 +171,15 @@ export default {
     showUserLeagues() {
       return this.getUserLeagues;
     },
-    showRounds() {
-      const allRounds = this.getAllRounds;
-      const activeSeason = this.getSeasons.find(({ active }) => active);
-      return activeSeason
-        ? allRounds.filter(({ season_id }) => season_id == activeSeason.id)
-        : [];
-    },
-
-    showTransfers() {
-      return this.fousedRoundId
-        ? this.getTransfers
-            .filter(({ round_id }) => round_id == this.fousedRoundId)
-            .map((transfer) => {
-              transfer.name = `From user ${transfer.user_id}: Player ${transfer.from_player_id} for player ${transfer.to_player_id}`;
-              return transfer;
-            })
-        : [];
-    },
   },
   async created() {
     await Promise.all([
-      this.$store.dispatch("fetchUserLeagues"),
-      this.$store.dispatch("fetchRounds"),
-      this.$store.dispatch("fetchSeasons"),
-      this.$store.dispatch("fetchTransfers"),
+      this.$store.dispatch("userLeagues/fetchUserLeagues"),
+      this.$store.dispatch("seasons/fetchSeasons"),
+      this.$store.dispatch("transfers/fetchTransfers"),
     ]);
     this.itemsForList = this.showUserLeagues;
     this.listItemsProps = { itemType: "user-league" };
-    // this.fousedRoundId = this.getSeasons.find(
-    //   ({ active }) => active
-    // ).current_round;
-    this.fousedRoundId = "7";
   },
 };
 </script>

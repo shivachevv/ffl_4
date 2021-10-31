@@ -2,7 +2,7 @@ import { requestResource } from "../../utils/resourceRequests";
 import { GET_RESOURCE_PATH } from "../../common/apiRequests";
 
 const state = {
-  transfers: null,
+  transfers: [],
 };
 
 const getters = {
@@ -10,19 +10,26 @@ const getters = {
 };
 
 const actions = {
-  async fetchTransfers({ commit }) {
+  async fetchTransfers({ commit, dispatch, rootGetters }) {
     let transfers;
     await requestResource({
       resourcePath: GET_RESOURCE_PATH.TRANSFERS_ALL,
-    }).then((response) => {
-      transfers = response.data.data;
-    });
+    })
+      .then(async (response) => {
+        await dispatch("user/fetchAllUsers", {}, { root: true });
+        const users = rootGetters["user/getAllUsers"];
+        return Promise.all(
+          response.data.data.map(async (transfer) => {
+            const user = users.find(({ id }) => id == transfer.user_id);
+            transfer.league_id = user.league_id;
+            return transfer;
+          })
+        );
+      })
+      .then((response) => {
+        transfers = response;
+      });
     commit("setTransfers", transfers);
-    const rounds = await requestResource({
-      resourcePath: GET_RESOURCE_PATH.TRANSFERS_ALL,
-    });
-
-    commit("setTransfers", rounds?.data?.data);
   },
 };
 

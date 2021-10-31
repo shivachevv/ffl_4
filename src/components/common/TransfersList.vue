@@ -1,59 +1,74 @@
 <template>
   <div>
-    <v-col cols="3">
-      <h1>NEW COMP</h1>
-      <v-list class="list-container">
-        <div class="item-wrapper" :class="itemProps.itemType">
-          <template v-for="(item, index) in passedItems.rounds">
-            <v-list-item :key="index" ripple>
-              <v-card
-                @click="focusItem(index)"
-                class="item-container grey lighten-1 white--text"
-                :class="itemProps.itemType"
-                elevation="6"
-              >
-                <v-row>
-                  <div v-if="itemProps.itemType == 'league'" class="icon-slot">
-                    <v-avatar size="80" tile
-                      ><img
-                        :src="
-                          require(`../../assets/images/user-transfers/leagues/${item.slug}.png`) ||
-                          ''
-                        "
-                    /></v-avatar>
-                  </div>
-                  <v-list-item-content class="item-content">
-                    <v-row
-                      :no-gutters="true"
-                      align="center"
-                      justify="space-between"
-                    >
-                      <h1 class="text-h6" v-if="itemProps.itemType == 'player'">
-                        {{ item.position }}
-                      </h1>
-                      <h1 :class="textSize">
-                        {{ item.name }}
-                      </h1>
-                    </v-row>
-                  </v-list-item-content>
-                  <!-- <v-list-item-action>
-              <slot name="itemActions"></slot>
-            </v-list-item-action> -->
-                </v-row>
-              </v-card>
-            </v-list-item>
-          </template>
-        </div>
-      </v-list>
-    </v-col>
+    <div class="cols-wrapper">
+      <v-col cols="4">
+        <v-list class="list-container">
+          <div class="item-wrapper">
+            <template v-for="(item, index) in Object.keys(transfersByRounds)">
+              <v-list-item :key="index" ripple>
+                <v-card
+                  @click="focusRound(index)"
+                  class="item-container grey lighten-1 white--text"
+                  elevation="6"
+                >
+                  <v-row>
+                    <v-list-item-content class="item-content">
+                      <v-row
+                        :no-gutters="true"
+                        align="center"
+                        justify="space-between"
+                      >
+                        <h1 class="text-h4">{{ item }}</h1>
+                      </v-row>
+                    </v-list-item-content>
+                  </v-row>
+                </v-card>
+              </v-list-item>
+            </template>
+          </div>
+        </v-list>
+      </v-col>
+      <v-col cols="8">
+        <v-list class="list-container">
+          <div class="item-wrapper">
+            <template
+              v-for="(item, index) in transfersByRounds[selectedRoundId]"
+            >
+              <v-list-item :key="index" ripple>
+                <v-card
+                  @click="focusItem(index)"
+                  class="item-container grey lighten-1 white--text"
+                  elevation="6"
+                >
+                  <v-row>
+                    <v-list-item-content>
+                      <v-row
+                        :no-gutters="true"
+                        align="center"
+                        justify="space-between"
+                      >
+                        <h1 class="text-h4">{{ item }}</h1>
+                      </v-row>
+                    </v-list-item-content>
+                  </v-row>
+                </v-card>
+              </v-list-item>
+            </template>
+          </div>
+        </v-list>
+      </v-col>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   data() {
     return {
       image: "",
+      userPickedRoundId: null,
     };
   },
   props: {
@@ -64,14 +79,32 @@ export default {
     focusItem(itemIndex) {
       this.$emit(`focus-${this.itemProps.itemType}`, itemIndex);
     },
-    imgSource(slug) {
-      return `../../assets/images/user-transfers/leagues/${slug}.png`;
+    focusRound(index) {
+      this.userPickedRoundId = Object.keys(this.transfersByRounds)[index];
     },
   },
   computed: {
-    textSize() {
-      return this.itemProps.itemType == "player" ? "text-h6" : "text-h4";
+    ...mapGetters("rounds", ["getCurrentRound"]),
+
+    selectedRoundId() {
+      return this.userPickedRoundId
+        ? this.userPickedRoundId
+        : this.getCurrentRound?.id;
     },
+
+    transfersByRounds() {
+      const transfersByRounds = {};
+      this.passedItems.forEach((transfer) => {
+        if (!transfersByRounds[transfer.round_id]) {
+          transfersByRounds[transfer.round_id] = [];
+        }
+        transfersByRounds[transfer.round_id].push(transfer);
+      });
+      return transfersByRounds;
+    },
+  },
+  async created() {
+    await this.$store.dispatch("rounds/fetchRounds");
   },
 };
 </script>
@@ -98,5 +131,8 @@ export default {
   max-width: 100%;
   display: flex;
   flex-flow: column wrap;
+}
+.cols-wrapper {
+  display: flex;
 }
 </style>
