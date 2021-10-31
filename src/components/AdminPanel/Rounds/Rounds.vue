@@ -156,7 +156,11 @@ export default {
     ...mapGetters("rounds", ["getAllRounds", "getCurrentRoundIndex"]),
     ...mapGetters("seasons", ["getSeasons"]),
     rounds() {
-      return this.getAllRounds;
+      const allRounds = this.getAllRounds;
+      const activeSeason = this.seasons.find(({ active }) => active);
+      return activeSeason
+        ? allRounds.filter(({ season_id }) => season_id == activeSeason.id)
+        : [];
     },
     seasons() {
       return this.getSeasons;

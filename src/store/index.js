@@ -10,6 +10,7 @@ import leagues from "./modules/leagues";
 import footballPlayers from "./modules/footballPlayers";
 import userPlayers from "./modules/userPlayers";
 import notifications from "./modules/notifications";
+import userLeagues from "./modules/userLeagues";
 
 Vue.use(Vuex);
 
@@ -33,5 +34,6 @@ export default new Vuex.Store({
     footballPlayers,
     userPlayers,
     notifications,
+    userLeagues,
   },
 });
