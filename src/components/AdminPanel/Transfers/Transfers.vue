@@ -25,7 +25,8 @@
       v-if="itemsForTransfersList.length"
       :passedItems="itemsForTransfersList"
       :itemProps="listItemsProps"
-      @focus-transfer="focusTransfer"
+      @update-transfers="updateTransfers"
+      :key="transferListKey"
     >
     </transfers-list>
 
@@ -65,6 +66,7 @@ export default {
   },
   data() {
     return {
+      transferListKey: 0,
       selectedPath: [],
       listItemsProps: {},
       itemsForList: [],
@@ -113,8 +115,15 @@ export default {
       this.listItemsProps = { itemType: "transfer" };
       console.log("items for transfers list: ", this.itemsForTransfersList);
     },
-    focusTransfer(transferId) {
-      console.log("FOCUSED: " + transferId);
+    updateTransfers() {
+      if (this.selectedPath.length == 1) {
+        this.itemsForTransfersList = this.getTransfers.filter(
+          ({ league_id }) => league_id == this.focusedUserLeagueId
+        );
+      }
+      this.listItemsProps = { itemType: "transfer" };
+      console.log("items for transfers list: ", this.itemsForTransfersList);
+      this.transferListKey++;
     },
     traverseBack() {
       const backFrom = this.selectedPath.pop();

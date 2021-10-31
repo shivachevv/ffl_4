@@ -72,9 +72,9 @@ const mutations = {
       return (
         DateTime.fromISO(round.from_date) <=
           // DateTime.now() <=
-          DateTime.fromISO("2021-05-11") &&
+          DateTime.fromISO("2021-02-15") &&
         // DateTime.now()
-        DateTime.fromISO("2021-05-17") <= DateTime.fromISO(round.to_date)
+        DateTime.fromISO("2021-03-20") <= DateTime.fromISO(round.to_date)
       );
     });
     state.currentRoundIndex = rounds.indexOf(currentRound);
