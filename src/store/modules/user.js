@@ -2,7 +2,6 @@ import { requestResource } from "../../utils/resourceRequests";
 import { GET_RESOURCE_PATH } from "../../common/apiRequests";
 
 const state = {
-  users: null,
   loggedUser: null,
   userPlayers: null,
   allUsers: null,
