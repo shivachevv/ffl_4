@@ -39,13 +39,20 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
+
 export default {
   data() {
     return {
       sidebar: false,
-      items: [
+    };
+  },
+  computed: {
+    ...mapState("user", ["loggedUser"]),
+    items() {
+      return [
         { title: "HOME", path: "/" },
-        { title: "MY TEAM", path: "/team-details" },
+        { title: "MY TEAM", path: `/team-details/${this.loggedUser?.id}` },
         { title: "TRANSFERS", path: "/transfers" },
         { title: "CUP", path: "/cup" },
         { title: "H2H", path: "/h2h" },
@@ -53,8 +60,14 @@ export default {
         { title: "ADMIN", path: "/admin" },
         { title: "LOGIN", path: "/login" },
         { title: "DONATE", path: "/donate" },
-      ],
-    };
+      ];
+    },
+  },
+  methods: {
+    ...mapActions("user", ["fetchLoggedUser"]),
+  },
+  async created() {
+    await this.fetchLoggedUser();
   },
 };
 </script>

@@ -1,9 +1,16 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import rounds from "./modules/rounds";
+import user from "./modules/user";
 import seasons from "./modules/seasons";
+import h2h from "./modules/h2h";
+import cup from "./modules/cup";
+import transfers from "./modules/transfers";
 import leagues from "./modules/leagues";
 import footballPlayers from "./modules/footballPlayers";
+import userPlayers from "./modules/userPlayers";
+import notifications from "./modules/notifications";
+import userLeagues from "./modules/userLeagues";
 
 Vue.use(Vuex);
 
@@ -16,5 +23,17 @@ export default new Vuex.Store({
   },
   mutations: {},
   actions: {},
-  modules: { rounds, seasons, leagues, footballPlayers },
+  modules: {
+    rounds,
+    user,
+    seasons,
+    h2h,
+    cup,
+    transfers,
+    leagues,
+    footballPlayers,
+    userPlayers,
+    notifications,
+    userLeagues,
+  },
 });

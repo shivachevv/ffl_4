@@ -2,28 +2,28 @@ import { requestResource } from "../../utils/resourceRequests";
 import { GET_RESOURCE_PATH } from "../../common/apiRequests";
 
 const state = {
-  seasons: [],
+  userLeagues: [],
 };
 
 const getters = {
-  getSeasons: (state) => state.seasons,
+  getUserLeagues: (state) => state.userLeagues,
 };
 
 const actions = {
-  async fetchSeasons({ commit }) {
-    let seasons;
+  async fetchUserLeagues({ commit }) {
+    let userLeagues;
     await requestResource({
-      resourcePath: GET_RESOURCE_PATH.SEASONS_ALL,
+      resourcePath: GET_RESOURCE_PATH.LEAGUES_ALL,
     }).then((response) => {
-      seasons = response.data.data;
+      userLeagues = response.data.data;
     });
-    commit("setSeasons", seasons);
+    commit("setUserLeagues", userLeagues);
   },
 };
 
 const mutations = {
-  setSeasons: (state, seasons) => {
-    state.seasons = seasons;
+  setUserLeagues: (state, userLeagues) => {
+    state.userLeagues = userLeagues;
   },
 };
 

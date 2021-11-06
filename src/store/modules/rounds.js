@@ -30,6 +30,7 @@ const getters = {
     return index || index == 0 ? rounds[index] : {};
   },
   getCurrentRoundIndex: (state) => state.currentRoundIndex,
+  getCurrentRound: (state) => state.rounds[state.currentRoundIndex],
 };
 
 const actions = {
@@ -65,15 +66,15 @@ const mutations = {
   setRounds: (state, rounds) => {
     state.rounds = rounds;
     state.roundsH2H = rounds.filter(function getH2HRounds(round) {
-      return round.h2h;
+      return round.head_to_head;
     });
     const currentRound = rounds.find(function findCurrentRound(round) {
       return (
         DateTime.fromISO(round.from_date) <=
           // DateTime.now() <=
-          DateTime.fromISO("2021-05-06") &&
+          DateTime.fromISO("2021-02-15") &&
         // DateTime.now()
-        DateTime.fromISO("2021-05-06") <= DateTime.fromISO(round.to_date)
+        DateTime.fromISO("2021-03-20") <= DateTime.fromISO(round.to_date)
       );
     });
     state.currentRoundIndex = rounds.indexOf(currentRound);
@@ -85,4 +86,5 @@ export default {
   getters,
   actions,
   mutations,
+  namespaced: true,
 };
