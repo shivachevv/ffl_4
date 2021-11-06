@@ -28,7 +28,6 @@
         :isAllowed="player.isAllowed"
         :maxTransfersOutReached="maxTransfersOutReached"
         @makeTransferOut="makeTransferOut"
-        @max="max($event)"
         :key="player.position"
       ></TransfersTeammate>
 
@@ -41,13 +40,18 @@
         >
       </div>
       <div class="addition wildcard" v-if="!makeSwitchUnavail && hasWildcard">
-        <h3 class="up">Wildcard</h3>
-        <vs-switch class="switch" color="success" v-model="wildcard" />
+        <h3 class="up">Wildcard:<br />{{ wildcard ? "ON" : "OFF" }}</h3>
+        <v-switch
+          v-model="wildcard"
+          inset
+          @change="changeWildcard"
+          class="ml-3"
+        ></v-switch>
       </div>
-      <div class="addition wildcard" v-else>
+      <!-- <div class="addition wildcard" v-else>
         <h3 class="up">Wildcard<br />taken</h3>
-        <!-- <vs-switch class="switch-inactive" disabled="true" color="success" /> -->
-      </div>
+        <vs-switch class="switch-inactive" disabled="true" color="success" /> 
+      </div> -->
     </div>
   </section>
 </template>
@@ -89,10 +93,18 @@ export default {
       type: Boolean,
       required: true,
     },
+    hasWildcard: {
+      type: Boolean,
+      required: true,
+    },
+    wildcard: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
-      wildcard: "",
+      // wildcard: null,
       reset: false,
     };
   },
@@ -100,26 +112,23 @@ export default {
     makeSwitchUnavail() {
       return false;
     },
-    hasWildcard() {
-      return false;
-    },
   },
   methods: {
     makeTransferOut(player) {
       return this.$emit("makeTransferOut", player);
     },
-    max(x) {
-      return this.$emit("max", x);
+    changeWildcard() {
+      console.log(this.wildcard);
     },
   },
   watch: {
-    wildcard(nv) {
-      if (!nv) {
-        this.$emit("makeTransferOut", "empty");
-      }
-      this.reset = !nv;
-      return this.$emit("wcHandler", nv);
-    },
+    // wildcard(nv) {
+    //   if (!nv) {
+    //     this.$emit("makeTransferOut", "empty");
+    //   }
+    //   this.reset = !nv;
+    //   return this.$emit("wcHandler", nv);
+    // },
   },
 };
 </script>

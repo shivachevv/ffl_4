@@ -1,6 +1,7 @@
 <template>
   <div class="transfers">
-    <h2>New transfers</h2>
+    <h2 v-if="allowedTransfersCount">New transfers</h2>
+    <h2 class="no-transfers" v-else>No transfers left</h2>
     <TransferInfo
       v-for="transfer in transfers"
       :key="transfer.id"
@@ -24,6 +25,10 @@ export default {
   props: {
     transfers: {
       type: Array,
+      required: true,
+    },
+    allowedTransfersCount: {
+      type: Number,
       required: true,
     },
   },
@@ -63,6 +68,10 @@ export default {
     margin: 0 0 5px 0;
     background-color: #59a95d;
     font-size: 1.3rem;
+
+    &.no-transfers {
+      background-color: #bd7272;
+    }
   }
 }
 </style>

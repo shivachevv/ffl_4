@@ -1,6 +1,6 @@
 <template>
   <div v-if="!loading">
-    <v-row class="mx-10 mt-5" justify="space-between">
+    <v-row class="mt-5" justify="space-between">
       <v-col cols="7" class="px-0 py-0 elevation-8">
         <TeamHeader :user="loggedUser"></TeamHeader>
         <RoundTransfersSoFar
@@ -11,6 +11,7 @@
           :transfers="combinedTransfers"
           @confirm="confirmTransfer"
           @cancel="cancelTransfer"
+          :allowedTransfersCount="allowedTransfersCount"
         ></SelectedTransfers>
 
         <UserTransfersTeam
@@ -22,6 +23,8 @@
           :transferredIn="transferredIn"
           :maxTransfersOutReached="maxTransfersOutReached"
           :selectedPlayersPositions="selectedPlayersPositions"
+          :hasWildcard="hasWildcard"
+          :wildcard="wildcard"
           @makeTransferOut="makeTransferOut"
         ></UserTransfersTeam>
       </v-col>
@@ -63,9 +66,11 @@ export default {
   },
   data() {
     return {
-      transfersPerWeek: 7,
+      // TO DO: make this 2
+      transfersPerWeek: 2,
       transferredIn: [],
       transferredOut: [],
+      wildcard: false,
     };
   },
   computed: {
@@ -221,6 +226,10 @@ export default {
         return { position, to_player, from_player };
       });
     },
+    hasWildcard() {
+      // TO DO: get real value
+      return true;
+    },
   },
   methods: {
     ...mapActions("user", ["fetchLoggedUser", "fetchUserPlayers"]),
@@ -289,6 +298,7 @@ export default {
     await this.fetchUserPlayers({
       userId: this.loggedUser?.id,
       round_id: 13,
+      // TO DO
       // round_id: this.currentRound,
     });
     await this.fetchAllPlayers({
@@ -296,6 +306,7 @@ export default {
         points: true,
       },
     });
+    // TO DO: get the WC info from the DB and assign it to 'wildcard'
   },
 };
 </script>
