@@ -2,6 +2,7 @@ export const API_URL = "api.ff-legends.com/api/";
 
 export const GET_RESOURCE_PATH = {
   USER_PROFILE: "profile",
+  USER_ALL: "user",
   USER: "user",
   SEASONS_ALL: "seasons",
   ROUNDS_ALL: "rounds",
@@ -61,6 +62,7 @@ export const PUT_RESOURCE_PATH = {
   USER_ASSIGN_TO_LEAGUE: "assign-league",
   SEASON_UPDATE: "seasons",
   ROUND_UPDATE: "rounds",
+  TRANSFER_UPDATE: "transfer_update",
   LEAGUES_UPDATE: "leagues",
   H2H_ROUND_UPDATE: "hth-users",
   H2H_TRANSFERS_UPDATE: "hth-transfers",

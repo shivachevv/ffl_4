@@ -18,7 +18,7 @@
         <!-- <Footer /> -->
       </div>
     </v-main>
-    <Notification />>
+    <Notification />
   </v-app>
 </template>
 
