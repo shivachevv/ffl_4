@@ -7,8 +7,8 @@
         </v-col>
       </v-row>
       <div id="app">
-        <v-btn @click.prevent="logIn" color="green" class="ml-16">Log In</v-btn>
         <Header />
+        <v-btn @click.prevent="logIn" color="green" class="ml-16">Log In</v-btn>
         <!-- <Logos /> -->
         <transition name="slide-left" mode="out-in">
           <router-view />

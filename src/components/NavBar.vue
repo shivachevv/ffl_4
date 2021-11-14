@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar mt-16">
+  <div class="navbar">
     <v-navigation-drawer v-model="sidebar" app bottom>
       <v-list>
         <v-list-item
@@ -13,7 +13,7 @@
     </v-navigation-drawer>
 
     <v-toolbar height="85px" color="#b3b3b3">
-      <v-toolbar-title class="mt-4">
+      <v-toolbar-title>
         <router-link to="/">
           <img class="navbar-logo" src="logo.png" />
         </router-link>
@@ -75,8 +75,37 @@ export default {
 <style lang="scss" scoped>
 @import "@/common/breakpoints.scss";
 
+.v-toolbar__title {
+  a {
+    display: flex;
+    align-items: center;
+    img {
+      width: 60px;
+      @media #{$tablet} {
+        width: auto;
+      }
+    }
+  }
+}
+
 .navbar-title {
-  display: none;
+  display: inline-block;
+  font-size: 20px;
+  margin-left: 15px;
+  font-weight: bold;
+
+  @media #{$tablet} {
+    display: inline-block;
+    font-size: 20px;
+    margin-left: 15px;
+    font-weight: bold;
+  }
+  @media only screen and (max-width: 400px) {
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 15px;
+    font-weight: bold;
+  }
 }
 @media #{$tablet} {
   .navbar {
@@ -87,7 +116,7 @@ export default {
   }
   .navbar-logo {
     height: 70px;
-    margin: 0 0 8px 10px;
+    margin: 0 0 0 10px;
   }
   ::v-deep .v-toolbar__content {
     padding: 0;
@@ -97,20 +126,6 @@ export default {
   }
   .navbar-hamburger {
     order: 4;
-  }
-  .navbar-title {
-    display: inline-block;
-    font-size: 20px;
-    margin-left: 15px;
-    font-weight: bold;
-  }
-}
-@media only screen and (max-width: 400px) {
-  .navbar-title {
-    display: inline-block;
-    font-size: 16px;
-    margin-left: 15px;
-    font-weight: bold;
   }
 }
 </style>
