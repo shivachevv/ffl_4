@@ -4,6 +4,7 @@ import { GET_RESOURCE_PATH } from "../../common/apiRequests";
 const state = {
   loggedUser: null,
   userPlayers: null,
+  nextRoundCaptains: null,
   allUsers: null,
 };
 
@@ -41,6 +42,18 @@ const actions = {
     });
     commit("setUserPlayers", response?.data?.data);
   },
+  async fetchNextRoundCaptains({ commit }, { userId, round_id }) {
+    try {
+      const response = await requestResource({
+        resourcePath: GET_RESOURCE_PATH.USER_PLAYERS_BY_USER,
+        mainId: userId,
+        queryParams: { round_id },
+      });
+      commit("setNextRoundCaptains", response?.data?.data);
+    } catch (error) {
+      commit("setNextRoundCaptains", { cpt: [], vice_cpt: [] });
+    }
+  },
 };
 
 const mutations = {
@@ -52,6 +65,9 @@ const mutations = {
   },
   setUserPlayers: (state, up) => {
     state.userPlayers = up;
+  },
+  setNextRoundCaptains: (state, { cpt, vice_cpt }) => {
+    state.nextRoundCaptains = { cpt: cpt[0], vice_cpt: vice_cpt[0] };
   },
 };
 

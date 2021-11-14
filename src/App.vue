@@ -10,9 +10,11 @@
         <Header />
         <v-btn @click.prevent="logIn" color="green" class="ml-16">Log In</v-btn>
         <!-- <Logos /> -->
-        <transition name="slide-left" mode="out-in">
+        <div class="content-wrapper" transition="slide-x-transition">
           <router-view />
-        </transition>
+        </div>
+        <button @click.prevent="fetch">fetch</button>
+        <button @click.prevent="fetchPlayer">fetch League</button>
         <!-- <Footer /> -->
       </div>
     </v-main>
@@ -83,5 +85,9 @@ export default {
 }
 #app {
   background-color: lightgrey;
+}
+
+.content-wrapper {
+  margin: 0 100px;
 }
 </style>
