@@ -184,7 +184,7 @@ export default {
         })
         .map((player) => {
           const total = player?.points.reduce((totalPoints, round) => {
-            totalPoints += +round.round_pts;
+            totalPoints += +round.roundPts;
             return totalPoints;
           }, 0);
           return {
@@ -214,14 +214,6 @@ export default {
     //     return false;
     //   }
     // },
-    playerTotal(player) {
-      const result = player?.points.reduce((total, round) => {
-        total += +round.round_pts;
-        return total;
-      }, 0);
-      console.log(result);
-      return result;
-    },
     leagueImagePath(league) {
       return `https://ff-legends.com/team-logos/${league
         .toLowerCase()

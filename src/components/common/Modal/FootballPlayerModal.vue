@@ -40,7 +40,7 @@
                 label="Shirt-slug"
               ></v-text-field>
               <v-text-field
-                v-model="footballPlayer.whoscored_id"
+                v-model="footballPlayer.whoscoredId"
                 :rules="requiredFieldRules"
                 label='"WhoScored" ID'
               ></v-text-field>
@@ -137,11 +137,14 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getLeagues", "getClubsByLeague", "getPositions"]),
+    ...mapGetters("leagues", ["getLeagues"]),
+    ...mapGetters("footballPlayers", ["getClubsByLeague"]),
+
+    ...mapGetters(["getPositions"]),
     leagueClubs() {
-      return this.footballPlayer.football_league_id
+      return this.footballPlayer.footballLeagueId
         ? Object.keys(
-            this.getClubsByLeague(this.footballPlayer.football_league_id)
+            this.getClubsByLeague(this.footballPlayer.footballLeagueId)
           )
         : [];
     },
@@ -159,11 +162,11 @@ export default {
     playerLeague: {
       get() {
         return this.getLeagues.find(
-          ({ id }) => id == this.footballPlayer.football_league_id
+          ({ id }) => id == this.footballPlayer.footballLeagueId
         );
       },
       set(value) {
-        this.footballPlayer.football_league_id = value;
+        this.footballPlayer.footballLeagueId = value;
       },
     },
   },
@@ -176,11 +179,11 @@ export default {
     },
     playerLeague: {
       handler: function () {
-        this.footballPlayer.football_league_id &&
+        this.footballPlayer.footballLeagueId &&
           !this.leagueClubs.length &&
           this.$store.dispatch(
             "fetchPlayersByLeague",
-            this.footballPlayer.football_league_id
+            this.footballPlayer.footballLeagueId
           );
       },
     },

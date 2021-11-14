@@ -53,7 +53,7 @@ export default {
       return [
         { title: "HOME", path: "/" },
         { title: "MY TEAM", path: `/team-details/${this.loggedUser?.id}` },
-        { title: "TRANSFERS", path: "/transfers" },
+        { title: "TRANSFERS", path: "/all-transfers" },
         { title: "CUP", path: "/cup" },
         { title: "H2H", path: "/h2h" },
         { title: "RULES & PRIZES", path: "/rules_prizes" },

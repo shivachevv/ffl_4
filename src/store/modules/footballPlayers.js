@@ -25,15 +25,15 @@ const state = {
 
 const getters = {
   getAllPlayers: (state) => state.footballPlayers,
-  getPlayersByLeague: (state, rootState) => (leagueId) => {
-    const league = rootState.getLeagues.find(({ id }) => id == leagueId);
+  getPlayersByLeague: (state, _, rootState) => (leagueId) => {
+    const league = rootState.leagues.leagues.find(({ id }) => id == leagueId);
     return state[league.leaguePlayers] ? state[league.leaguePlayers] : [];
   },
 
   getPlayerById: (state) => (playerId) =>
     state.footballPlayers.find(({ id }) => id == playerId),
-  getClubsByLeague: (state, rootState) => (leagueId) => {
-    const league = rootState.getLeagues.find(({ id }) => id == leagueId);
+  getClubsByLeague: (state, _, rootState) => (leagueId) => {
+    const league = rootState.leagues.leagues.find(({ id }) => id == leagueId);
     const playersArr = state[league.leaguePlayers]
       ? state[league.leaguePlayers]
       : [];
@@ -60,7 +60,7 @@ const actions = {
     if (priorityLeagueId) {
       await dispatch("fetchPlayersByLeague", priorityLeagueId);
       players = state.footballPlayers.filter(
-        ({ football_league_id }) => football_league_id == priorityLeagueId
+        ({ footballLeagueId }) => footballLeagueId == priorityLeagueId
       );
       const indexOfPriorityLeague = leagueIdsArr.indexOf(priorityLeagueId);
       leagueIdsArr.splice(indexOfPriorityLeague, 1);
@@ -76,12 +76,13 @@ const actions = {
     Promise.allSettled(allLeaguesArr).then((response) => {
       response.forEach((leaguePlayers) => {
         const league = rootGetters["leagues/getLeagues"].find(
-          ({ id }) => id == leaguePlayers.value.data.data[0].football_league_id
+          ({ id }) =>
+            id == leaguePlayers?.value?.data?.data[0]?.footballLeagueId
         );
-        players.push(...leaguePlayers.value.data.data);
+        players.push(...leaguePlayers?.value?.data?.data);
         commit("setLeaguePlayers", {
-          leagueString: league.leaguePlayers,
-          players: leaguePlayers.value.data.data,
+          leagueString: league?.leaguePlayers,
+          players: leaguePlayers?.value?.data?.data,
         });
       });
       commit("setFootballPlayers", players);
@@ -102,7 +103,7 @@ const actions = {
         players,
       });
       const allPlayers = state.footballPlayers.filter(
-        ({ football_league_id }) => football_league_id != leagueId
+        ({ footballLeagueId }) => footballLeagueId != leagueId
       );
       commit("setFootballPlayers", [...allPlayers, ...players]);
     });
@@ -122,7 +123,7 @@ const actions = {
       resourcePath: POST_RESOURCE_PATH.FOOTBALL_PLAYERS_CREATE_PLAYER,
       payload,
     })
-      .then(() => dispatch("fetchPlayersByLeague", payload.football_league_id))
+      .then(() => dispatch("fetchPlayersByLeague", payload.footballLeagueId))
       .catch((err) => console.log(err.message));
   },
   async editPlayer({ dispatch }, payload) {
@@ -133,7 +134,7 @@ const actions = {
     })
       .then(() =>
         dispatch("fetchAllPlayers", {
-          priorityLeagueId: payload.football_league_id,
+          priorityLeagueId: payload.footballLeagueId,
         })
       )
       .catch((err) => console.log(err.message));
@@ -146,7 +147,7 @@ const actions = {
     })
       .then(() =>
         dispatch("fetchAllPlayers", {
-          priorityLeagueId: payload.football_league_id,
+          priorityLeagueId: payload.footballLeagueId,
         })
       )
       .catch((err) => console.log(err.message));

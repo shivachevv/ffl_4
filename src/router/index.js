@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 const AdminPanel = () => import("../views/AdminPanel");
 const TeamDetails = () => import("../views/TeamDetails");
 const TransfersCenter = () => import("../views/TransfersCenter");
+const AllTransfers = () => import("../views/AllTransfers");
 import store from "@/store";
 
 Vue.use(VueRouter);
@@ -34,6 +35,16 @@ const routes = [
     name: "TransfersCenter",
     beforeEnter(to, from, next) {
       document.title = "Transfers Center";
+      next();
+    },
+  },
+  {
+    path: "/all-transfers",
+    component: AllTransfers,
+    props: true,
+    name: "AllTransfers",
+    beforeEnter(to, from, next) {
+      document.title = "All Transfers";
       next();
     },
   },

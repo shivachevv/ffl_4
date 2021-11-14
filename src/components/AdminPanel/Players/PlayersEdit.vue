@@ -160,7 +160,7 @@ export default {
       blankPlayer: {
         id: "",
         name: "",
-        football_league_id: "",
+        footballLeagueId: "",
         club: "",
         position: "",
         shirt: "",
@@ -169,7 +169,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions({
+    ...mapActions("footballPlayers", {
       fetchAllPlayersAction: "fetchAllPlayers",
       createPlayerAction: "createPlayer",
       editPlayerAction: "editPlayer",
@@ -232,7 +232,17 @@ export default {
     },
     editPlayer(player) {
       console.log("EDIT PLAYER: ", player);
-      this.editPlayerAction(player);
+      // this.editPlayerAction(player);
+      this.editPlayerAction({
+        club: player.club,
+        football_league_id: player.footballLeagueId,
+        id: player.id,
+        league: player.league,
+        name: player.name,
+        position: player.position,
+        shirt: player.shirt,
+        whoscored_id: player.whoscoredId,
+      });
     },
     createPlayer(player) {
       console.log("CREATE PLAYER: ", player);
@@ -248,12 +258,13 @@ export default {
     },
   },
   computed: {
-    ...mapGetters([
-      "getPlayersByLeague",
+    ...mapGetters("leagues", ["getLeagues"]),
+    ...mapGetters("footballPlayers", [
       "getClubsByLeague",
-      "getLeagues",
-      "getPositions",
+      "getPlayersByLeague",
     ]),
+
+    ...mapGetters(["getPositions"]),
 
     topLabel() {
       let label;

@@ -167,11 +167,14 @@ export default {
     },
     playersCathegorized() {
       return (this.footballPlayers || []).reduce((result, player) => {
-        if (!result[player?.league]) result[player?.league] = {};
-        if (!result[player?.league][player?.club])
-          result[player?.league][player?.club] = {};
+        const { name: leagueName } = this.leagues.find(
+          (league) => +league.id === +player?.footballLeagueId
+        );
+        if (!result[leagueName]) result[leagueName] = {};
+        if (!result[leagueName][player?.club])
+          result[leagueName][player?.club] = {};
 
-        result[player?.league][player?.club][player.whoscored_id] = player;
+        result[leagueName][player?.club][player.whoscoredId] = player;
 
         return result;
       }, {});
@@ -241,17 +244,17 @@ export default {
     ]),
     addLeagueName(player) {
       const leaguePlayerIn = this.leagues.find(
-        (league) => +league.id === +player?.football_league_id
+        (league) => +league.id === +player?.footballLeagueId
       );
       const leaguePlayerOut = this.leagues.find(
-        (league) => +league.id === +player?.football_league_id
+        (league) => +league.id === +player?.footballLeagueId
       );
       if (leaguePlayerIn?.name) {
-        player.league = leaguePlayerIn?.name || "";
+        player.footballLeagueId = leaguePlayerIn?.name || "";
       }
 
       if (leaguePlayerOut?.name) {
-        player.league = leaguePlayerOut?.name || "";
+        player.footballLeagueId = leaguePlayerOut?.name || "";
       }
 
       return player;
