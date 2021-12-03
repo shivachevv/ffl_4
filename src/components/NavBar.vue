@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar mt-16">
+  <div class="navbar">
     <v-navigation-drawer v-model="sidebar" app bottom>
       <v-list>
         <v-list-item
@@ -13,7 +13,7 @@
     </v-navigation-drawer>
 
     <v-toolbar height="85px" color="#b3b3b3">
-      <v-toolbar-title class="mt-4">
+      <v-toolbar-title>
         <router-link to="/">
           <img class="navbar-logo" src="logo.png" />
         </router-link>
@@ -33,6 +33,14 @@
         >
           {{ item.title }}
         </v-btn>
+        <v-btn
+          v-if="!!this.loggedUser"
+          text
+          color="#ffffff"
+          @click.prevent="logoutAction"
+        >
+          Logout
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
   </div>
@@ -51,20 +59,32 @@ export default {
     ...mapState("user", ["loggedUser"]),
     items() {
       return [
-        { title: "HOME", path: "/" },
-        { title: "MY TEAM", path: `/team-details/${this.loggedUser?.id}` },
-        { title: "TRANSFERS", path: "/all-transfers" },
-        { title: "CUP", path: "/cup" },
-        { title: "H2H", path: "/h2h" },
-        { title: "RULES & PRIZES", path: "/rules_prizes" },
-        { title: "ADMIN", path: "/admin" },
-        { title: "LOGIN", path: "/login" },
-        { title: "DONATE", path: "/donate" },
-      ];
+        { title: "HOME", path: "/", show: true },
+        {
+          title: "MY TEAM",
+          path: `/team-details/${this.loggedUser?.id}`,
+          show: !!this.loggedUser,
+        },
+        { title: "TRANSFERS", path: "/transfers", show: true },
+        { title: "CUP", path: "/cup", show: true },
+        { title: "H2H", path: "/h2h", show: true },
+        {
+          title: "RULES & PRIZES",
+          path: "/rules_prizes",
+          show: true,
+        },
+        { title: "ADMIN", path: "/admin", show: true },
+        { title: "LOGIN", path: "/login", show: !this.loggedUser },
+        { title: "DONATE", path: "/donate", show: true },
+      ].filter((item) => item.show);
     },
   },
   methods: {
     ...mapActions("user", ["fetchLoggedUser"]),
+    ...mapActions("auth", ["logout"]),
+    async logoutAction() {
+      await this.logout();
+    },
   },
   async created() {
     await this.fetchLoggedUser();
@@ -75,8 +95,37 @@ export default {
 <style lang="scss" scoped>
 @import "@/common/breakpoints.scss";
 
+.v-toolbar__title {
+  a {
+    display: flex;
+    align-items: center;
+    img {
+      width: 60px;
+      @media #{$tablet} {
+        width: auto;
+      }
+    }
+  }
+}
+
 .navbar-title {
-  display: none;
+  display: inline-block;
+  font-size: 20px;
+  margin-left: 15px;
+  font-weight: bold;
+
+  @media #{$tablet} {
+    display: inline-block;
+    font-size: 20px;
+    margin-left: 15px;
+    font-weight: bold;
+  }
+  @media only screen and (max-width: 400px) {
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 15px;
+    font-weight: bold;
+  }
 }
 @media #{$tablet} {
   .navbar {
@@ -87,7 +136,7 @@ export default {
   }
   .navbar-logo {
     height: 70px;
-    margin: 0 0 8px 10px;
+    margin: 0 0 0 10px;
   }
   ::v-deep .v-toolbar__content {
     padding: 0;
@@ -97,20 +146,6 @@ export default {
   }
   .navbar-hamburger {
     order: 4;
-  }
-  .navbar-title {
-    display: inline-block;
-    font-size: 20px;
-    margin-left: 15px;
-    font-weight: bold;
-  }
-}
-@media only screen and (max-width: 400px) {
-  .navbar-title {
-    display: inline-block;
-    font-size: 16px;
-    margin-left: 15px;
-    font-weight: bold;
   }
 }
 </style>

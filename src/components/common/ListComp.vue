@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/valid-v-for  -->
 <template>
   <div>
     <h1 class="ml-10" v-if="!passedItems">LOADING...</h1>

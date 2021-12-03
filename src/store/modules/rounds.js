@@ -30,6 +30,7 @@ const getters = {
     return index || index == 0 ? rounds[index] : {};
   },
   getCurrentRoundIndex: (state) => state.currentRoundIndex,
+  getCurrentRound: (state) => state.rounds[state.currentRoundIndex],
 };
 
 const actions = {

@@ -6,7 +6,7 @@ const state = {
 };
 
 const getters = {
-  getUserLeagues: (state) => state.leagues,
+  getUserLeagues: (state) => state.userLeagues,
 };
 
 const actions = {

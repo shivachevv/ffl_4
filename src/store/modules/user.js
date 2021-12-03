@@ -5,19 +5,31 @@ const state = {
   loggedUser: null,
   userPlayers: null,
   nextRoundCaptains: null,
+  allUsers: null,
 };
 
 const getters = {
   getLoggerUser: (state) => state.loggedUser,
   getUserPlayers: (state) => state.userPlayers,
+  getAllUsers: (state) => state.allUsers,
 };
 
 const actions = {
-  async fetchLoggedUser({ commit }) {
+  async fetchAllUsers({ commit }) {
     const response = await requestResource({
-      resourcePath: GET_RESOURCE_PATH.USER_PROFILE,
+      resourcePath: GET_RESOURCE_PATH.USER,
     });
-    commit("setLoggedUser", response?.data?.data);
+    commit("setAllUsers", response?.data?.data);
+  },
+  async fetchLoggedUser({ commit }) {
+    try {
+      const response = await requestResource({
+        resourcePath: GET_RESOURCE_PATH.USER_PROFILE,
+      });
+      commit("setLoggedUser", response?.data?.data);
+    } catch (error) {
+      commit("setLoggedUser", null);
+    }
   },
   async fetchUser(_, { userId }) {
     const response = await requestResource({
@@ -49,6 +61,9 @@ const actions = {
 };
 
 const mutations = {
+  setAllUsers: (state, users) => {
+    state.allUsers = users;
+  },
   setLoggedUser: (state, u) => {
     state.loggedUser = u;
   },
