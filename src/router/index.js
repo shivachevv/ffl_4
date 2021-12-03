@@ -5,6 +5,7 @@ const TeamDetails = () => import("../views/TeamDetails");
 const TransfersCenter = () => import("../views/TransfersCenter");
 const AllTransfers = () => import("../views/AllTransfers");
 const Login = () => import("../views/Login");
+const Rules = () => import("../views/Rules");
 import store from "@/store";
 
 Vue.use(VueRouter);
@@ -74,6 +75,13 @@ const routes = [
     props: true,
     name: "AllTransfers",
     meta: { requiresAuth: true, title: "All Transfers" },
+  },
+  {
+    path: "/rules-prizes",
+    component: Rules,
+    props: true,
+    name: "Rules",
+    meta: { requiresAuth: false, title: "FFL Rules" },
   },
 ];
 
