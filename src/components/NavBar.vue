@@ -33,6 +33,14 @@
         >
           {{ item.title }}
         </v-btn>
+        <v-btn
+          v-if="!!this.loggedUser"
+          text
+          color="#ffffff"
+          @click.prevent="logoutAction"
+        >
+          Logout
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
   </div>
@@ -51,20 +59,32 @@ export default {
     ...mapState("user", ["loggedUser"]),
     items() {
       return [
-        { title: "HOME", path: "/" },
-        { title: "MY TEAM", path: `/team-details/${this.loggedUser?.id}` },
-        { title: "TRANSFERS", path: "/transfers" },
-        { title: "CUP", path: "/cup" },
-        { title: "H2H", path: "/h2h" },
-        { title: "RULES & PRIZES", path: "/rules_prizes" },
-        { title: "ADMIN", path: "/admin" },
-        { title: "LOGIN", path: "/login" },
-        { title: "DONATE", path: "/donate" },
-      ];
+        { title: "HOME", path: "/", show: true },
+        {
+          title: "MY TEAM",
+          path: `/team-details/${this.loggedUser?.id}`,
+          show: !!this.loggedUser,
+        },
+        { title: "TRANSFERS", path: "/transfers", show: true },
+        { title: "CUP", path: "/cup", show: true },
+        { title: "H2H", path: "/h2h", show: true },
+        {
+          title: "RULES & PRIZES",
+          path: "/rules_prizes",
+          show: true,
+        },
+        { title: "ADMIN", path: "/admin", show: true },
+        { title: "LOGIN", path: "/login", show: !this.loggedUser },
+        { title: "DONATE", path: "/donate", show: true },
+      ].filter((item) => item.show);
     },
   },
   methods: {
     ...mapActions("user", ["fetchLoggedUser"]),
+    ...mapActions("auth", ["logout"]),
+    async logoutAction() {
+      await this.logout();
+    },
   },
   async created() {
     await this.fetchLoggedUser();

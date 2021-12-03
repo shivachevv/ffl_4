@@ -8,13 +8,13 @@
       </v-row>
       <div id="app">
         <Header />
-        <v-btn @click.prevent="logIn" color="green" class="ml-16">Log In</v-btn>
+        <v-btn @click.prevent="logIn" color="green" class="ml-16"
+          >Temp Log In</v-btn
+        >
         <!-- <Logos /> -->
         <div class="content-wrapper" transition="slide-x-transition">
           <router-view />
         </div>
-        <button @click.prevent="fetch">fetch</button>
-        <button @click.prevent="fetchPlayer">fetch League</button>
         <!-- <Footer /> -->
       </div>
     </v-main>
@@ -41,12 +41,6 @@ export default {
 
   data: () => ({}),
   methods: {
-    async fetch() {
-      await this.$store.dispatch("getClubsByLeague");
-    },
-    async fetchPlayer() {
-      await this.$store.dispatch("fetchPlayersByLeague", 4);
-    },
     logIn() {
       let data = JSON.stringify({
         email: "superadmin@info.dev",
