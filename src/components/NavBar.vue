@@ -65,7 +65,7 @@ export default {
           path: `/team-details/${this.loggedUser?.id}`,
           show: !!this.loggedUser,
         },
-        { title: "TRANSFERS", path: "/all-transfers", show: true },
+        { title: "TRANSFERS", path: "/all-transfers", show: !!this.loggedUser },
         { title: "CUP", path: "/cup", show: true },
         { title: "H2H", path: "/h2h", show: true },
         {

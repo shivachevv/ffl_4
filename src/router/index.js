@@ -73,10 +73,7 @@ const routes = [
     component: AllTransfers,
     props: true,
     name: "AllTransfers",
-    beforeEnter(to, from, next) {
-      document.title = "All Transfers";
-      next();
-    },
+    meta: { requiresAuth: true, title: "All Transfers" },
   },
 ];
 
