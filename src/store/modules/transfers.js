@@ -39,7 +39,6 @@ const actions = {
       .then((response) => {
         transfers = response;
       });
-      console.log("transfers fetched")
     commit("setTransfers", transfers);
   },
   async updateTransfer({ dispatch }, payload) {
