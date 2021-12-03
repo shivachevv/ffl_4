@@ -25,15 +25,15 @@ const state = {
 
 const getters = {
   getAllPlayers: (state) => state.footballPlayers,
-  getPlayersByLeague: (state, rootState) => (leagueId) => {
-    const league = rootState.getLeagues.find(({ id }) => id == leagueId);
+  getPlayersByLeague: (state, _, rootState) => (leagueId) => {
+    const league = rootState.leagues.leagues.find(({ id }) => id == leagueId);
     return state[league.leaguePlayers] ? state[league.leaguePlayers] : [];
   },
 
   getPlayerById: (state) => (playerId) =>
     state.footballPlayers.find(({ id }) => id == playerId),
-  getClubsByLeague: (state, rootState) => (leagueId) => {
-    const league = rootState.getLeagues.find(({ id }) => id == leagueId);
+  getClubsByLeague: (state, _, rootState) => (leagueId) => {
+    const league = rootState.leagues.leagues.find(({ id }) => id == leagueId);
     const playersArr = state[league.leaguePlayers]
       ? state[league.leaguePlayers]
       : [];
@@ -49,13 +49,18 @@ const getters = {
 };
 
 const actions = {
-  async fetchAllPlayers({ commit, dispatch, rootGetters }, priorityLeagueId) {
+  async fetchAllPlayers(
+    { commit, dispatch, rootGetters },
+    { priorityLeagueId, queryParams }
+  ) {
     let players = [];
-    let leagueIdsArr = rootGetters.getLeagues.map((league) => league.id);
+    let leagueIdsArr = rootGetters["leagues/getLeagues"].map(
+      (league) => league.id
+    );
     if (priorityLeagueId) {
       await dispatch("fetchPlayersByLeague", priorityLeagueId);
       players = state.footballPlayers.filter(
-        ({ football_league_id }) => football_league_id == priorityLeagueId
+        ({ footballLeagueId }) => footballLeagueId == priorityLeagueId
       );
       const indexOfPriorityLeague = leagueIdsArr.indexOf(priorityLeagueId);
       leagueIdsArr.splice(indexOfPriorityLeague, 1);
@@ -65,17 +70,19 @@ const actions = {
         await requestResource({
           resourcePath: GET_RESOURCE_PATH.PLAYERS_BY_LEAGUE,
           mainId: leagueId,
+          queryParams,
         })
     );
     Promise.allSettled(allLeaguesArr).then((response) => {
       response.forEach((leaguePlayers) => {
-        const league = rootGetters.getLeagues.find(
-          ({ id }) => id == leaguePlayers.value.data.data[0].football_league_id
+        const league = rootGetters["leagues/getLeagues"].find(
+          ({ id }) =>
+            id == leaguePlayers?.value?.data?.data[0]?.footballLeagueId
         );
-        players.push(...leaguePlayers.value.data.data);
+        players.push(...leaguePlayers?.value?.data?.data);
         commit("setLeaguePlayers", {
-          leagueString: league.leaguePlayers,
-          players: leaguePlayers.value.data.data,
+          leagueString: league?.leaguePlayers,
+          players: leaguePlayers?.value?.data?.data,
         });
       });
       commit("setFootballPlayers", players);
@@ -83,7 +90,9 @@ const actions = {
   },
   async fetchPlayersByLeague({ commit, rootGetters }, leagueId) {
     let players = [];
-    const league = rootGetters.getLeagues.find(({ id }) => id == leagueId);
+    const league = rootGetters["leagues/getLeagues"].find(
+      ({ id }) => id == leagueId
+    );
     await requestResource({
       resourcePath: GET_RESOURCE_PATH.PLAYERS_BY_LEAGUE,
       mainId: leagueId,
@@ -94,7 +103,7 @@ const actions = {
         players,
       });
       const allPlayers = state.footballPlayers.filter(
-        ({ football_league_id }) => football_league_id != leagueId
+        ({ footballLeagueId }) => footballLeagueId != leagueId
       );
       commit("setFootballPlayers", [...allPlayers, ...players]);
     });
@@ -114,7 +123,7 @@ const actions = {
       resourcePath: POST_RESOURCE_PATH.FOOTBALL_PLAYERS_CREATE_PLAYER,
       payload,
     })
-      .then(() => dispatch("fetchPlayersByLeague", payload.football_league_id))
+      .then(() => dispatch("fetchPlayersByLeague", payload.footballLeagueId))
       .catch((err) => console.log(err.message));
   },
   async editPlayer({ dispatch }, payload) {
@@ -123,7 +132,11 @@ const actions = {
       mainId: payload.id,
       payload,
     })
-      .then(() => dispatch("fetchAllPlayers", payload.football_league_id))
+      .then(() =>
+        dispatch("fetchAllPlayers", {
+          priorityLeagueId: payload.footballLeagueId,
+        })
+      )
       .catch((err) => console.log(err.message));
   },
   async deletePlayer({ dispatch }, payload) {
@@ -132,7 +145,11 @@ const actions = {
       resourcePath: DELETE_RESOURCE_PATH.FOOTBALL_PLAYER_DELETE,
       mainId: payload.id,
     })
-      .then(() => dispatch("fetchAllPlayers", payload.football_league_id))
+      .then(() =>
+        dispatch("fetchAllPlayers", {
+          priorityLeagueId: payload.footballLeagueId,
+        })
+      )
       .catch((err) => console.log(err.message));
   },
 };
@@ -161,4 +178,5 @@ export default {
   getters,
   actions,
   mutations,
+  namespaced: true,
 };

@@ -44,7 +44,10 @@ export const postResource = async ({
 }) => {
   let headers = {};
   let accessToken = localStorage.getItem("Access-Token");
-  headers["Authorization"] = `Bearer ${accessToken}`;
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
 
   let resourceUrl = secondaryId
     ? `${resourcePath}/${mainId}/${secondaryId}${queryParamsString(

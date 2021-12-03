@@ -2,11 +2,13 @@ import Vue from "vue";
 import Vuex from "vuex";
 import rounds from "./modules/rounds";
 import user from "./modules/user";
+import auth from "./modules/auth";
 import seasons from "./modules/seasons";
 import h2h from "./modules/h2h";
 import cup from "./modules/cup";
 import transfers from "./modules/transfers";
 import leagues from "./modules/leagues";
+import userLeagues from "./modules/userLeagues";
 import footballPlayers from "./modules/footballPlayers";
 import userPlayers from "./modules/userPlayers";
 import notifications from "./modules/notifications";
@@ -23,6 +25,7 @@ export default new Vuex.Store({
   mutations: {},
   actions: {},
   modules: {
+    auth,
     rounds,
     user,
     seasons,
@@ -33,5 +36,6 @@ export default new Vuex.Store({
     footballPlayers,
     userPlayers,
     notifications,
+    userLeagues,
   },
 });

@@ -62,7 +62,7 @@ const actions = {
   async fetchLeagues({ commit }) {
     let leagues;
     await requestResource({
-      resourcePath: GET_RESOURCE_PATH.LEAGUES_ALL,
+      resourcePath: GET_RESOURCE_PATH.FOOTBALL_LEAGUES_ALL,
     }).then((response) => {
       leagues = response.data.data;
     });
@@ -81,4 +81,5 @@ export default {
   getters,
   actions,
   mutations,
+  namespaced: true,
 };
