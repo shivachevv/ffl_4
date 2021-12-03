@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 const AdminPanel = () => import("../views/AdminPanel");
 const TeamDetails = () => import("../views/TeamDetails");
 const TransfersCenter = () => import("../views/TransfersCenter");
+const AllTransfers = () => import("../views/AllTransfers");
 const Login = () => import("../views/Login");
 import store from "@/store";
 
@@ -66,6 +67,13 @@ const routes = [
     props: true,
     name: "Login",
     meta: { requiresAuth: false, title: "Login" },
+  },
+  {
+    path: "/all-transfers",
+    component: AllTransfers,
+    props: true,
+    name: "AllTransfers",
+    meta: { requiresAuth: true, title: "All Transfers" },
   },
 ];
 
