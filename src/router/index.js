@@ -75,16 +75,6 @@ const routes = [
     name: "AllTransfers",
     meta: { requiresAuth: true, title: "All Transfers" },
   },
-  {
-    path: "/transfers-center/:userId",
-    component: TransfersCenter,
-    props: true,
-    name: "TransfersCenter",
-    beforeEnter(to, from, next) {
-      document.title = "Transfers Center";
-      next();
-    },
-  },
 ];
 
 const router = new VueRouter({
