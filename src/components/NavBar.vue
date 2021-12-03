@@ -70,7 +70,7 @@ export default {
         { title: "H2H", path: "/h2h", show: true },
         {
           title: "RULES & PRIZES",
-          path: "/rules_prizes",
+          path: "/rules-prizes",
           show: true,
         },
         { title: "ADMIN", path: "/admin", show: true },
