@@ -22,10 +22,14 @@ const actions = {
     commit("setAllUsers", response?.data?.data);
   },
   async fetchLoggedUser({ commit }) {
-    const response = await requestResource({
-      resourcePath: GET_RESOURCE_PATH.USER_PROFILE,
-    });
-    commit("setLoggedUser", response?.data?.data);
+    try {
+      const response = await requestResource({
+        resourcePath: GET_RESOURCE_PATH.USER_PROFILE,
+      });
+      commit("setLoggedUser", response?.data?.data);
+    } catch (error) {
+      commit("setLoggedUser", null);
+    }
   },
   async fetchUser(_, { userId }) {
     const response = await requestResource({
