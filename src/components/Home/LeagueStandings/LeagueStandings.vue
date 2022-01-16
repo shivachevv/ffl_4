@@ -3,17 +3,15 @@
     <div class="st-header-container">
       <p class="standings-header up">
         Standings
-        <span>{{ selectedLeagueObj.name }}</span>
+        <span>{{ selectedLeague.name }}</span>
       </p>
     </div>
     <table class="standings-table front">
       <thead class="up">
         <tr>
-          <th class="table-num">#</th>
-          <th class="up table-name">Team</th>
-          <th class="up table-total">
-            Total points
-          </th>
+          <th class="table-num"></th>
+          <th>Team</th>
+          <th class="up table-total">Total points</th>
           <th class="up table-rnd">
             Round
             <br />Points
@@ -26,29 +24,27 @@
       </thead>
       <tbody>
         <router-link
-          :to="`team-details/${users[t[0]].userLogo}`"
+          :to="`team-details`"
           tag="tr"
           :class="{ first: i === 0, secthi: i === 1 || i === 2, grey: i > 2 }"
-          v-for="(t, i) in sortedStandings"
-          :key="t[0]"
+          v-for="(row, i) in sortedStandings"
+          :key="row.id"
         >
           <td class="table-num">{{ i + 1 }}</td>
-          <td class="up table-name">
+          <td class="table-name">
             <img
               :src="
-                require(`@/assets/images/team-logos/${
-                  users[t[0]].userLogo
-                }.webp`)
+                require(`@/assets/images/team-logos/arbitragers.webp`)
               "
-              :alt="`${users[t[0]].userTeam} logo`"
+              :alt="`${row.teamName} just logo`"
             />
-            {{ users[t[0]].userTeam }}
-            <span>{{ users[t[0]].name }}</span>
+            {{ row.teamName }}
+            <span>{{ `${row.firstName} ${row.lastName}` }}</span>
           </td>
-          <td class="up table-total">{{ t[1].total }}</td>
-          <td class="up table-rnd">{{ t[1].thisRndTotal }}</td>
+          <td class="up table-total">{{ row.total }}</td>
+          <td class="up table-rnd">{{ row.lastRound }}</td>
           <td class="up table-move">
-            <MovementArrow :movement="t[1].movement" />
+            <MovementArrow :movement="row.movement" />
           </td>
         </router-link>
       </tbody>
@@ -61,43 +57,37 @@ const MovementArrow = () => import("./MovementArrow");
 
 export default {
   name: "LeagueStandings",
-  components:{
-    MovementArrow
+  components: {
+    MovementArrow,
   },
   data() {
     return {};
   },
   props: {
-    selectedLeagueObj: {
+    selectedLeague: {
       type: Object,
-      required: true
+      default: () => {},
     },
     users: {
-      type: Object,
-      required: true
+      type: Array,
+      default: () => [],
     },
     standings: {
-      type: Object,
-      required: true
+      type: Array,
+      default: () => [],
     },
     currentRound: {
-      type: Number,
-      required: true
-    }
+      type: Object,
+      default: () => {},
+    },
   },
   computed: {
     sortedStandings() {
-      return Object.entries(
-        this.standings[this.selectedLeagueObj.id]
-      ).sort((a, b) => {
-        return b[1].total - a[1].total;
+      const result = [...this.standings].sort((a, b) => {
+          return b.total - a.total;
       });
-      // return Object.entries(
-      //   this.standings[`r${this.currentRound}`][this.selectedLeagueObj.id]
-      // ).sort((a, b) => {
-      //   return b[1].total - a[1].total;
-      // });
-    }
+      return result;
+    },
   },
   methods: {
     // ...mapActions(['fetchCurrentRound']),
@@ -109,12 +99,10 @@ export default {
       } else {
         return "no";
       }
-    }
+    },
   },
   watch: {},
-  async created() {
-    // await this.fetchCurrentRound()
-  },
+
   filters: {
     // routeFilter: function(v) {
     //   return v
@@ -122,7 +110,7 @@ export default {
     //     .split(" ")
     //     .join("-");
     // }
-  }
+  },
 };
 </script>
 
@@ -145,7 +133,7 @@ export default {
 
 /************** TABLE *************************/
 .standings-container {
-  width: 40%;
+  width: 60%;
   margin: 0 20px;
   display: flex;
   flex-direction: column;
@@ -182,13 +170,21 @@ export default {
   border-collapse: separate;
   border-spacing: 0 10px;
   transition: all 0.3s;
+  thead {
+    tr {
+      :last-child {
+        padding-right: 20px !important;
+      }
+    }
+  }
   th {
     background-color: #838a8e;
     color: #232f37;
     font-size: 1rem;
     border-bottom: 4px solid #4e585e;
-    padding: 5px;
     vertical-align: middle;
+    text-align: start;
+    padding: 2px 15px 2px 20px;
   }
   tbody {
     tr {
@@ -244,7 +240,7 @@ export default {
   text-align: left;
   position: relative;
   padding: 10px 10px 10px 40px !important;
-width: 60%;
+  width: 60%;
   a {
     color: #232f37;
   }

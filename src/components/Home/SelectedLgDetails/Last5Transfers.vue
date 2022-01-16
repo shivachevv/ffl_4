@@ -3,30 +3,30 @@
     <div class="last5-heading up">
       <div>
         <img
-          :src="require(`@/assets/images/home/last5.png`)"
+          :src="getPictureByName('last5.png')"
           alt="last5-logo`"
         />
       </div>
       <h2>Last 5 transfers</h2>
     </div>
-    <div class="transfers-container" v-if="last5TransfersReady">
-      <div class="transfer" v-for="(tr, i) in last5TransfersReady" :key="i">
-        <p class="up arr">{{ users[tr.team].userTeam }}</p>
+    <div class="transfers-container" v-if="transfers">
+      <div class="transfer" v-for="transfer in userTransfers" :key="transfer.id">
+        <p class="up arr">{{ transfer.user.userTeam }}</p>
         <router-link
-          :to="`/team-details/${users[tr.team].userLogo}`"
+          :to="`/team-details/${transfer.user.userLogo}`"
           class="transfer-details"
         >
-          <span class="tr-round up">R{{ tr.round }}</span>
+          <span class="tr-round up">R{{ transfer.round_id }}</span> 
           <span class="tr-in">
-            {{ players[tr.transferIn].name }}
+            {{ transfer.to_player.name }}
             <br />
-            <span>{{ players[tr.transferIn].club }}</span>
+            <span>{{ transfer.to_player.club }}</span>
           </span>
-          <span class="tr-pos up">{{ tr.position }}</span>
+          <span class="tr-pos up">{{ transfer.to_player.position }}</span>
           <span class="tr-out">
-            {{ players[tr.transferOut].name }}
+            {{ transfer.from_player.name }}
             <br />
-            <span>{{ players[tr.transferOut].club }}</span>
+            <span>{{ transfer.from_player.club }}</span>
           </span>
         </router-link>
       </div>
@@ -35,74 +35,38 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
+import { getPictureByName } from "../../../utils/getPictureByName";
 
 export default {
   name: 'Last5Transfers',
   props: {
-    selectedLeagueObj: {
+    selectedLeague: {
       type: Object,
-      required: true
+      default: () => [],
     },
-    users: {
-      type: Object,
-      required: true
-    },
-    players: {
-      type: Object,
-      required: true
-    }
   },
   data () {
-    return {}
+    return {getPictureByName,}
   },
   methods: {
-    ...mapActions(['fetchTransfers'])
+    ...mapActions('transfers', ['fetchTransfers']),
   },
   computed: {
-    ...mapGetters(['transfers']),
+    ...mapState('transfers', ['transfers']),
+    userTransfers() {
+      return this.transfers.filter(transfer => transfer.user.league_id === this.selectedLeague.id).sort((a, b) => a - b).slice(0, 5);
+    },
     last5TransfersReady () {
       if (!this.transfers) {
-        return ''
+        return [];
       }
-      const destructured = [...Object.values(this.transfers)]
-        .map(x => {
-          const obj = Object.values(x)
-          return [...Object.values(obj)]
-        })
-        .flat()
-        .map(x => {
-          return [...Object.values(x)]
-        })
-        .flat()
-        .filter(x => {
-          if (this.selectedLeagueObj.teams.includes(x.team)) {
-            return x
-          }
-        })
-        .filter(x => {
-          if (x.status !== 'cancelled' && x.status !== 'pending') {
-            return x
-          }
-        })
-        .sort((a, b) => {
-          return new Date(b.timeMade) - new Date(a.timeMade)
-        })
-        .sort((a, b) => {
-          return b.round - a.round
-        })
-        .filter((x, i) => {
-          if (i <= 4) {
-            return x
-          }
-        })
-
-      return destructured
+      return [];
     }
   },
-  created () {
-    this.fetchTransfers()
-  }
+  async created () {
+    await this.fetchTransfers(this.selectedLeague.id);
+  },
 }
 </script>
 

@@ -4,65 +4,65 @@
       <h2>
         League
         <br />
-        {{selectedLeagueObj.name}}
+        {{ selectedLeague.name }}
       </h2>
       <img
-        :src="require(`@/assets/images/home/${selectedLeagueObj.logoSmall}.png`)"
-        :alt="`${selectedLeagueObj.name} logo`"
+        :src="getPictureByName(selectedLeague.name,'-big.png')"
+        :alt="`${selectedLeague.name} logo`"
       />
     </div>
 
-    <Tow :standings="standings" :selectedLeagueObj="selectedLeagueObj" :currentRound="currentRound" :users="users"></Tow>
+    <Tow :selectedLeague="selectedLeague" :currentRound="currentRound" :users="users"></Tow>
 
-    <Last5Transfers :selectedLeagueObj="selectedLeagueObj" :users="users" :players="players"></Last5Transfers>
-
+    <Last5Transfers :selectedLeague="selectedLeague"></Last5Transfers>
   </section>
 </template>
 
 <script>
-// import Tow from "./Tow";
-// import Last5Transfers from "./Last5Transfers";
 const Tow = () => import("./Tow");
 const Last5Transfers = () => import("./Last5Transfers");
+import { getPictureByName } from "../../../utils/getPictureByName";
 
 export default {
   name: "SelectedLgDetails",
   components: {
     Tow,
-    Last5Transfers
+    Last5Transfers,
   },
   props: {
-    selectedLeagueObj: {
+    selectedLeague: {
       type: Object,
-      required: true
+      default: () => {},
     },
     users: {
-      type: Object,
-      required: true
+      type: Array,
+      default: () => [],
     },
     players: {
-      type: Object,
-      required: true
+      type: Array,
+      default: () => [],
     },
     currentRound: {
-      type: Number,
-      required: true
-    },
-    standings: {
       type: Object,
-      required: true
-    }
+      default: () => {},
+    },
+    // standings: {
+    //   type: Object,
+    //   required: true
+    // }
   },
-  methods:{
+  methods: {},
+  filters: {},
+  data() {
+    console.log(this.currentRound, 'cr in details');
+    return { getPictureByName };
   },
-  filters: {
-  }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-@import '../../../common/breakpoints.scss';
+@import "../../../common/breakpoints.scss";
 
 .pele-container,
 .maradona-container {

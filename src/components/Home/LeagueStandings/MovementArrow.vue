@@ -16,7 +16,7 @@ export default {
   props: {
     movement: {
       type: [String, Number],
-      required: true,
+      default: '',
     },
   },
   computed: {},

@@ -1,69 +1,58 @@
 <template>
-  <div class="league-tow sha hover" v-if="towRdy">
+  <div class="league-tow sha hover" v-if='towReady.length'>
     <div class="tow-heading up">
       <div>
-        <img :src="require(`@/assets/images/home/tow.png`)" alt="tow-icon`" />
+        <img :src="getPictureByName('tow.png')" alt="tow-icon`" />
       </div>
       <h2>Team of the week</h2>
     </div>
-    <div class="tow-points" v-for="team in towRdy" :key="team[0]">
-      <router-link
-        :to="`/team-details/${users[team[0]].userLogo}`"
-        tag="h2"
-        class="tow up"
-        >{{ users[team[0]].userTeam }}</router-link
-      >
-      <span class="tow-points-number">{{ team[1].lastRndTotal }} pts</span>
+    <div class="tow-points" v-for="team in towReady" :key='team.id'>
+      <router-link :to="`/team-details`" tag="h2" class="tow up">
+        {{ team.teamName }}
+      </router-link>
+      <span class="tow-points-number">{{ team.lastRound }} pts</span>
     </div>
   </div>
 </template>
 
 <script>
+import { getPictureByName } from "../../../utils/getPictureByName";
+import { mapState } from "vuex";
+
 export default {
   name: "Tow",
   props: {
-    selectedLeagueObj: {
+    selectedLeague: {
       type: Object,
-      required: true
+      default: () => {},
     },
     currentRound: {
-      type: Number,
-      required: true
-    },
-    standings: {
       type: Object,
-      required: true
+      default: () => {},
     },
     users: {
-      type: Object,
-      required: true
-    }
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
-    return {};
+    return { getPictureByName };
   },
   methods: {},
   computed: {
-    towRdy() {
-      // const tow = Object.entries(
-      //   this.standings[`r${this.currentRound}`][this.selectedLeagueObj.id]
-      // ).sort((a, b) => {
-      //   return b[1].lastRndTotal - a[1].lastRndTotal;
-      // });
-      const tow = Object.entries(
-        this.standings[this.selectedLeagueObj.id]
-      ).sort((a, b) => {
-        return b[1].lastRndTotal - a[1].lastRndTotal;
+    ...mapState("standings", ["standings"]),
+    towReady() {
+      if (!this.standings.length) {
+        return [];
+      }
+      const tow = [...this.standings].sort((a, b) => {
+        return b.lastRound - a.lastRound;
       });
-      const highest = Number(tow[0][1].lastRndTotal);
-      return tow.filter(x => {
-        if (x[1].lastRndTotal === highest) {
-          return x;
-        }
-      });
-    }
+      
+      return tow.filter(team => team.lastRound === tow[0].lastRound);
+    },
   },
-  created() {}
+  created() {},
 };
 </script>
 

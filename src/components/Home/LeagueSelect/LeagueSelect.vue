@@ -6,21 +6,17 @@
 
     <LeagueBtn
       used="home"
-      v-for="(l, i) in leagues"
-      :key="i"
-      :title="l.name"
-      :id="l.id"
-      :logo="selectedLeague === l.id ? l.logoActive : l.logoBig"
+      v-for="league in leagues"
+      :key="league.league_uuid"
+      :league="league"
       @selectedLeague="selectedLeagueHandler($event)"
-      :class="{ lgActive: selectedLeague === l.id }"
+      :class="{ lgActive: selectedLeague === league.id }"
     ></LeagueBtn>
   </section>
 </template>
 
 <script>
-// import LeagueBtn from "./LeagueBtn";
 const LeagueBtn = () => import("./LeagueBtn");
-
 
 export default {
   name: "LeagueSelect",
@@ -31,20 +27,22 @@ export default {
     leagues: {
       type: Array,
       required: true,
+      default: () => [],
     },
-    selectedLeague: {
-      type: String
-    }
-  },
-  data() {
-    return {};
   },
   computed: {},
   methods: {
-    selectedLeagueHandler(x) {
-      return this.$emit("selectedLeague", x);
+    selectedLeagueHandler(league) {
+      this.selectedLeague = league;
+      return this.$emit("selectedLeague", league);
     }
-  }
+  },
+  data() {
+    const selectedLeague = null;
+    return {
+      selectedLeague,
+    }
+  },
 };
 </script>
 

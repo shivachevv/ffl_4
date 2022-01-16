@@ -1,88 +1,43 @@
 <template>
-  <div class="slider-container" v-if="bestTeamReady">
-    <h2>FFL BEST TEAM FOR ROUND {{ currentRound - 1 }}</h2>
-    <carousel
-      :navigationEnabled="true"
-      :perPage="isMobile ? 3 : 8"
-      :paginationSize="10"
-      :paginationPadding="10"
-    >
-      <slide>
-        <BestTeamPlayer
-          :currentRound="currentRound"
-          :player="bestTeamReady.GK"
-        />
-      </slide>
-      <slide>
-        <BestTeamPlayer
-          :currentRound="currentRound"
-          :player="bestTeamReady.DL"
-        />
-      </slide>
-      <slide>
-        <BestTeamPlayer
-          :currentRound="currentRound"
-          :player="bestTeamReady.DC"
-        />
-      </slide>
-      <slide>
-        <BestTeamPlayer
-          :currentRound="currentRound"
-          :player="bestTeamReady.DR"
-        />
-      </slide>
-      <slide>
-        <BestTeamPlayer
-          :currentRound="currentRound"
-          :player="bestTeamReady.ML"
-        />
-      </slide>
-      <slide>
-        <BestTeamPlayer
-          :currentRound="currentRound"
-          :player="bestTeamReady.MC"
-        />
-      </slide>
-      <slide>
-        <BestTeamPlayer
-          :currentRound="currentRound"
-          :player="bestTeamReady.MR"
-        />
-      </slide>
-      <slide>
-        <BestTeamPlayer
-          :currentRound="currentRound"
-          :player="bestTeamReady.ST"
-        />
-      </slide>
-    </carousel>
+  <div class="main-container">
+    <h2 v-if='currentRound.id'>FFL BEST TEAM FOR ROUND {{ currentRound.id - 1 || 1 }} </h2>
+    <div>
+      <img src="../../../assets/images/user-page/pitch1.png" width="500px" height="600px" alt="The football field">
+      <div v-for='player in players' :key='player.id'>
+        <best-team-player :player='player'></best-team-player>
+      </div>
+    </div>
   </div>
 </template>
 <script>
+// import BestTeamPlayer from './BestTeamPlayer.vue';
 // import slider components
-import { Carousel, Slide } from "vue-carousel";
-// import BestTeamPlayer from "./BestTeamPlayer";
+// import { Carousel, Slide } from "vue-carousel";
 const BestTeamPlayer = () => import("./BestTeamPlayer");
 
 export default {
   name: "BestTeam",
   components: {
-    Carousel,
-    Slide,
     BestTeamPlayer
+    // Carousel,
+    // Slide,
+    // BestTeamPlayer
   },
   props: {
     players: {
-      type: Object,
-      required: true
+      type: Array,
+      default: () => [],
+      required: true,
     },
     users: {
-      type: Object,
-      required: true
+      type: Array,
+      default: () => [],
+      required: true,
     },
     currentRound: {
-      type: Number,
-      required: true
+      type: Object,
+      default: () => {},
+      required: true,
     }
   },
   data() {
@@ -93,101 +48,108 @@ export default {
       const screen = window.innerWidth;
       return screen < 501;
     },
-    bestTeamReady() {
-      const players = Object.keys(this.players)
-      let result = {};
-      players.forEach(id => {
-        const player = this.players[id];
-        const lastRnd = player.points[`r${this.currentRound - 1}`].roundPts;
-        const owned = !!this.isOwned(id);
-        if (owned) {
-          if (result[player.position]) {
-            if (
-              result[player.position].points[`r${this.currentRound - 1}`]
-                .roundPts < lastRnd
-            ) {
-              result[player.position] = player;
-              result[player.position].userTeams = this.userOwnedCheck(id);
-            }
-          } else {
-            result[player.position] = player;
-            result[player.position].userTeams = this.userOwnedCheck(id);
-          }
-        }
-      });
+    // bestTeamReady() {
+    //   const players = Object.keys(this.players)
+    //   let result = {};
+    //   players.forEach(id => {
+    //     const player = this.players[id];
+    //     const lastRnd = player.points[`r${this.currentRound - 1}`].roundPts;
+    //     const owned = !!this.isOwned(id);
+    //     if (owned) {
+    //       if (result[player.position]) {
+    //         if (
+    //           result[player.position].points[`r${this.currentRound - 1}`]
+    //             .roundPts < lastRnd
+    //         ) {
+    //           result[player.position] = player;
+    //           result[player.position].userTeams = this.userOwnedCheck(id);
+    //         }
+    //       } else {
+    //         result[player.position] = player;
+    //         result[player.position].userTeams = this.userOwnedCheck(id);
+    //       }
+    //     }
+    //   });
 
-      return result;
-    }
+    //   return result;
+    // }
   },
   methods: {
-    isOwned(id) {
-      return Object.values(this.users).filter(x => {
-        const team = Object.values(x.rounds[`r${this.currentRound - 1}`].team);
-        if (team.includes(id)) {
-          return x;
-        }
-      }).length;
-    },
-    userOwnedCheck(id) {
-      const simplifyTeams = teams => {
-        const half = teams.length / 2;
-        let result = {
-          one: "",
-          two: ""
-        };
-        teams.forEach((x, i) => {
-          if (x && i < half) {
-            result.one = x;
-          }
-          if (x && i >= half) {
-            result.two = x;
-          }
-        });
-        return Object.values(result)
-      };
-      const userTeams = Object.values(this.users)
-        .sort((a, b) => {
-          if (a.league && b.league) {
-            return a.league.localeCompare(b.league);
-          }
-        })
-        // .filter(x => {
-        //   const team = Object.values(
-        //     x.rounds[`r${this.currentRound - 1}`].team
-        //   );
-        //   if (team.includes(id)) {
-        //     return x;
-        //   }
-        // })
-        .filter(x => {
-          if (x.league) {
-            return x;
-          }
-        })
-        .map(x => {
-          const team = Object.values(
-            x.rounds[`r${this.currentRound - 1}`].team
-          );
-          if (team.includes(id)) {
-            return x.userTeam;
-          } else {
-            return "";
-          }
-        });
+    // isOwned(id) {
+    //   return Object.values(this.users).filter(x => {
+    //     const team = Object.values(x.rounds[`r${this.currentRound - 1}`].team);
+    //     if (team.includes(id)) {
+    //       return x;
+    //     }
+    //   }).length;
+    // },
+    // userOwnedCheck(id) {
+    //   const simplifyTeams = teams => {
+    //     const half = teams.length / 2;
+    //     let result = {
+    //       one: "",
+    //       two: ""
+    //     };
+    //     teams.forEach((x, i) => {
+    //       if (x && i < half) {
+    //         result.one = x;
+    //       }
+    //       if (x && i >= half) {
+    //         result.two = x;
+    //       }
+    //     });
+    //     return Object.values(result)
+    //   };
+    //   const userTeams = Object.values(this.users)
+    //     .sort((a, b) => {
+    //       if (a.league && b.league) {
+    //         return a.league.localeCompare(b.league);
+    //       }
+    //     })
+    //     // .filter(x => {
+    //     //   const team = Object.values(
+    //     //     x.rounds[`r${this.currentRound - 1}`].team
+    //     //   );
+    //     //   if (team.includes(id)) {
+    //     //     return x;
+    //     //   }
+    //     // })
+    //     .filter(x => {
+    //       if (x.league) {
+    //         return x;
+    //       }
+    //     })
+    //     .map(x => {
+    //       const team = Object.values(
+    //         x.rounds[`r${this.currentRound - 1}`].team
+    //       );
+    //       if (team.includes(id)) {
+    //         return x.userTeam;
+    //       } else {
+    //         return "";
+    //       }
+    //     });
 
-      const simplifiedTeams = simplifyTeams(userTeams);
+    //   const simplifiedTeams = simplifyTeams(userTeams);
 
-      return simplifiedTeams;
-    },
-    playerPopupHandler(p) {
-      return this.$emit("playerPopupHandler", p);
-    }
+    //   return simplifiedTeams;
+    // },
+    // playerPopupHandler(p) {
+    //   return this.$emit("playerPopupHandler", p);
+    // }
   }
 };
 </script>
 
 <style lang="scss">
 @import "../../../common/breakpoints.scss";
+
+.pitch {
+  width: 780px;
+  height: 800px;
+  background-image: url("../../../assets/images/user-page/pitch1.png");
+  background-repeat: 'no-repeat';
+}
 
 .slider-container {
   width: 100%;

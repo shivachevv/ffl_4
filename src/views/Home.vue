@@ -1,76 +1,73 @@
 <template>
-  <main>
-    <div>PESHO</div>
-    <div class="main-container" v-if="leagues && allUsers">
-      <div class="league-container">
-        <!---------------- LEAGUE CHOICE -------------------------------------->
+  <div class="main-container" v-if="leagues && allUsers">
+    <div class="league-container">
+      <!---------------- LEAGUE CHOICE -------------------------------------->
 
-        <LeagueSelect
-          :leagues="leagues"
-          :selectedLeague="selectedLeague"
-          @selectedLeague="selectedLeague = $event"
-        ></LeagueSelect>
+      <LeagueSelect
+        :leagues="leagues"
+        @selectedLeague="handleSelectedLeague($event)"
+      ></LeagueSelect>
 
-        <!---------------- STANDINGS -------------------------------------->
+      <!---------------- STANDINGS -------------------------------------->
 
-        <!-- <LeagueStandings
-          :selectedLeagueObj="selectedLeagueObj"
-          :currentRound="rounds[currentRoundIndex]"
-          :allUsers="allUsers"
-          :standings="standings"
-        ></LeagueStandings> -->
+      <LeagueStandings
+        v-if='selectedLeague && currentRound'
+        :selectedLeague="selectedLeague"
+        :currentRound="currentRound"
+        :users="allUsers"
+        :standings="standings"
+      ></LeagueStandings>
 
-        <!---------------- LEAGUE DETAILS -------------------------------------->
+      <!---------------- LEAGUE DETAILS -------------------------------------->
 
-        <!-- <SelectedLgDetails
-          v-if="frozenPlayers"
-          :allUsers="allUsers"
-          :selectedLeagueObj="selectedLeagueObj"
-          :players="frozenPlayers"
-          :standings="standings"
-          :currentRound="rounds[currentRoundIndex]"
-          @playerPopupSelected="playerPopupHandler($event)"
-        ></SelectedLgDetails> -->
-      </div>
+      <SelectedLgDetails
+        v-if="frozenPlayers && selectedLeague && currentRound"
+        :users="allUsers"
+        :selectedLeague="selectedLeague"
+        :players="frozenPlayers"
+        :standings="standings"
+        :currentRound="currentRound"
+        @playerPopupSelected="playerPopupHandler($event)"
+      ></SelectedLgDetails>
+    </div>
 
-      <!---------------- BEST TEAM OF THE WEEK -------------------------------------->
+    <!---------------- BEST TEAM OF THE WEEK -------------------------------------->
 
       <BestTeam
-        v-if="frozenPlayers"
+        v-if="frozenPlayers && currentRound"
         :players="frozenPlayers"
-        :allUsers="allUsers"
-        :currentRound="rounds[currentRoundIndex]"
+        :users="allUsers"
+        :currentRound="currentRound"
         @playerPopupHandler="playerPopupHandler($event)"
       />
-    </div>
-    <!-- <transition name="slide-left" mode="out-in"> -->
-    <!-- <vs-popup
-        class="holamundo"
-        :title="`${popupPlayer.name} Information`"
-        :active.sync="popupShow"
-        v-if="popupPlayer"
-        @close="deselectPlayer"
-      >
-        <PlayerPopup :player="popupPlayer" />
-      </vs-popup> -->
-    <!-- <PlayerPopup
-        v-if="popupShow"
-        :popupPlayer="popupPlayer"
-        :popupShow="popupShow"
-        :selectedLeagueObj="selectedLeagueObj"
-        @popupClose="popupShow = $event"
-      ></PlayerPopup>-->
-    <!-- </transition> -->
-  </main>
+  </div>
+  <!-- <transition name="slide-left" mode="out-in"> -->
+  <!-- <vs-popup
+      class="holamundo"
+      :title="`${popupPlayer.name} Information`"
+      :active.sync="popupShow"
+      v-if="popupPlayer"
+      @close="deselectPlayer"
+    >
+      <PlayerPopup :player="popupPlayer" />
+    </vs-popup> -->
+  <!-- <PlayerPopup
+      v-if="popupShow"
+      :popupPlayer="popupPlayer"
+      :popupShow="popupShow"
+      :selectedLeagueObj="selectedLeagueObj"
+      @popupClose="popupShow = $event"
+    ></PlayerPopup>-->
+  <!-- </transition> -->
 </template>
 
 <script>
 const LeagueSelect = () =>
   import("../components/Home/LeagueSelect/LeagueSelect");
-// const LeagueStandings = () =>
-//   import("../components/Home/LeagueStandings/LeagueStandings");
-// const SelectedLgDetails = () =>
-//   import("../components/Home/SelectedLgDetails/SelectedLgDetails");
+const LeagueStandings = () =>
+  import("../components/Home/LeagueStandings/LeagueStandings");
+const SelectedLgDetails = () =>
+  import("../components/Home/SelectedLgDetails/SelectedLgDetails");
 const BestTeam = () => import("../components/Home/BestTeam/BestTeam");
 // const PlayerPopup = () => import("../Popup/PlayerPopup");
 import { mapState, mapActions } from "vuex";
@@ -79,16 +76,18 @@ export default {
   name: "Home",
   components: {
     LeagueSelect,
-    // LeagueStandings,
-    // SelectedLgDetails,
+    LeagueStandings,
+    SelectedLgDetails,
     // PlayerPopup,
     BestTeam,
   },
   data() {
+    const selectedLeague = null;
     return {
       popupShow: false,
       popupPlayer: "",
       selectedLgTmp: "",
+      selectedLeague,
     };
   },
   methods: {
@@ -96,19 +95,21 @@ export default {
     ...mapActions("leagues", ["fetchLeagues"]),
     ...mapActions("rounds", ["fetchRounds"]),
     ...mapActions("standings", ["fetchStandings", "fetchStanding"]),
+    ...mapActions("userPlayers", ["fetchUserPlayers"]),
 
-    //   "fetchPlayers",
-    //   "fetchCurrentRound",
-    //   "fetchStandings",
-    //   "fetchLoggedUser",
-    // ]),
+    async handleSelectedLeague(league) {
+      this.selectedLeague = league;
+    },
+
     playerPopupHandler(p) {
       this.popupShow = true;
       this.popupPlayer = p;
     },
+
     closePopup() {
       return (this.popupShow = false);
     },
+
     deselectPlayer() {
       return (this.popupPlayer = "");
     },
@@ -118,123 +119,42 @@ export default {
     ...mapState("leagues", ["leagues"]),
     ...mapState("rounds", ["rounds", "roundsH2H", "currentRoundIndex", "currentH2HRoundIndex"]),
     ...mapState("standings", ["standings"]),
-    selectedLeagueObj() {
-      return this.leagues[this.selectedLeague];
-    },
-    selectedLeague: {
-      get: function () {
-        if (this.loggedUser && !this.selectedLgTmp) {
-          const result = Object.keys(this.leagues).filter((id) => {
-            if (this.leagues?.[id]?.teams?.includes(this.loggedUser.uid)) {
-              return id;
-            }
-          })[0];
+    ...mapState("userPlayers", ["userPlayers"]),
 
-          // console.log(result);
-          return result;
-        } else {
-          return this.selectedLgTmp
-            ? this.selectedLgTmp
-            : "33c46ff1-1756-41a1-a80f-01b2f4fb4b3c";
-        }
-      },
-      set: function (v) {
-        this.selectedLgTmp = v;
-      },
+    userId() {
+      return this.loggedUser.id;
     },
+
+    currentRound() {
+      return this.rounds[this.currentRoundIndex] || this.rounds[0];
+    },
+
+    latestEndedRound() {
+      return this.rounds[this.currentRoundIndex - 1] || this.rounds[0];
+    },
+
+    loading() {
+      return !this.rounds[this.currentRoundIndex] && !this.leagues.length;
+    },
+
     frozenPlayers() {
-      if (this.players) {
-        const result = Object.freeze(this.players);
+      if (this.userPlayers) {
+        const result = Object.freeze(this.userPlayers);
         return result;
       } else {
-        return "";
+        return [];
       }
     },
   },
-  watch: {
-    // leagues(nv) {
-    //   if (
-    //     nv &&
-    //     this.players &&
-    //     this.currentRound &&
-    //     this.allUsers &&
-    //     this.standings
-    //   ) {
-    //   }
-    // },
-    // players(nv) {
-    //   if (
-    //     nv &&
-    //     this.leagues &&
-    //     this.currentRound &&
-    //     this.allUsers &&
-    //     this.standings
-    //   ) {
-    //   }
-    // },
-    // currentRound(nv) {
-    //   if (nv && this.players && this.leagues && this.allUsers && this.standings) {
-    //   }
-    // },
-    // allUsers(nv) {
-    //   if (
-    //     nv &&
-    //     this.players &&
-    //     this.leagues &&
-    //     this.currentRound &&
-    //     this.standings
-    //   ) {
-    //   }
-    // },
-    // standings(nv) {
-    //   if (
-    //     nv &&
-    //     this.players &&
-    //     this.leagues &&
-    //     this.currentRound &&
-    //     this.allUsers
-    //   ) {
-    //   }
-    // },
-  },
+  watch: {},
   async created() {
-    // console.log(this.leagues);
-    // if (!this.leagues) {
     await this.fetchLeagues();
-    await this.fetchAllUsers();
     await this.fetchRounds();
-    await this.fetchStandings();
-    console.log(this.leagues, 'leagues');
-    // console.log(this.leagues);
-    // console.log(this.allUsers);
-    // console.log(this.rounds);
-    // }
-    // if (!this.players) {
-    //   this.$vs.loading();
-    //   this.fetchPlayers();
-    // }
-    // if (!this.currentRound) {
-    //   this.$vs.loading();
-    //   this.fetchCurrentRound();
-    // }
-    // if (!this.allUsers) {
+    await this.fetchAllUsers();
+    
+    // await this.fetchStandings(); --> throws error
 
-    // }
-    // console.log(this.allUsers);
-    // if (!this.standings) {
-    //   this.$vs.loading();
-    //   this.fetchStandings();
-    // }
-    // if (!this.loggedUser) {
-    //   this.$vs.loading();
-    //   this.fetchLoggedUser();
-    // }
-    // this.fetchCurrentRound();
-    // this.fetchUsers();
-  },
-  beforeDestroy() {
-    // this.closePopup()
-    // console.log('destroyed');
+    await this.fetchUserPlayers(this.latestEndedRound);
   },
 };
 </script>
@@ -243,8 +163,14 @@ export default {
 <style scoped lang="scss">
 // @import "../../common/breakpoints.scss";
 
+.main-container {
+  padding-left: 25px;
+  padding-right: 25px;
+  box-sizing: border-box;
+}
+
 .league-container {
-  width: 90%;
+  width: 100%;
   background: none;
   display: flex;
   flex-direction: row;

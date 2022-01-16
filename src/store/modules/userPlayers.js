@@ -1,7 +1,9 @@
-import { postResource } from "../../utils/resourceRequests";
-import { POST_RESOURCE_PATH } from "../../common/apiRequests";
+import { postResource, requestResource } from "../../utils/resourceRequests";
+import { POST_RESOURCE_PATH, GET_RESOURCE_PATH } from "../../common/apiRequests";
 
-const state = {};
+const state = {
+  userPlayers: [],
+};
 
 const getters = {};
 
@@ -18,9 +20,22 @@ const actions = {
       payload,
     });
   },
+  async fetchUserPlayers({ commit }, round) {
+    let userPlayers;
+    await requestResource({
+      resourcePath: `${GET_RESOURCE_PATH.PLAYERS_ALL}?round_id=${round.id}`
+    }).then((response) => {
+      userPlayers = response.data.data;
+    });
+    commit("setUserPlayers", userPlayers);
+  },
 };
 
-const mutations = {};
+const mutations = {
+  setUserPlayers: (state, userPlayers) => {
+    state.userPlayers = [...userPlayers];
+  },
+};
 
 export default {
   state,

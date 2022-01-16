@@ -5,31 +5,24 @@
       home_choose_lg_container: used === 'home',
       transfers_choose_lg_container: used === 'transfers'
     }"
-    @click="selectLeagueHandler(id)"
+    @click="selectLeagueHandler(league)"
   >
     <img
-      :src="require(`@/assets/images/home/${logo}.png`)"
-      :alt="`${title} logo`"
+      :src="getPictureByName(league.name, '-big.png')"
+      :alt="`${league.title} logo`"
     />
-    <p class="up">{{ title }}</p>
+    <p class="up">{{ league.name }}</p>
   </div>
 </template>
 
 <script>
+import { getPictureByName } from '../../../utils/getPictureByName';
 export default {
   name: "LeagueBtn",
   props: {
-    title: {
-      type: String,
-      required: true
-    },
-    logo: {
-      type: String,
-      required: true
-    },
-    id: {
-      type: String,
-      required: true
+    league: {
+      type: Object,
+      default: () => {},
     },
     used: {
       type: String,
@@ -37,8 +30,13 @@ export default {
     }
   },
   methods: {
-    selectLeagueHandler(x) {
-      return this.$emit("selectedLeague", x);
+    selectLeagueHandler(league) {
+      return this.$emit("selectedLeague", league);
+    },
+  },
+  data() {
+    return {
+     getPictureByName,
     }
   }
 };

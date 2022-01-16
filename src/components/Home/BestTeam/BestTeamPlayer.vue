@@ -6,16 +6,16 @@
   >
     <h3 class="pos">{{ player.position }}</h3>
     <img
-      :src="`https://ff-legends.com/team-kits/${player.shirt}.png?version=1`"
+      :src="`https://ff-legends.com/team-kits/${player.club.split(' ').join('-').toLowerCase()}.png?fix=true`"
       alt="Player"
     />
     <h3 class="name">
       {{ player.name }}<br />
-      {{ player.points[`r${currentRound - 1}`].roundPts }} pts
+      <!-- {{ player.points[`r${currentRound - 1}`].roundPts }} pts -->
     </h3>
-    <h3 class="team" v-for="(team, i) in player.userTeams" :key="i">
+    <!-- <h3 class="team" v-for="(team, i) in player.userTeams" :key="i">
       {{ team }}
-    </h3>
+    </h3> -->
   </div>
 </template>
 <script>
@@ -28,10 +28,10 @@ export default {
       type: Object,
       required: true
     },
-    currentRound: {
-      type: Number,
-      required: true
-    }
+    // currentRound: {
+    //   type: Number,
+    //   required: true
+    // }
   },
   data() {
     return {};
