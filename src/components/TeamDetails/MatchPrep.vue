@@ -52,8 +52,16 @@
     </div>
     <div class="captain-selected" v-if="isThisLoggedTeam">
       <span class="header">Next Round Captains:</span>
-      <span>Captain: Del Piero</span>
-      <span>Vice Captain: Del Piero</span>
+      <span v-if="nextRoundCaptains.cpt"
+        >Captain: {{ nextRoundCaptains.cpt.name }}
+        {{ nextRoundCaptains.cpt.position }}</span
+      >
+      <span v-else>Captain: Not Selected</span>
+      <span v-if="nextRoundCaptains.vice_cpt"
+        >Vice Captain: {{ nextRoundCaptains.vice_cpt.name }}
+        {{ nextRoundCaptains.vice_cpt.position }}</span
+      >
+      <span v-else>Vice Captain: Not Selected</span>
       <span>Super Captain: Not Active</span>
     </div>
     <!---------------- CAPTAIN SELECTION -------------------------------------->
@@ -115,9 +123,9 @@
       <span class="header">Next round transfers</span>
       <div class="transfers-info__details">
         <span class="transfers-info__transfer-count"
-          >Transfers left: {{ transfersMade - 2 }}</span
+          >Transfers left: {{ 2 - transfersMade }}</span
         >
-        <router-link :to="`/transfers/${user.id}`" tag="button">
+        <router-link to="/transfers-center" class="transfers-center">
           <v-btn
             large
             :disabled="transfersMade === 3"
@@ -181,6 +189,10 @@ export default {
     },
     transfersMade: {
       type: Number,
+    },
+    nextRoundCaptains: {
+      type: Object,
+      required: true,
     },
   },
   data() {
@@ -419,6 +431,10 @@ export default {
     .transfers-info__transfer-count {
       font-size: 1rem;
     }
+  }
+
+  .transfers-center {
+    text-decoration: none;
   }
 }
 

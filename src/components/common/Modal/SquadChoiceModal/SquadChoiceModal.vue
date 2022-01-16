@@ -350,7 +350,7 @@ export default {
       if (this.isSquadReady) {
         try {
           if (this.isCup) {
-            // calculate correct CUP round
+            // TO DO calculate correct CUP round
             const payload = new CupSquadPayload(this.createCupSquadPayload());
             await this.addCupTeam(payload);
           } else {

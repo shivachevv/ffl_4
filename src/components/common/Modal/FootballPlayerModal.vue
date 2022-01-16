@@ -27,7 +27,26 @@
                 :rules="requiredFieldRules"
                 :items="leagueClubs"
                 label="Club"
-              ></v-select>
+                v-if="!isNewClub"
+              >
+                <template v-slot:append-outer>
+                  <v-btn small @click="isNewClub = true" color="accent"
+                    >New Club</v-btn
+                  >
+                </template>
+              </v-select>
+              <v-text-field
+                v-if="isNewClub"
+                v-model="footballPlayer.club"
+                label="New Club"
+                :rules="requiredFieldRules"
+              >
+                <template v-slot:append-outer>
+                  <v-btn small @click="isNewClub = false" color="accent"
+                    >Old Club</v-btn
+                  >
+                </template></v-text-field
+              >
               <v-select
                 v-model="footballPlayer.position"
                 :rules="requiredFieldRules"
@@ -36,11 +55,11 @@
               ></v-select>
               <v-text-field
                 v-model="footballPlayer.shirt"
-                :rules="requiredFieldRules"
                 label="Shirt-slug"
+                v-if="false"
               ></v-text-field>
               <v-text-field
-                v-model="footballPlayer.whoscored_id"
+                v-model="footballPlayer.whoscoredId"
                 :rules="requiredFieldRules"
                 label='"WhoScored" ID'
               ></v-text-field>
@@ -108,6 +127,7 @@ export default {
       (value) => (value || "").length <= 30 || "Max 30 characters",
     ],
     requiredFieldRules: [(value) => !!value || "Required."],
+    isNewClub: false,
   }),
   props: {
     value: Boolean,
@@ -120,6 +140,7 @@ export default {
     },
     // TO DO: Form validation!!!!
     handleSave() {
+      this.footballPlayer.shirt = "1";
       if (this.label == "EDIT PLAYER") {
         this.$emit("edit-player", this.footballPlayer);
       } else {
@@ -137,11 +158,14 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getLeagues", "getClubsByLeague", "getPositions"]),
+    ...mapGetters("leagues", ["getLeagues"]),
+    ...mapGetters("footballPlayers", ["getClubsByLeague"]),
+
+    ...mapGetters(["getPositions"]),
     leagueClubs() {
-      return this.footballPlayer.football_league_id
+      return this.footballPlayer.footballLeagueId
         ? Object.keys(
-            this.getClubsByLeague(this.footballPlayer.football_league_id)
+            this.getClubsByLeague(this.footballPlayer.footballLeagueId)
           )
         : [];
     },
@@ -159,11 +183,11 @@ export default {
     playerLeague: {
       get() {
         return this.getLeagues.find(
-          ({ id }) => id == this.footballPlayer.football_league_id
+          ({ id }) => id == this.footballPlayer.footballLeagueId
         );
       },
       set(value) {
-        this.footballPlayer.football_league_id = value;
+        this.footballPlayer.footballLeagueId = value;
       },
     },
   },
@@ -176,11 +200,11 @@ export default {
     },
     playerLeague: {
       handler: function () {
-        this.footballPlayer.football_league_id &&
+        this.footballPlayer.footballLeagueId &&
           !this.leagueClubs.length &&
           this.$store.dispatch(
             "fetchPlayersByLeague",
-            this.footballPlayer.football_league_id
+            this.footballPlayer.footballLeagueId
           );
       },
     },

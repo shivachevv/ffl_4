@@ -7,12 +7,14 @@
         </v-col>
       </v-row>
       <div id="app">
-        <v-btn @click.prevent="logIn" color="green" class="ml-16">Log In</v-btn>
         <Header />
+        <v-btn @click.prevent="logIn" color="green" class="ml-16"
+          >Temp Log In</v-btn
+        >
         <!-- <Logos /> -->
-        <transition name="slide-left" mode="out-in">
+        <div class="content-wrapper" transition="slide-x-transition">
           <router-view />
-        </transition>
+        </div>
         <!-- <Footer /> -->
       </div>
     </v-main>
@@ -39,12 +41,6 @@ export default {
 
   data: () => ({}),
   methods: {
-    async fetch() {
-      await this.$store.dispatch("getClubsByLeague");
-    },
-    async fetchPlayer() {
-      await this.$store.dispatch("fetchPlayersByLeague", 4);
-    },
     logIn() {
       let data = JSON.stringify({
         email: "superadmin@info.dev",
@@ -83,5 +79,9 @@ export default {
 }
 #app {
   background-color: lightgrey;
+}
+
+.content-wrapper {
+  margin: 0 100px;
 }
 </style>

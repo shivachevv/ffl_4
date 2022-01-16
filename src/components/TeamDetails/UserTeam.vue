@@ -1,10 +1,8 @@
 <template>
   <section class="elevation-8">
-    <TeamHeader :user="user"></TeamHeader>
+    <!-- <TeamHeader :user="user"></TeamHeader> -->
 
     <div class="user-team">
-      <!-- <Keypress key-event="keyup" :key-code="37" @success="previousRound()" />
-      <Keypress key-event="keyup" :key-code="39" @success="nextRound()" /> -->
 
       <div class="team-round-change">
         <div class="buttons-cont">
@@ -59,14 +57,13 @@
 <script>
 import { mapActions } from "vuex";
 import Teammate from "./Teammate";
-import TeamHeader from "./TeamHeader.vue";
+// import TeamHeader from "./TeamHeader.vue";
 // import roundPointsCalculator from "../../../utils/roundPointsCalculator";
 export default {
   name: "UserTeam",
   components: {
     Teammate,
-    TeamHeader,
-    // Keypress: () => import("vue-keypress"),
+    // TeamHeader,
   },
   props: {
     user: {
@@ -119,31 +116,6 @@ export default {
       // );
       return 100;
     },
-    // roundPlayersArray() {
-    //   const positions = [
-    //     "dc1",
-    //     "dc2",
-    //     "dl1",
-    //     "dl2",
-    //     "dr1",
-    //     "dr2",
-    //     "gk",
-    //     "mc1",
-    //     "mc2",
-    //     "ml1",
-    //     "ml2",
-    //     "mr1",
-    //     "mr2",
-    //     "st1",
-    //     "st2",
-    //     "st3",
-    //   ];
-    //   return Object.entries(this.roundPlayers)
-    //     .filter(([position]) => positions.includes(position))
-    //     .map(([position, player]) => {
-    //       return { position, player: player[0] };
-    //     });
-    // },
   },
   methods: {
     ...mapActions("rounds", ["fetchRounds"]),
@@ -190,13 +162,6 @@ export default {
   async created() {
     await this.fetchRounds();
     this.selectedRound = this.currentRound;
-  },
-  watch: {
-    // user(nv) {
-    //   if (nv) {
-    //     this.resetRndShow();
-    //   }
-    // },
   },
 };
 </script>

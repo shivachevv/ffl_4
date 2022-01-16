@@ -258,6 +258,9 @@ export default {
 </script>
 
 <style lang="scss">
+.content-wrapper {
+  margin: 0 !important;
+}
 .admin-container {
   width: 100%;
   display: flex;

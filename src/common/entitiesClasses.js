@@ -103,22 +103,30 @@ export class FootballPlayer {
   constructor({
     id,
     club,
-    football_league_id,
+    footballLeagueId,
     league,
     name,
     points,
     position,
     shirt,
-    whoscored_id,
+    whoscoredId,
   }) {
     this.id = id;
     this.club = club;
-    this.football_league_id = football_league_id;
+    this.footballLeagueId = footballLeagueId;
     this.league = league;
     this.name = name;
     this.points = points;
     this.position = position;
     this.shirt = shirt;
-    this.whoscored_id = whoscored_id;
+    this.whoscoredId = whoscoredId;
+  }
+}
+export class TransferRequest {
+  constructor({ round_id, position, from, to }) {
+    this.round_id = round_id;
+    this.position = position;
+    this.from = from;
+    this.to = to;
   }
 }

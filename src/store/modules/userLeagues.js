@@ -11,13 +11,10 @@ const getters = {
 
 const actions = {
   async fetchUserLeagues({ commit }) {
-    let userLeagues;
-    await requestResource({
+    const leagues = await requestResource({
       resourcePath: GET_RESOURCE_PATH.LEAGUES_ALL,
-    }).then((response) => {
-      userLeagues = response.data.data;
     });
-    commit("setUserLeagues", userLeagues);
+    commit("setUserLeagues", leagues?.data?.data);
   },
 };
 
