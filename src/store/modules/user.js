@@ -10,7 +10,6 @@ const state = {
 
 const getters = {
   getLoggerUser: (state) => state.loggedUser,
-  getUserPlayers: (state) => state.userPlayers,
   getAllUsers: (state) => state.allUsers,
 };
 

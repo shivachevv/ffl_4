@@ -9,13 +9,10 @@ const state = {
   transfers: [],
 };
 
-const getters = {
-  getTransfers: (state) => state.transfers,
-};
+const getters = {};
 
 const actions = {
-  async fetchTransfers({ commit, dispatch, rootGetters }) {
-    let transfers;
+  async fetchTransfers({ commit }) {
     await requestResource({
       resourcePath: GET_RESOURCE_PATH.TRANSFERS_ALL,
     })
@@ -64,7 +61,7 @@ const actions = {
 
 const mutations = {
   setTransfers: (state, transfers) => {
-    state.transfers = transfers;
+    state.transfers = transfers.data.data;
   },
 };
 
