@@ -56,13 +56,13 @@
           >Users</a
         >
         <div v-if="showUsers" class="admin-menu-item">
-          <button
+          <!-- <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'UsersPersonal' }"
             @click.prevent="switchComponent"
           >
             UsersPersonal
-          </button>
+          </button> -->
           <button
             class="menu-item-link"
             :class="{ selected: chosenComponent === 'UsersTeams' }"
@@ -179,7 +179,7 @@ const PlayersEdit = () =>
 // const SyncPoints = () => import("./Players/SyncPoints");
 // const Rounds = () => import("./Rounds/Rounds");
 // const UsersPersonal = () => import("./Users/UsersPersonal");
-// const UsersTeams = () => import("./Users/UsersTeams");
+const UsersTeams = () => import("../components/AdminPanel/UsersTeams");
 const Transfers = () =>
   import("../components/AdminPanel/Transfers/Transfers.vue");
 // const Leagues = () => import("./Leagues/Leagues");
@@ -201,7 +201,7 @@ export default {
     // PlayersPoints,
     // SyncPoints,
     // UsersPersonal,
-    // UsersTeams,
+    UsersTeams,
     Transfers,
     // Leagues,
     // H2HLeague,

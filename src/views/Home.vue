@@ -11,7 +11,7 @@
       <!---------------- STANDINGS -------------------------------------->
 
       <LeagueStandings
-        v-if='selectedLeague && currentRound'
+        v-if="selectedLeague && currentRound"
         :selectedLeague="selectedLeague"
         :currentRound="currentRound"
         :users="allUsers"
@@ -21,10 +21,9 @@
       <!---------------- LEAGUE DETAILS -------------------------------------->
 
       <SelectedLgDetails
-        v-if="frozenPlayers && selectedLeague && currentRound"
+        v-if="selectedLeague && currentRound"
         :users="allUsers"
         :selectedLeague="selectedLeague"
-        :players="frozenPlayers"
         :standings="standings"
         :currentRound="currentRound"
         @playerPopupSelected="playerPopupHandler($event)"
@@ -33,13 +32,11 @@
 
     <!---------------- BEST TEAM OF THE WEEK -------------------------------------->
 
-      <BestTeam
-        v-if="frozenPlayers && currentRound"
-        :players="frozenPlayers"
-        :users="allUsers"
-        :currentRound="currentRound"
-        @playerPopupHandler="playerPopupHandler($event)"
-      />
+    <BestTeam
+      v-if="currentRound"
+      :currentRound="currentRound"
+      @playerPopupHandler="playerPopupHandler($event)"
+    />
   </div>
   <!-- <transition name="slide-left" mode="out-in"> -->
   <!-- <vs-popup
@@ -95,7 +92,7 @@ export default {
     ...mapActions("leagues", ["fetchLeagues"]),
     ...mapActions("rounds", ["fetchRounds"]),
     ...mapActions("standings", ["fetchStandings", "fetchStanding"]),
-    ...mapActions("userPlayers", ["fetchUserPlayers"]),
+    // ...mapActions("footballPlayers", ["fetchAllPlayers"]),
 
     async handleSelectedLeague(league) {
       this.selectedLeague = league;
@@ -115,11 +112,16 @@ export default {
     },
   },
   computed: {
-    ...mapState("user", ["loggedUser", "userPlayers", "allUsers"]),
+    ...mapState("user", ["loggedUser", "allUsers"]),
     ...mapState("leagues", ["leagues"]),
-    ...mapState("rounds", ["rounds", "roundsH2H", "currentRoundIndex", "currentH2HRoundIndex"]),
+    ...mapState("rounds", [
+      "rounds",
+      "roundsH2H",
+      "currentRoundIndex",
+      "currentH2HRoundIndex",
+    ]),
     ...mapState("standings", ["standings"]),
-    ...mapState("userPlayers", ["userPlayers"]),
+    // ...mapState("footballPlayers", ["footballPlayers"]),
 
     userId() {
       return this.loggedUser.id;
@@ -136,25 +138,14 @@ export default {
     loading() {
       return !this.rounds[this.currentRoundIndex] && !this.leagues.length;
     },
-
-    frozenPlayers() {
-      if (this.userPlayers) {
-        const result = Object.freeze(this.userPlayers);
-        return result;
-      } else {
-        return [];
-      }
-    },
   },
   watch: {},
   async created() {
     await this.fetchLeagues();
     await this.fetchRounds();
     await this.fetchAllUsers();
-    
-    // await this.fetchStandings(); --> throws error
 
-    await this.fetchUserPlayers(this.latestEndedRound);
+    // await this.fetchStandings(); --> throws error
   },
 };
 </script>

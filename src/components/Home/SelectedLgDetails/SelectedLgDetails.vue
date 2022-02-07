@@ -7,12 +7,16 @@
         {{ selectedLeague.name }}
       </h2>
       <img
-        :src="getPictureByName(selectedLeague.name,'-big.png')"
+        :src="getPictureByName(selectedLeague.name, '-big.png')"
         :alt="`${selectedLeague.name} logo`"
       />
     </div>
 
-    <Tow :selectedLeague="selectedLeague" :currentRound="currentRound" :users="users"></Tow>
+    <Tow
+      :selectedLeague="selectedLeague"
+      :currentRound="currentRound"
+      :users="users"
+    ></Tow>
 
     <Last5Transfers :selectedLeague="selectedLeague"></Last5Transfers>
   </section>
@@ -38,10 +42,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    players: {
-      type: Array,
-      default: () => [],
-    },
     currentRound: {
       type: Object,
       default: () => {},
@@ -54,7 +54,6 @@ export default {
   methods: {},
   filters: {},
   data() {
-    console.log(this.currentRound, 'cr in details');
     return { getPictureByName };
   },
 };

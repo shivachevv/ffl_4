@@ -94,35 +94,19 @@ export default {
       );
     },
     calculatedPlayerPts() {
+      if (this.player.pointsround) {
+        return this.player?.pointsround[0]?.roundPts || 0;
+      }
       if (this.player.player_points) {
         return this.player?.player_points[0]?.round_pts || 0;
       }
       return 0;
-      // const { isTripple, isCap, isVCap, isVCActive, player, tmpRndShow } = this;
-      // const pts = Number(player.points[`r${tmpRndShow}`].roundPts);
-      // const multiplier = isTripple ? 3 : 2;
-      // // console.log(isVCActive);
-      // if (isCap && !isVCap && !isTripple && !isVCActive) {
-      //   // console.log(1);
-      //   return pts * multiplier;
-      // } else if (isCap && !isVCap && isTripple && !isVCActive) {
-      //   // console.log(2);
-      //   return pts * multiplier;
-      // } else if (!isCap && isVCap && !isTripple && isVCActive) {
-      //   // console.log(3);
-      //   return pts * multiplier;
-      // } else if (!isCap && isVCap && isTripple && isVCActive) {
-      //   // console.log(4);
-      //   return pts * multiplier;
-      // } else {
-      //   return pts;
-      // }
     },
   },
   methods: {
-    clickHandler(){
-      this.$emit("player-action", this.player)
-    }
+    clickHandler() {
+      this.$emit("player-action", this.player);
+    },
   },
   filters: {
     prettyPosition(value) {
@@ -143,7 +127,6 @@ export default {
 }
 
 .teammate {
-  width: 70%;
   position: relative;
   background-color: #ababab42 !important;
 }

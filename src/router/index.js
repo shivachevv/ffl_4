@@ -1,7 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import AdminPanel from "../views/AdminPanel.vue";
-import TeamDetails from "../views/TeamDetails.vue";
 import Home from "../views/Home.vue";
 const AdminPanel = () => import("../views/AdminPanel");
 const TeamDetails = () => import("../views/TeamDetails");

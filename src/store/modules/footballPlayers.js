@@ -54,7 +54,8 @@ const actions = {
     { priorityLeagueId, queryParams }
   ) {
     let players = [];
-    let leagueIdsArr = rootGetters["leagues/getLeagues"].map(
+
+    let leagueIdsArr = rootGetters["leagues/getFootballLeagues"].map(
       (league) => league.id
     );
     if (priorityLeagueId) {
@@ -75,7 +76,7 @@ const actions = {
     );
     Promise.allSettled(allLeaguesArr).then((response) => {
       response.forEach((leaguePlayers) => {
-        const league = rootGetters["leagues/getLeagues"].find(
+        const league = rootGetters["leagues/getFootballLeagues"].find(
           ({ id }) =>
             id == leaguePlayers?.value?.data?.data[0]?.footballLeagueId
         );
@@ -85,12 +86,13 @@ const actions = {
           players: leaguePlayers?.value?.data?.data,
         });
       });
+      console.log(players);
       commit("setFootballPlayers", players);
     });
   },
   async fetchPlayersByLeague({ commit, rootGetters }, leagueId) {
     let players = [];
-    const league = rootGetters["leagues/getLeagues"].find(
+    const league = rootGetters["leagues/getFootballLeagues"].find(
       ({ id }) => id == leagueId
     );
     await requestResource({

@@ -1,8 +1,12 @@
-import { requestResource, postResource, putResource } from "../../utils/resourceRequests";
+import {
+  requestResource,
+  postResource,
+  putResource,
+} from "../../utils/resourceRequests";
 import {
   GET_RESOURCE_PATH,
   POST_RESOURCE_PATH,
-  PUT_RESOURCE_PATH
+  PUT_RESOURCE_PATH,
 } from "../../common/apiRequests";
 
 const state = {
@@ -12,30 +16,27 @@ const state = {
 const getters = {};
 
 const actions = {
-  async fetchTransfers({ commit }) {
-    await requestResource({
+  async fetchTransfers({ commit, dispatch, rootGetters }) {
+    const transfers = await requestResource({
       resourcePath: GET_RESOURCE_PATH.TRANSFERS_ALL,
-    })
-      .then(async (response) => {
-        await dispatch("user/fetchAllUsers", {}, { root: true });
-        await dispatch("rounds/fetchRounds", {}, { root: true });
-        const users = rootGetters["user/getAllUsers"];
-        const rounds = rootGetters["rounds/getAllRounds"];
+    }).then(async (response) => {
+      await dispatch("user/fetchAllUsers", {}, { root: true });
+      await dispatch("rounds/fetchRounds", {}, { root: true });
+      const users = rootGetters["user/getAllUsers"];
+      const rounds = rootGetters["rounds/getAllRounds"];
 
-        return Promise.all(
-          response.data.data.map(async (transfer) => {
-            const user = users.find(({ id }) => id == transfer.user_id);
-            const round = rounds.find(({ id }) => id == transfer.round_id);
-            transfer.league_id = user.league_id;
-            transfer.round = round;
-            transfer.user = user;
-            return transfer;
-          })
-        );
-      })
-      .then((response) => {
-        transfers = response;
-      });
+      return Promise.all(
+        response.data.data.map(async (transfer) => {
+          const user = users.find(({ id }) => id == transfer.user_id);
+          const round = rounds.find(({ id }) => id == transfer.round_id);
+          transfer.league_id = user.league_id;
+          transfer.round = round;
+          transfer.user = user;
+          return transfer;
+        })
+      );
+    });
+
     commit("setTransfers", transfers);
   },
   async updateTransfer({ dispatch }, payload) {
@@ -61,7 +62,7 @@ const actions = {
 
 const mutations = {
   setTransfers: (state, transfers) => {
-    state.transfers = transfers.data.data;
+    state.transfers = transfers;
   },
 };
 

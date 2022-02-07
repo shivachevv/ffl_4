@@ -16,7 +16,7 @@
               <v-select
                 v-model="playerLeague"
                 :rules="requiredFieldRules"
-                :items="getLeagues"
+                :items="getFootballLeagues"
                 item-text="name"
                 item-value="id"
                 label="League"
@@ -158,7 +158,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("leagues", ["getLeagues"]),
+    ...mapGetters("leagues", ["getFootballLeagues"]),
     ...mapGetters("footballPlayers", ["getClubsByLeague"]),
 
     ...mapGetters(["getPositions"]),
@@ -182,7 +182,7 @@ export default {
     },
     playerLeague: {
       get() {
-        return this.getLeagues.find(
+        return this.getFootballLeagues.find(
           ({ id }) => id == this.footballPlayer.footballLeagueId
         );
       },

@@ -64,18 +64,19 @@ const actions = {
 
 const mutations = {
   setRounds: (state, rounds) => {
-    state.rounds = [...state.rounds, ...rounds];
+    state.rounds = rounds;
     state.roundsH2H = rounds.filter(function getH2HRounds(round) {
       return round.head_to_head;
     });
-    const currentRoundIndex = rounds.findIndex(function findCurrentRound(round) {
+    const currentRoundIndex = rounds.findIndex(function findCurrentRound(
+      round
+    ) {
       return (
-        DateTime.fromISO(round.from_date) <=
-          DateTime.now() &&
+        DateTime.fromISO(round.from_date) <= DateTime.now() &&
         DateTime.now() <= DateTime.fromISO(round.to_date)
       );
     });
-    
+
     state.currentRoundIndex = currentRoundIndex;
   },
 };

@@ -2,21 +2,22 @@
   <div class="league-last5 sha hover">
     <div class="last5-heading up">
       <div>
-        <img
-          :src="getPictureByName('last5.png')"
-          alt="last5-logo`"
-        />
+        <img :src="getPictureByName('last5.png')" alt="last5-logo`" />
       </div>
       <h2>Last 5 transfers</h2>
     </div>
     <div class="transfers-container" v-if="transfers">
-      <div class="transfer" v-for="transfer in userTransfers" :key="transfer.id">
+      <div
+        class="transfer"
+        v-for="transfer in userTransfers"
+        :key="transfer.id"
+      >
         <p class="up arr">{{ transfer.user.userTeam }}</p>
         <router-link
           :to="`/team-details/${transfer.user.userLogo}`"
           class="transfer-details"
         >
-          <span class="tr-round up">R{{ transfer.round_id }}</span> 
+          <span class="tr-round up">R{{ transfer.round_id }}</span>
           <span class="tr-in">
             {{ transfer.to_player.name }}
             <br />
@@ -35,39 +36,44 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from "vuex";
 import { getPictureByName } from "../../../utils/getPictureByName";
 
 export default {
-  name: 'Last5Transfers',
+  name: "Last5Transfers",
   props: {
     selectedLeague: {
       type: Object,
       default: () => [],
     },
   },
-  data () {
-    return {getPictureByName,}
+  data() {
+    return { getPictureByName };
   },
   methods: {
-    ...mapActions('transfers', ['fetchTransfers']),
+    ...mapActions("transfers", ["fetchTransfers"]),
   },
   computed: {
-    ...mapState('transfers', ['transfers']),
+    ...mapState("transfers", ["transfers"]),
     userTransfers() {
-      return this.transfers.filter(transfer => transfer.user.league_id === this.selectedLeague.id).sort((a, b) => a - b).slice(0, 5);
+      return this.transfers
+        .filter(
+          (transfer) => +transfer.user.league_id === +this.selectedLeague.id
+        )
+        .sort((a, b) => a - b)
+        .slice(0, 5);
     },
-    last5TransfersReady () {
+    last5TransfersReady() {
       if (!this.transfers) {
         return [];
       }
       return [];
-    }
+    },
   },
-  async created () {
+  async created() {
     await this.fetchTransfers(this.selectedLeague.id);
   },
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -135,7 +141,7 @@ export default {
     > .arr {
       &::after {
         position: absolute;
-        content: '';
+        content: "";
         left: 20px;
         bottom: 0;
         width: 40px;
@@ -147,7 +153,7 @@ export default {
       }
       &::before {
         position: absolute;
-        content: '';
+        content: "";
         right: 20px;
         bottom: 0;
         width: 40px;
@@ -205,7 +211,7 @@ export default {
   padding: 0 0 0 5px;
   transition: all 0.3s;
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     right: -34px;
     top: -1px;

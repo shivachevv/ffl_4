@@ -12,7 +12,6 @@ import userLeagues from "./modules/userLeagues";
 import footballPlayers from "./modules/footballPlayers";
 import userPlayers from "./modules/userPlayers";
 import notifications from "./modules/notifications";
-import userLeagues from "./modules/userLeagues";
 import standings from "./modules/standings";
 
 Vue.use(Vuex);

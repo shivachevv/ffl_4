@@ -184,7 +184,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("leagues", ["getLeagues"]),
+    ...mapGetters("leagues", ["getFootballLeagues"]),
     ...mapGetters("footballPlayers", [
       "getClubsByLeague",
       "getPlayersByLeague",
@@ -208,7 +208,7 @@ export default {
     },
 
     showLeagues() {
-      return this.getLeagues;
+      return this.getFootballLeagues;
     },
 
     showPlayers() {

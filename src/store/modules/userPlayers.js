@@ -1,5 +1,8 @@
 import { postResource, requestResource } from "../../utils/resourceRequests";
-import { POST_RESOURCE_PATH, GET_RESOURCE_PATH } from "../../common/apiRequests";
+import {
+  POST_RESOURCE_PATH,
+  GET_RESOURCE_PATH,
+} from "../../common/apiRequests";
 
 const state = {
   userPlayers: [],
@@ -23,7 +26,7 @@ const actions = {
   async fetchUserPlayers({ commit }, round) {
     let userPlayers;
     await requestResource({
-      resourcePath: `${GET_RESOURCE_PATH.PLAYERS_ALL}?round_id=${round.id}`
+      resourcePath: `${GET_RESOURCE_PATH.PLAYERS_ALL}?round_id=${round.id}`,
     }).then((response) => {
       userPlayers = response.data.data;
     });
